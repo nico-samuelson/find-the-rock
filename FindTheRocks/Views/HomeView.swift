@@ -11,20 +11,31 @@ struct HomeView: View {
     var body: some View {
         NavigationStack() {
             GeometryReader { gp in
-//                VStack(alignment:.leading,spacing:0){
-                    VStack{
-                        Text("Find")
-                            .font(.title)
-                        Text("ThE ROCK")
-                            .font(.largeTitle)
-                    }
-                    .frame(minWidth:gp.size.width,minHeight:gp.size.height/2)
-                    .background{
-                        RoundedRectangle(cornerRadius: 40)
-                            .foregroundColor(.blue)
-                    }
-//                }
+                //                VStack(alignment:.leading,spacing:0){
+                VStack{
+                    Text("Find")
+                        .font(.title)
+                        .foregroundStyle(.white)
+                        .bold()
+                        .padding(.top,40)
+                    Text("ThE ROCK")
+                        .font(.largeTitle)
+                        .foregroundStyle(.white)
+                        .bold()
+                }
+                .frame(minWidth:gp.size.width,minHeight:gp.size.height/30*7)
+                .background{
+                    SkewedRoundedRectangle(bottomRightYOffset: 20,cornerRadius: 30)
+                        .fill(Color.primaryGradient)
+                        .shadow(color:.init(.black.opacity(0.25)),radius: 20,x:0,y:4)
+                    //                            .overlay(
+                    //                                SkewedRoundedRectangle(bottomRightYOffset: 20,cornerRadius: 30)
+                    //                                    .shadow(radius: 10)
+                    //                            )
+                }
+                //                }
             }
+            .background(Color.secondaryGradient)
             .ignoresSafeArea()
         }
     }
