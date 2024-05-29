@@ -71,7 +71,7 @@ struct SkewedRoundedRectangle: Shape {
 //        path.addArc(center: CGPoint(x: width - cornerRadius - bottomRightXOffset, y: height - cornerRadius - bottomRightYOffset), radius: cornerRadius, startAngle: .degrees(0), endAngle: .degrees(90), clockwise: false)
         path.addQuadCurve(
             to: CGPoint(x: width - brCornerRadius - bottomRightXOffset, y: height - bottomRightYOffset),
-            control: CGPoint(x: width - bottomRightXOffset - (bottomRightXOffset - bottomLeftXOffset)*0.08, y: height - bottomRightYOffset - (bottomRightYOffset - topRightYOffset)*0.15)
+            control: CGPoint(x: width - bottomRightXOffset - (bottomRightXOffset - topRightXOffset)*0.08, y: height - bottomRightYOffset - (bottomRightYOffset - topRightYOffset)*0.15)
         )
         
         // Bottom side
@@ -91,6 +91,6 @@ struct SkewedRoundedRectangle: Shape {
     }
 }
 #Preview {
-    SkewedRoundedRectangle(cornerRadius:20)
-        .padding(100)
+    SkewedRoundedRectangle(topLeftCornerRadius:20, bottomRightCornerRadius: 20)
+        .padding(50)
 }
