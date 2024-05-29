@@ -20,4 +20,11 @@ public extension Color {
         .init(red: 255/255.0, green: 225/255.0, blue: 130/255.0), 
         .init(red: 255/255.0, green: 82/255.0, blue: 225/255.0)
     ], center: .center, startRadius: 5, endRadius: 450)
+    
+    static let tersierGradient: LinearGradient = LinearGradient(
+        stops: [
+            .init(color: .init(red: 249/255.0, green: 164/255.0, blue: 49/255.0), location: 0),
+            .init(color: .init(red: 225/255.0, green: 181/255.0, blue: 71/255.0), location: 0.5),
+            .init(color: .init(red: 225/255.0, green: 200/255.0, blue: 118/255.0), location: 1),
+        ], startPoint: .init(x: 0.6, y: -0.1), endPoint: .init(x: 0.2, y: 1.9))
 }

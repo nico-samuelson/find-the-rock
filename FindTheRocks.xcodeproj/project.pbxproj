@@ -21,6 +21,7 @@
 		A43A7A032C05DA0A00C46FAA /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A43A7A022C05DA0A00C46FAA /* HomeView.swift */; };
 		A43A7A062C05E27E00C46FAA /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = A43A7A042C05E27E00C46FAA /* Color.swift */; };
 		A43A7A092C05E54000C46FAA /* SkewedRoundedRectangle.swift in Sources */ = {isa = PBXBuildFile; fileRef = A43A7A082C05E54000C46FAA /* SkewedRoundedRectangle.swift */; };
+		A43A7A0B2C06411800C46FAA /* CustomRandomShape.swift in Sources */ = {isa = PBXBuildFile; fileRef = A43A7A0A2C06411800C46FAA /* CustomRandomShape.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -59,6 +60,7 @@
 		A43A7A022C05DA0A00C46FAA /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		A43A7A042C05E27E00C46FAA /* Color.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 		A43A7A082C05E54000C46FAA /* SkewedRoundedRectangle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkewedRoundedRectangle.swift; sourceTree = "<group>"; };
+		A43A7A0A2C06411800C46FAA /* CustomRandomShape.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomRandomShape.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -178,6 +180,7 @@
 			isa = PBXGroup;
 			children = (
 				A43A7A082C05E54000C46FAA /* SkewedRoundedRectangle.swift */,
+				A43A7A0A2C06411800C46FAA /* CustomRandomShape.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -313,6 +316,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				04F5BD072C05CDE200AC5205 /* MultipeerSession.swift in Sources */,
+				A43A7A0B2C06411800C46FAA /* CustomRandomShape.swift in Sources */,
 				A43A7A032C05DA0A00C46FAA /* HomeView.swift in Sources */,
 				04F5BCDB2C05CD0000AC5205 /* ContentView.swift in Sources */,
 				04F5BCDD2C05CD0000AC5205 /* Item.swift in Sources */,

@@ -91,6 +91,6 @@ struct SkewedRoundedRectangle: Shape {
     }
 }
 #Preview {
-    SkewedRoundedRectangle(topLeftCornerRadius:20)
+    SkewedRoundedRectangle(cornerRadius:20)
         .padding(100)
 }
