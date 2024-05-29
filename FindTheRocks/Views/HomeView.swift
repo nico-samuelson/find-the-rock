@@ -37,15 +37,15 @@ struct HomeView: View {
                     Spacer()
                     
                     VStack(){
-                        Image(systemName: "person.fill")
+                        Image("lancelot-avatar")
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .clipShape(Circle())
-                            .frame(width:80,height:80)
+                            .frame(width:60,height:60)
                             .background{
                                 Circle()
                                     .fill(.white.opacity(0.2))
-                                    .frame(width:90,height:90)
+                                    .frame(width:70,height:70)
                             }
                             .padding(.top,-35)
                             
