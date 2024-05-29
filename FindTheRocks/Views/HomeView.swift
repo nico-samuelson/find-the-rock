@@ -41,36 +41,53 @@ struct HomeView: View {
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .clipShape(Circle())
-                            .frame(width:60,height:60)
+                            .frame(width:75,height:75)
                             .background{
                                 Circle()
                                     .fill(.white.opacity(0.2))
-                                    .frame(width:70,height:70)
+                                    .frame(width:85,height:85)
                             }
                             .padding(.top,-35)
                             
+                        Spacer()
+                            .frame(height:25)
+                        
                         
                         HStack(alignment:.center,spacing:0){
-                            Text("Nico Samuel")
-                                .font(.title)
-                                .foregroundStyle(.white)
-                                .bold()
-                                .padding(15)
-                                .background(){
-                                        Rectangle()
-                                        .fill(.white.opacity(0.2))
-                                }
-                            Image(systemName: "pencil")
-                                .foregroundStyle(.white)
-                                .font(.title)
-                                .bold()
-                                .padding(15)
-                                .background(){
-                                    Rectangle()
-                                        .fill(Color.white.opacity(0.5))
-                                }
+                            VStack{
+                                Spacer()
+                                    .frame(height:10)
+                                Text("Nico Samuel")
+                                    .font(.title)
+                                    .foregroundStyle(.white)
+                                    .bold()
+                                    .padding(.horizontal,28)
+                                Spacer()
+                                    .frame(height:10)
+                            }
+                            .background(){
+                                Rectangle()
+                                    .fill(.white.opacity(0.2))
+                            }
+                            VStack{
+                                Spacer()
+                                    .frame(height:12)
+                                Image(systemName: "pencil")
+                                    .foregroundStyle(.white)
+                                    .font(.title)
+                                    .bold()
+                                    .padding(.horizontal,16)
+                                Spacer()
+                                    .frame(height:12)
+                            }
+                            .background(){
+                                Rectangle()
+                                    .fill(Color.white.opacity(0.5))
+                            }
                         }
-                        .clipShape(SkewedRoundedRectangle(topLeftXOffset: 4,topRightXOffset: 3,bottomRightYOffset: 4, cornerRadius: 20))
+                        .clipShape(SkewedRoundedRectangle(topLeftXOffset: 2,topRightXOffset: 2,bottomRightYOffset: 0.56, cornerRadius: 20))
+                        Spacer()
+                            .frame(height:12)
                         Text("CREATE ROOM")
                             .font(.title)
                             .foregroundStyle(.white)
