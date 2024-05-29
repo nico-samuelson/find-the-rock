@@ -5,11 +5,13 @@ Abstract:
 A simple abstraction of the MultipeerConnectivity API as used in this app.
 */
 
+import Foundation
 import MultipeerConnectivity
 
 /// - Tag: MultipeerSession
+@Observable
 class MultipeerSession: NSObject {
-    static let serviceType = "ar-multi-player"
+    static let serviceType = "find-the-rock"
     
     private let myPeerID = MCPeerID(displayName: UIDevice.current.name)
     private var session: MCSession!
@@ -55,7 +57,6 @@ class MultipeerSession: NSObject {
 }
 
 extension MultipeerSession: MCSessionDelegate {
-    
     func session(_ session: MCSession, peer peerID: MCPeerID, didChange state: MCSessionState) {
         // not used
     }
@@ -84,13 +85,16 @@ extension MultipeerSession: MCNearbyServiceBrowserDelegate {
     public func browser(_ browser: MCNearbyServiceBrowser, foundPeer peerID: MCPeerID, withDiscoveryInfo info: [String: String]?) {
         // Invite the new peer to the session.
         browser.invitePeer(peerID, to: session, withContext: nil, timeout: 10)
+        
         if !nearbyPeers.contains(peerID) {
             nearbyPeers.append(peerID)
         }
+        print(self.nearbyPeers)
     }
 
     public func browser(_ browser: MCNearbyServiceBrowser, lostPeer peerID: MCPeerID) {
         // This app doesn't do anything with non-invited peers, so there's nothing to do here.
+        print("lost peer: ", peerID)
         if let index = nearbyPeers.firstIndex(of: peerID) {
             nearbyPeers.remove(at: index)
         }
