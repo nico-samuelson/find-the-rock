@@ -62,8 +62,6 @@ struct HomeView: View {
                                 .foregroundColor(.white)
                                 .padding(.leading,30)
                                 .frame(maxWidth:225,maxHeight:60)
-                                .background(Color.clear)
-                            
                                 .background(){
                                     Rectangle()
                                         .fill(.white.opacity(0.2))

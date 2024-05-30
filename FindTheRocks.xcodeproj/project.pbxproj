@@ -27,6 +27,7 @@
 		A43A7A142C072B0C00C46FAA /* ButtonPillComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A43A7A132C072B0C00C46FAA /* ButtonPillComponent.swift */; };
 		A43A7A162C07374300C46FAA /* CustomStepperComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A43A7A152C07374300C46FAA /* CustomStepperComponent.swift */; };
 		A43A7A182C0737B900C46FAA /* ActionStepperComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A43A7A172C0737B900C46FAA /* ActionStepperComponent.swift */; };
+		A4DAC4CA2C085A670062CE38 /* RoomView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4DAC4C92C085A670062CE38 /* RoomView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -71,6 +72,7 @@
 		A43A7A132C072B0C00C46FAA /* ButtonPillComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonPillComponent.swift; sourceTree = "<group>"; };
 		A43A7A152C07374300C46FAA /* CustomStepperComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomStepperComponent.swift; sourceTree = "<group>"; };
 		A43A7A172C0737B900C46FAA /* ActionStepperComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionStepperComponent.swift; sourceTree = "<group>"; };
+		A4DAC4C92C085A670062CE38 /* RoomView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoomView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -174,6 +176,7 @@
 		A43A7A012C05D99E00C46FAA /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				A4DAC4C92C085A670062CE38 /* RoomView.swift */,
 				A43A7A022C05DA0A00C46FAA /* HomeView.swift */,
 				A43A7A112C07246700C46FAA /* RoomSettingSheetView.swift */,
 			);
@@ -351,6 +354,7 @@
 				A43A7A062C05E27E00C46FAA /* Color.swift in Sources */,
 				04F5BD0B2C05CE8200AC5205 /* ARController.swift in Sources */,
 				04F5BCD92C05CD0000AC5205 /* FindTheRocksApp.swift in Sources */,
+				A4DAC4CA2C085A670062CE38 /* RoomView.swift in Sources */,
 				A43A7A162C07374300C46FAA /* CustomStepperComponent.swift in Sources */,
 				A43A7A092C05E54000C46FAA /* SkewedRoundedRectangle.swift in Sources */,
 			);

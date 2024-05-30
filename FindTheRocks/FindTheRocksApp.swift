@@ -25,7 +25,7 @@ struct FindTheRocksApp: App {
 
     var body: some Scene {
         WindowGroup {
-            RoomSettingSheetView()
+            ContentView()
         }
         .modelContainer(sharedModelContainer)
     }
