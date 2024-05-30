@@ -28,6 +28,10 @@
 		A43A7A162C07374300C46FAA /* CustomStepperComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A43A7A152C07374300C46FAA /* CustomStepperComponent.swift */; };
 		A43A7A182C0737B900C46FAA /* ActionStepperComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A43A7A172C0737B900C46FAA /* ActionStepperComponent.swift */; };
 		A4DAC4CA2C085A670062CE38 /* RoomView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4DAC4C92C085A670062CE38 /* RoomView.swift */; };
+		A4DAC4CD2C08660F0062CE38 /* RoomModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4DAC4CC2C08660F0062CE38 /* RoomModel.swift */; };
+		A4DAC4CF2C0866260062CE38 /* TeamModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4DAC4CE2C0866260062CE38 /* TeamModel.swift */; };
+		A4DAC4D12C0866340062CE38 /* PlayerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4DAC4D02C0866340062CE38 /* PlayerModel.swift */; };
+		A4DAC4D32C08663F0062CE38 /* RockModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4DAC4D22C08663F0062CE38 /* RockModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -73,6 +77,10 @@
 		A43A7A152C07374300C46FAA /* CustomStepperComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomStepperComponent.swift; sourceTree = "<group>"; };
 		A43A7A172C0737B900C46FAA /* ActionStepperComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionStepperComponent.swift; sourceTree = "<group>"; };
 		A4DAC4C92C085A670062CE38 /* RoomView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoomView.swift; sourceTree = "<group>"; };
+		A4DAC4CC2C08660F0062CE38 /* RoomModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomModel.swift; sourceTree = "<group>"; };
+		A4DAC4CE2C0866260062CE38 /* TeamModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamModel.swift; sourceTree = "<group>"; };
+		A4DAC4D02C0866340062CE38 /* PlayerModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerModel.swift; sourceTree = "<group>"; };
+		A4DAC4D22C08663F0062CE38 /* RockModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RockModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -123,6 +131,7 @@
 		04F5BCD72C05CD0000AC5205 /* FindTheRocks */ = {
 			isa = PBXGroup;
 			children = (
+				A4DAC4CB2C0865E40062CE38 /* Models */,
 				A43A7A0E2C07164800C46FAA /* Fonts */,
 				A43A7A072C05E4EF00C46FAA /* Components */,
 				A43A7A012C05D99E00C46FAA /* Views */,
@@ -209,6 +218,17 @@
 				A43A7A0F2C071C8900C46FAA /* Roboto-Black.ttf */,
 			);
 			path = Fonts;
+			sourceTree = "<group>";
+		};
+		A4DAC4CB2C0865E40062CE38 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				A4DAC4CC2C08660F0062CE38 /* RoomModel.swift */,
+				A4DAC4CE2C0866260062CE38 /* TeamModel.swift */,
+				A4DAC4D02C0866340062CE38 /* PlayerModel.swift */,
+				A4DAC4D22C08663F0062CE38 /* RockModel.swift */,
+			);
+			path = Models;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -343,15 +363,19 @@
 			buildActionMask = 2147483647;
 			files = (
 				A43A7A142C072B0C00C46FAA /* ButtonPillComponent.swift in Sources */,
+				A4DAC4CF2C0866260062CE38 /* TeamModel.swift in Sources */,
 				04F5BD072C05CDE200AC5205 /* MultipeerSession.swift in Sources */,
 				A43A7A0B2C06411800C46FAA /* CustomRandomShape.swift in Sources */,
 				A43A7A032C05DA0A00C46FAA /* HomeView.swift in Sources */,
 				04F5BCDB2C05CD0000AC5205 /* ContentView.swift in Sources */,
 				A43A7A122C07246700C46FAA /* RoomSettingSheetView.swift in Sources */,
+				A4DAC4D32C08663F0062CE38 /* RockModel.swift in Sources */,
 				04F5BCDD2C05CD0000AC5205 /* Item.swift in Sources */,
 				A43A7A182C0737B900C46FAA /* ActionStepperComponent.swift in Sources */,
+				A4DAC4CD2C08660F0062CE38 /* RoomModel.swift in Sources */,
 				04F5BD092C05CE5B00AC5205 /* Utilities.swift in Sources */,
 				A43A7A062C05E27E00C46FAA /* Color.swift in Sources */,
+				A4DAC4D12C0866340062CE38 /* PlayerModel.swift in Sources */,
 				04F5BD0B2C05CE8200AC5205 /* ARController.swift in Sources */,
 				04F5BCD92C05CD0000AC5205 /* FindTheRocksApp.swift in Sources */,
 				A4DAC4CA2C085A670062CE38 /* RoomView.swift in Sources */,
