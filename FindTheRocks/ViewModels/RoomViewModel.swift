@@ -6,3 +6,11 @@
 //
 
 import Foundation
+import SwiftUI
+
+struct RoomViewModel {
+    @Binding var room: Room
+    @Binding var multipeerSession: MultipeerSession
+    
+    
+}

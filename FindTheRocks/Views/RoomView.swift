@@ -9,10 +9,40 @@ import SwiftUI
 import MultipeerConnectivity
 
 struct RoomView: View {
-    @State var redTeam : [MCPeerID] = []
-    @State var blueTeam: [MCPeerID] = []
     @Binding var multiPeerSession: MultipeerSession
-    @State var nearbyPeers: [MCPeerID] = []
+    @State var room: Room = Room()
+    
+    func assignToTeam(player: Player, to: Int = -1) {
+        print("player: ", player)
+        print("to: ", to)
+        // assign player to team after invite
+        if to == -1 {
+            let team1Count = room.teams[0].players.count
+            let team2Count = room.teams[1].players.count
+            let target = team1Count <= team2Count ? 0 : 1
+            
+            print(target)
+            
+            room.teams[target].players.append(player)
+            player.status = .connected
+            
+//            multiPeerSession.notifyPeer(peer: player.peerID, data: try! NSKeyedArchiver.archivedData(withRootObject: player, requiringSecureCoding: true))
+        }
+        
+        // move player to another team
+        else {
+            let from = to == 0 ? 1 : 0
+            room.teams[from].players.removeAll(where: { $0.peerID == player.peerID })
+            room.teams[to].players.append(player)
+        }
+    }
+    
+    func kickPlayer(player: Player) {
+        let message: String = "kicked"
+        multiPeerSession.notifyPeer(peer: player.peerID, data: message.data(using: .utf8)!)
+        room.teams[0].players.removeAll(where: { $0.peerID == player.peerID })
+        room.teams[1].players.removeAll(where: { $0.peerID == player.peerID })
+    }
     
     var body: some View {
         NavigationStack {
@@ -47,7 +77,7 @@ struct RoomView: View {
                                 )
                             
                             List {
-                                ForEach(redTeam, id: \.self) { player in
+                                ForEach(room.teams[0].players, id: \.peerID) { player in
                                     HStack(alignment: .center) {
                                         Circle()
                                             .foregroundStyle(Color.lightRed)
@@ -58,7 +88,7 @@ struct RoomView: View {
                                                     .padding(2)
                                             }
                                         
-                                        Text(player.displayName.uppercased())
+                                        Text(player.peerID.displayName.uppercased())
                                             .font(.system(size: 12))
                                             .fontWeight(.medium)
                                             .lineLimit(0)
@@ -82,7 +112,9 @@ struct RoomView: View {
                                         .padding(0)
                                         .frame(maxWidth: 25, maxHeight: 25)
                                         
-                                        Button{} label: {
+                                        Button{
+                                            assignToTeam(player: player, to: 1)
+                                        } label: {
                                             SkewedRoundedRectangle(topRightYOffset: 0.5, bottomRightYOffset: -0.5, bottomLeftXOffset: 0.5,
                                                                    topLeftCornerRadius: 10,
                                                                    topRightCornerRadius: 10,
@@ -111,7 +143,7 @@ struct RoomView: View {
                         .listRowSpacing(-6)
                         .scrollDisabled(false)
                         .scrollContentBackground(.hidden)
-                        .scrollIndicators(.visible)
+                        .scrollIndicators(.visible) 
                         .background(
                             SkewedRoundedRectangle(topRightYOffset: -5, bottomRightXOffset: -5, topLeftCornerRadius: 20, topRightCornerRadius: 20, bottomRightCornerRadius: 20)
                                 .foregroundStyle(.white.opacity(0.2))
@@ -131,9 +163,11 @@ struct RoomView: View {
                                 )
                             
                             List {
-                                ForEach(blueTeam, id: \.self) { player in
+                                ForEach(room.teams[1].players, id: \.peerID) { player in
                                     HStack(alignment: .center) {
-                                        Button{} label: {
+                                        Button{
+                                            assignToTeam(player: player, to: 0)
+                                        } label: {
                                             SkewedRoundedRectangle(topRightYOffset: 0.5, bottomRightYOffset: -0.5, bottomLeftXOffset: 0.5, cornerRadius: 10)
                                             .foregroundStyle(Color.tersierGradient)
                                             .overlay(
@@ -159,7 +193,7 @@ struct RoomView: View {
                                         .padding(0)
                                         .frame(maxWidth: 25, maxHeight: 25)
                                         
-                                        Text(player.displayName.uppercased())
+                                        Text(player.peerID.displayName.uppercased())
                                             .font(.system(size: 12))
                                             .fontWeight(.medium)
                                             .lineLimit(0)
@@ -204,7 +238,7 @@ struct RoomView: View {
                         .padding(.horizontal, 25)
                     
                     List {
-                        ForEach(self.nearbyPeers, id: \.self) { peer in
+                        ForEach(Array(multiPeerSession.detectedPeers.filter({ $0.status == .disconnected })), id: \.peerID) { peer in
                             HStack {
                                 Circle()
                                     .foregroundStyle(.white.opacity(0.5))
@@ -215,7 +249,7 @@ struct RoomView: View {
                                             .padding(4)
                                     }
                                 
-                                Text(peer.displayName.uppercased())
+                                Text(peer.peerID.displayName.uppercased())
                                     .foregroundStyle(.black)
                                     .fontWeight(.medium)
                                     .font(.system(size: 20))
@@ -223,7 +257,9 @@ struct RoomView: View {
                                 
                                 Spacer()
                                 
-                                Button{} label: {
+                                Button{
+                                    assignToTeam(player: peer)
+                                } label: {
                                     SkewedRoundedRectangle(topRightYOffset: 0.5, bottomRightXOffset: 2, bottomRightYOffset: -1, bottomLeftXOffset: 3, topLeftCornerRadius: 10, topRightCornerRadius: 10, bottomLeftCornerRadius: 10, bottomRightCornerRadius: 10)
                                         .foregroundStyle(Color.tersierGradient)
                                         .overlay(
@@ -288,12 +324,9 @@ struct RoomView: View {
                 .background(Color.primaryGradient)
             }
         }
-        .onChange(of: multiPeerSession.detectedPeers) { peers in
-            self.nearbyPeers = peers
-        }
-        .onAppear(perform: {
-            self.nearbyPeers = multiPeerSession.detectedPeers
-        })
+//        .onAppear(perform: {
+//            self.roomVM = RoomViewModel(room: $room, multipeerSession: $multiPeerSession)
+//        })
     }
 }
 
