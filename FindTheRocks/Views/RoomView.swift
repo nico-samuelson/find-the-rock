@@ -9,10 +9,8 @@ import SwiftUI
 import MultipeerConnectivity
 
 struct RoomView: View {
-    @State var redTeam : [MCPeerID] = []
-    @State var blueTeam: [MCPeerID] = []
     @Binding var multiPeerSession: MultipeerSession
-    @State var nearbyPeers: [MCPeerID] = []
+    @State var room: Room = Room()
     
     var body: some View {
         NavigationStack {
@@ -47,7 +45,7 @@ struct RoomView: View {
                                 )
                             
                             List {
-                                ForEach(redTeam, id: \.self) { player in
+                                ForEach(room.teams[0].players, id: \.peerID) { player in
                                     HStack(alignment: .center) {
                                         Circle()
                                             .foregroundStyle(Color.lightRed)
@@ -58,7 +56,7 @@ struct RoomView: View {
                                                     .padding(2)
                                             }
                                         
-                                        Text(player.displayName.uppercased())
+                                        Text(player.peerID.displayName.uppercased())
                                             .font(.system(size: 12))
                                             .fontWeight(.medium)
                                             .lineLimit(0)
@@ -131,7 +129,7 @@ struct RoomView: View {
                                 )
                             
                             List {
-                                ForEach(blueTeam, id: \.self) { player in
+                                ForEach(room.teams[1].players, id: \.peerID) { player in
                                     HStack(alignment: .center) {
                                         Button{} label: {
                                             SkewedRoundedRectangle(topRightYOffset: 0.5, bottomRightYOffset: -0.5, bottomLeftXOffset: 0.5, cornerRadius: 10)
@@ -159,7 +157,7 @@ struct RoomView: View {
                                         .padding(0)
                                         .frame(maxWidth: 25, maxHeight: 25)
                                         
-                                        Text(player.displayName.uppercased())
+                                        Text(player.peerID.displayName.uppercased())
                                             .font(.system(size: 12))
                                             .fontWeight(.medium)
                                             .lineLimit(0)
@@ -204,7 +202,7 @@ struct RoomView: View {
                         .padding(.horizontal, 25)
                     
                     List {
-                        ForEach(self.nearbyPeers, id: \.self) { peer in
+                        ForEach(Array(multiPeerSession.detectedPeers), id: \.peerID) { peer in
                             HStack {
                                 Circle()
                                     .foregroundStyle(.white.opacity(0.5))
@@ -215,7 +213,7 @@ struct RoomView: View {
                                             .padding(4)
                                     }
                                 
-                                Text(peer.displayName.uppercased())
+                                Text(peer.peerID.displayName.uppercased())
                                     .foregroundStyle(.black)
                                     .fontWeight(.medium)
                                     .font(.system(size: 20))
@@ -288,12 +286,12 @@ struct RoomView: View {
                 .background(Color.primaryGradient)
             }
         }
-        .onChange(of: multiPeerSession.detectedPeers) { peers in
-            self.nearbyPeers = peers
-        }
-        .onAppear(perform: {
-            self.nearbyPeers = multiPeerSession.detectedPeers
-        })
+//        .onChange(of: multiPeerSession.detectedPeers) { peers in
+//            self.near
+//        }
+//        .onAppear(perform: {
+//            self.nearbyPeers = multiPeerSession.detectedPeers
+//        })
     }
 }
 

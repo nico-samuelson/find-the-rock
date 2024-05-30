@@ -18,7 +18,7 @@ class MultipeerSession: NSObject {
     private var session: MCSession!
     private var serviceAdvertiser: MCNearbyServiceAdvertiser!
     private var serviceBrowser: MCNearbyServiceBrowser!
-    private var nearbyPeers: [MCPeerID] = []
+    private var nearbyPeers: [Player] = []
     
     private let receivedDataHandler: (Data, MCPeerID) -> Void
     
@@ -46,7 +46,7 @@ class MultipeerSession: NSObject {
         return session.connectedPeers
     }
     
-    var detectedPeers: [MCPeerID] {
+    var detectedPeers: [Player] {
         return nearbyPeers
     }
     
@@ -110,10 +110,13 @@ extension MultipeerSession: MCNearbyServiceBrowserDelegate {
     /// - Tag: FoundPeer
     public func browser(_ browser: MCNearbyServiceBrowser, foundPeer peerID: MCPeerID, withDiscoveryInfo info: [String: String]?) {
         // Invite the new peer to the session.
+        
         browser.invitePeer(peerID, to: session, withContext: nil, timeout: 10)
         
-        if !nearbyPeers.contains(peerID) {
-            nearbyPeers.append(peerID)
+        print(nearbyPeers.firstIndex(where: {$0.peerID == peerID}) == nil)
+        if nearbyPeers.firstIndex(where: { $0.peerID == peerID }) == nil {
+            print("masuk")
+            nearbyPeers.append(Player(peerID: peerID, profile: "", status: .disconnected, point: 0))
         }
         print(self.nearbyPeers)
     }
@@ -121,7 +124,8 @@ extension MultipeerSession: MCNearbyServiceBrowserDelegate {
     public func browser(_ browser: MCNearbyServiceBrowser, lostPeer peerID: MCPeerID) {
         // This app doesn't do anything with non-invited peers, so there's nothing to do here.
         print("lost peer: ", peerID)
-        if let index = nearbyPeers.firstIndex(of: peerID) {
+        
+        if let index = nearbyPeers.firstIndex(where: {$0.peerID == peerID}) {
             nearbyPeers.remove(at: index)
         }
     }
