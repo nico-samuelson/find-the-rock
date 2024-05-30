@@ -42,6 +42,14 @@ class MultipeerSession: NSObject {
         }
     }
     
+    func notifyPeer(peer: MCPeerID, data: Data) {
+        do {
+            try session.send(data, toPeers: [peer], with: .reliable)
+        } catch {
+            print("error sending data to peers: \(error.localizedDescription)")
+        }
+    }
+    
     var connectedPeers: [MCPeerID] {
         return session.connectedPeers
     }
@@ -79,7 +87,6 @@ class MultipeerSession: NSObject {
         setupSession()
         startAdvertisingAndBrowsing()
     }
-    
 }
 
 extension MultipeerSession: MCSessionDelegate {
