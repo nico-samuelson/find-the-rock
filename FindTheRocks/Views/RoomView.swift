@@ -95,7 +95,9 @@ struct RoomView: View {
                                             .truncationMode(.tail)
                                             .rotationEffect(.degrees(-0.48))
                                         
-                                        Button{} label: {
+                                        Button{
+                                            kickPlayer(player: player)
+                                        } label: {
                                             SkewedRoundedRectangle(topRightYOffset: 0.5, bottomRightYOffset: -0.5, bottomLeftXOffset: 0.5,
                                                                    topLeftCornerRadius: 10,
                                                                    topRightCornerRadius: 10,
@@ -143,7 +145,7 @@ struct RoomView: View {
                         .listRowSpacing(-6)
                         .scrollDisabled(false)
                         .scrollContentBackground(.hidden)
-                        .scrollIndicators(.visible) 
+                        .scrollIndicators(.visible)
                         .background(
                             SkewedRoundedRectangle(topRightYOffset: -5, bottomRightXOffset: -5, topLeftCornerRadius: 20, topRightCornerRadius: 20, bottomRightCornerRadius: 20)
                                 .foregroundStyle(.white.opacity(0.2))
@@ -180,7 +182,9 @@ struct RoomView: View {
                                         .padding(0)
                                         .frame(maxWidth: 25, maxHeight: 25)
                                         
-                                        Button{} label: {
+                                        Button{
+                                            kickPlayer(player: player)
+                                        } label: {
                                             SkewedRoundedRectangle(topRightYOffset: 0.5, bottomRightYOffset: -0.5, bottomLeftXOffset: 0.5, cornerRadius: 10)
                                             .foregroundStyle(.white)
                                             .overlay(
@@ -323,6 +327,11 @@ struct RoomView: View {
                 }
                 .background(Color.primaryGradient)
             }
+        }
+        .onChange(of: multiPeerSession.connectedPeers) { peers in
+            print("connected berubah")
+            let allPlayers = room.teams[0].players + room.teams[1].players
+            
         }
 //        .onAppear(perform: {
 //            self.roomVM = RoomViewModel(room: $room, multipeerSession: $multiPeerSession)
