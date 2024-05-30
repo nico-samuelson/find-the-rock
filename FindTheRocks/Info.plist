@@ -7,5 +7,30 @@
 		<string>_find-the-rock._tcp</string>
 		<string>_find-the-rock._udp</string>
 	</array>
+	<key>UIAppFonts</key>
+	<array>
+		<string>Fonts/Roboto-Black.ttf</string>
+	</array>
+	<key>UIApplicationSceneManifest</key>
+	<dict>
+		<key>UIApplicationSupportsMultipleScenes</key>
+		<true/>
+		<key>UISceneConfigurations</key>
+		<dict>
+			<key>UIWindowSceneSessionRoleApplication</key>
+			<array>
+				<dict>
+					<key>UISceneClassName</key>
+					<string></string>
+					<key>UISceneConfigurationName</key>
+					<string></string>
+					<key>UISceneDelegateClassName</key>
+					<string>$(PRODUCT_MODULE_NAME).SceneDelegate</string>
+					<key>UISceneStoryboardFile</key>
+					<string></string>
+				</dict>
+			</array>
+		</dict>
+	</dict>
 </dict>
 </plist>

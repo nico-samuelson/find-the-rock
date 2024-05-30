@@ -8,20 +8,23 @@
 import SwiftUI
 
 struct HomeView: View {
+    @State private var name: String = "Nico Samuel"
+    
     var body: some View {
         NavigationStack() {
             GeometryReader { gp in
                 VStack(alignment:.center,spacing:0){
                     VStack{
                         Text("Find")
-                            .font(.title)
+                            .font(.custom("Roboto", size:40))
                             .foregroundStyle(.white)
-                            .bold()
                             .padding(.top,40)
+                            .rotationEffect(.degrees(-3))
                         Text("ThE ROCK")
-                            .font(.largeTitle)
+                            .font(.custom("Roboto",size:40))
                             .foregroundStyle(.white)
                             .bold()
+                            .rotationEffect(.degrees(-3))
                     }
                     .frame(minWidth:gp.size.width,minHeight:gp.size.height/30*7)
                     .background{
@@ -48,48 +51,38 @@ struct HomeView: View {
                                     .frame(width:85,height:85)
                             }
                             .padding(.top,-35)
-                            
+                        
                         Spacer()
                             .frame(height:25)
                         
                         
                         HStack(alignment:.center,spacing:0){
-                            VStack{
-                                Spacer()
-                                    .frame(height:10)
-                                Text("Nico Samuel")
-                                    .font(.title)
-                                    .foregroundStyle(.white)
-                                    .bold()
-                                    .padding(.horizontal,28)
-                                Spacer()
-                                    .frame(height:10)
-                            }
-                            .background(){
-                                Rectangle()
-                                    .fill(.white.opacity(0.2))
-                            }
-                            VStack{
-                                Spacer()
-                                    .frame(height:12)
-                                Image(systemName: "pencil")
-                                    .foregroundStyle(.white)
-                                    .font(.title)
-                                    .bold()
-                                    .padding(.horizontal,16)
-                                Spacer()
-                                    .frame(height:12)
-                            }
-                            .background(){
-                                Rectangle()
-                                    .fill(Color.white.opacity(0.5))
-                            }
+                            TextField("", text: $name)
+                                .font(.custom("Roboto", size: 27, relativeTo: .title))
+                                .foregroundColor(.white)
+                                .padding(.leading,30)
+                                .frame(maxWidth:225,maxHeight:60)
+                                .background(Color.clear)
+                            
+                                .background(){
+                                    Rectangle()
+                                        .fill(.white.opacity(0.2))
+                                }
+                            Image(systemName: "pencil")
+                                .foregroundStyle(.white)
+                                .font(.title)
+                                .bold()
+                                .frame(width:55,height:60)
+                                .background(){
+                                    Rectangle()
+                                        .fill(Color.white.opacity(0.5))
+                                }
                         }
-                        .clipShape(SkewedRoundedRectangle(topLeftXOffset: 2,topRightXOffset: 2,bottomRightYOffset: 0.56, cornerRadius: 20))
+                        .clipShape(SkewedRoundedRectangle(topLeftXOffset: 2,topRightXOffset: 2,bottomRightYOffset: 4, cornerRadius: 20))
                         Spacer()
                             .frame(height:12)
                         Text("CREATE ROOM")
-                            .font(.title)
+                            .font(.custom("Roboto",size:28,relativeTo: .title))
                             .foregroundStyle(.white)
                             .bold()
                             .padding(20)
@@ -100,11 +93,11 @@ struct HomeView: View {
                             }
                         Spacer()
                     }.frame(width:gp.size.width,height:gp.size.height/30*9)
-                    .background(){
-                        CustomRandomShape()
-                            .fill(Color.primaryGradient)
-                            .shadow(color:.init(.black.opacity(0.33)),radius: 20,x:0,y:4)
-                    }
+                        .background(){
+                            CustomRandomShape()
+                                .fill(Color.primaryGradient)
+                                .shadow(color:.init(.black.opacity(0.33)),radius: 20,x:0,y:4)
+                        }
                 }
             }
             .background(Color.secondaryGradient)
