@@ -30,7 +30,7 @@ class ARController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         sceneView.session.delegate = self
         sceneView.delegate = self
         
-        multipeerSession = MultipeerSession(receivedDataHandler: receivedData)
+        multipeerSession = MultipeerSession(displayName:"Nico",receivedDataHandler: receivedData)
     }
     
     private lazy var sessionInfoView: UIView = {

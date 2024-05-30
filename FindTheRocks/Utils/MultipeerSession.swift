@@ -1,9 +1,9 @@
 /*
-See LICENSE folder for this sample’s licensing information.
-
-Abstract:
-A simple abstraction of the MultipeerConnectivity API as used in this app.
-*/
+ See LICENSE folder for this sample’s licensing information.
+ 
+ Abstract:
+ A simple abstraction of the MultipeerConnectivity API as used in this app.
+ */
 
 import Foundation
 import MultipeerConnectivity
@@ -13,7 +13,8 @@ import MultipeerConnectivity
 class MultipeerSession: NSObject {
     static let serviceType = "find-the-rock"
     
-    private let myPeerID = MCPeerID(displayName: UIDevice.current.name)
+    private var displayName:String
+    private var myPeerID:MCPeerID
     private var session: MCSession!
     private var serviceAdvertiser: MCNearbyServiceAdvertiser!
     private var serviceBrowser: MCNearbyServiceBrowser!
@@ -22,21 +23,15 @@ class MultipeerSession: NSObject {
     private let receivedDataHandler: (Data, MCPeerID) -> Void
     
     /// - Tag: MultipeerSetup
-    init(receivedDataHandler: @escaping (Data, MCPeerID) -> Void ) {
+    init(displayName:String,receivedDataHandler: @escaping (Data, MCPeerID) -> Void ) {
+        self.displayName = displayName
         self.receivedDataHandler = receivedDataHandler
+        self.myPeerID = MCPeerID(displayName: displayName)
         
         super.init()
         
-        session = MCSession(peer: myPeerID, securityIdentity: nil, encryptionPreference: .required)
-        session.delegate = self
-        
-        serviceAdvertiser = MCNearbyServiceAdvertiser(peer: myPeerID, discoveryInfo: nil, serviceType: MultipeerSession.serviceType)
-        serviceAdvertiser.delegate = self
-        serviceAdvertiser.startAdvertisingPeer()
-        
-        serviceBrowser = MCNearbyServiceBrowser(peer: myPeerID, serviceType: MultipeerSession.serviceType)
-        serviceBrowser.delegate = self
-        serviceBrowser.startBrowsingForPeers()
+        setupSession()
+        startAdvertisingAndBrowsing()
     }
     
     func sendToAllPeers(_ data: Data) {
@@ -54,6 +49,37 @@ class MultipeerSession: NSObject {
     var detectedPeers: [MCPeerID] {
         return nearbyPeers
     }
+    
+    private func setupSession(){
+        session = MCSession(peer: myPeerID, securityIdentity: nil, encryptionPreference: .required)
+        session.delegate = self
+    }
+    
+    private func startAdvertisingAndBrowsing() {
+        serviceAdvertiser = MCNearbyServiceAdvertiser(peer: myPeerID, discoveryInfo: nil, serviceType: MultipeerSession.serviceType)
+        serviceAdvertiser.delegate = self
+        serviceAdvertiser.startAdvertisingPeer()
+        
+        serviceBrowser = MCNearbyServiceBrowser(peer: myPeerID, serviceType: MultipeerSession.serviceType)
+        serviceBrowser.delegate = self
+        serviceBrowser.startBrowsingForPeers()
+    }
+    
+    private func stopAdvertisingAndBrowsing() {
+        serviceAdvertiser.stopAdvertisingPeer()
+        serviceBrowser.stopBrowsingForPeers()
+    }
+    
+    func updateDisplayName(_ newDisplayName: String) {
+        stopAdvertisingAndBrowsing()
+        
+        displayName = newDisplayName
+        myPeerID = MCPeerID(displayName: newDisplayName)
+        
+        setupSession()
+        startAdvertisingAndBrowsing()
+    }
+    
 }
 
 extension MultipeerSession: MCSessionDelegate {
@@ -91,7 +117,7 @@ extension MultipeerSession: MCNearbyServiceBrowserDelegate {
         }
         print(self.nearbyPeers)
     }
-
+    
     public func browser(_ browser: MCNearbyServiceBrowser, lostPeer peerID: MCPeerID) {
         // This app doesn't do anything with non-invited peers, so there's nothing to do here.
         print("lost peer: ", peerID)
@@ -109,5 +135,5 @@ extension MultipeerSession: MCNearbyServiceAdvertiserDelegate {
         // Call handler to accept invitation and join the session.
         invitationHandler(true, self.session)
     }
-
+    
 }

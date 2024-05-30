@@ -9,10 +9,10 @@ import SwiftUI
 import SwiftData
 
 struct ContentView: View {
-    @State var multipeerSession: MultipeerSession = MultipeerSession(receivedDataHandler: receivedData)
+    @State var multipeerSession: MultipeerSession = MultipeerSession(displayName:"Nico Samuel",receivedDataHandler: receivedData)
 
     var body: some View {
-        RoomView(multiPeerSession: $multipeerSession)
+        HomeView(multiPeerSession: $multipeerSession)
 //        NavigationSplitView {
 //            List {
 //                ForEach(items) { item in

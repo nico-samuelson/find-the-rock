@@ -9,7 +9,7 @@ import SwiftUI
 
 struct HomeView: View {
     @State private var name: String = "Nico Samuel"
-    
+    @Binding var multiPeerSession: MultipeerSession
     var body: some View {
         NavigationStack() {
             GeometryReader { gp in
@@ -77,6 +77,9 @@ struct HomeView: View {
                                     Rectangle()
                                         .fill(Color.white.opacity(0.5))
                                 }
+                                .onTapGesture {
+                                    multiPeerSession.updateDisplayName(name)
+                                }
                         }
                         .clipShape(SkewedRoundedRectangle(topLeftXOffset: 2,topRightXOffset: 2,bottomRightYOffset: 4, cornerRadius: 20))
                         Spacer()
@@ -104,8 +107,4 @@ struct HomeView: View {
             .ignoresSafeArea()
         }
     }
-}
-
-#Preview {
-    HomeView()
 }
