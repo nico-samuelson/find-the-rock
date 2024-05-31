@@ -13,7 +13,7 @@ struct ContentView: View {
     @State var multipeerSession: MultipeerSession = MultipeerSession(displayName:"Seed")
 
     var body: some View {
-        RoomView(multiPeerSession: $multipeerSession)
+        HomeView(multiPeerSession: $multipeerSession)
 //        NavigationSplitView {
 //            List {
 //                ForEach(items) { item in

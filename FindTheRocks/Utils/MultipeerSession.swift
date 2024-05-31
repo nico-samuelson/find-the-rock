@@ -14,7 +14,7 @@ class MultipeerSession: NSObject {
     static let serviceType = "find-the-rock"
     
     private var displayName:String
-    private var myPeerID:MCPeerID
+    private var myPeerID:MCPeerID!
     private var session: MCSession!
     private var serviceAdvertiser: MCNearbyServiceAdvertiser!
     private var serviceBrowser: MCNearbyServiceBrowser!
@@ -32,6 +32,10 @@ class MultipeerSession: NSObject {
         
         setupSession()
         startAdvertisingAndBrowsing()
+    }
+    
+    func getDisplayName() -> String {
+        return self.displayName
     }
     
     func sendToAllPeers(_ data: Data) {
@@ -75,17 +79,30 @@ class MultipeerSession: NSObject {
     
     private func stopAdvertisingAndBrowsing() {
         serviceAdvertiser.stopAdvertisingPeer()
+        serviceAdvertiser.delegate = nil
         serviceBrowser.stopBrowsingForPeers()
+        serviceBrowser.delegate = nil
     }
     
     func updateDisplayName(_ newDisplayName: String) {
+        session.delegate = nil
+        session.disconnect()
         stopAdvertisingAndBrowsing()
         
-        displayName = newDisplayName
-        myPeerID = MCPeerID(displayName: newDisplayName)
+        self.session = nil
+        self.myPeerID = nil
+        self.serviceBrowser = nil
+        self.serviceAdvertiser = nil
         
-        setupSession()
-        startAdvertisingAndBrowsing()
+        DispatchQueue.main.asyncAfter(deadline: (.now()+0.5)) {[weak self] in
+            guard let self = self else { return }
+            
+            self.displayName = newDisplayName
+            self.myPeerID = MCPeerID(displayName: newDisplayName)
+            
+            self.setupSession()
+            self.startAdvertisingAndBrowsing()
+        }
     }
 }
 
