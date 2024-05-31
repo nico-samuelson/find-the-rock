@@ -323,8 +323,6 @@ public extension View {
     func keyboardHeight(_ state: Binding<CGFloat>,hide: @escaping () -> Void ) -> some View {
         self.modifier(KeyboardProvider(keyboardHeight: state, hideKeyboard: hide))
     }
-        }
-    }
     
     static func loadScene(named modelName: String) -> SCNScene {
         guard let scene = SCNScene(named: modelName) else {
@@ -393,8 +391,4 @@ struct LegacySceneView: UIViewRepresentable {
 //                }
 //            }
 //        }
-}
-
-#Preview {
-    HomeView()
 }
