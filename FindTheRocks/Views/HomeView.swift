@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SceneKit
 
 struct HomeView: View {
     @State private var name: String = "Nico Samuel"
@@ -44,11 +45,14 @@ struct HomeView: View {
                                 .shadow(color:.init(.black.opacity(0.25)),radius: 20,x:0,y:4)
                         }
                         Spacer()
-                        Image(systemName: "magnifyingglass.circle.fill")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width:gp.size.width/2)
-                        Spacer()
+    //                    Image(systemName: "magnifyingglass.circle.fill")
+    //                        .resizable()
+    //                        .aspectRatio(contentMode: .fit)
+    //                        .frame(width:gp.size.width/2)
+                        // 3d Asset
+                    LegacySceneView(scene: Self.loadScene(named: "art.scnassets/models/rock.scn"))
+                        .frame(width: gp.size.width)
+                    Spacer()
                         
                         /// Bottom Action BAR
                         VStack(){
@@ -319,4 +323,78 @@ public extension View {
     func keyboardHeight(_ state: Binding<CGFloat>,hide: @escaping () -> Void ) -> some View {
         self.modifier(KeyboardProvider(keyboardHeight: state, hideKeyboard: hide))
     }
+        }
+    }
+    
+    static func loadScene(named modelName: String) -> SCNScene {
+        guard let scene = SCNScene(named: modelName) else {
+            print("cannot find \(modelName)")
+            abort()
+        }
+        scene.background.contents = UIColor.clear
+        return scene
+    }
+}
+
+struct LegacySceneView: UIViewRepresentable {
+    var scene: SCNScene
+    let view = SCNView()
+    var lastPanLocation: CGPoint? // Keep track of the last pan location
+    var currentAngleY: Float = 0.0
+    
+    init(scene: SCNScene) {
+        self.scene = scene
+    }
+    
+    func makeUIView(context: Context) -> SCNView {
+        // get camera from scene
+        let cameraNode = scene.rootNode.childNode(withName: "camera", recursively: true)?.camera
+        scene.rootNode.camera = cameraNode
+        
+        view.scene = scene
+        view.backgroundColor = UIColor.clear
+//        view.pointOfView = cameraNode
+        view.allowsCameraControl = true
+//        view.autoenablesDefaultLighting = true
+        view.isUserInteractionEnabled = true
+//        view.isMultipleTouchEnabled = false
+        
+//        let panGesture = UIPanGestureRecognizer(target: context.coordinator, action: #selector(Coordinator.handlePan(_:)))
+//        view.addGestureRecognizer(panGesture)
+//        
+        return view
+    }
+    
+    func updateUIView(_ uiView: SCNView, context: Context) {
+        // ... existing code ...
+    }
+    
+// 
+//
+//    class Coordinator: NSObject {
+//            var parent: LegacySceneView
+//            
+//            init(_ parent: LegacySceneView) {
+//                self.parent = parent
+//            }
+//            
+//            @objc func handlePan(_ gesture: UIPanGestureRecognizer) {
+//                let translation = gesture.translation(in: gesture.view!)
+//                let x = Float(translation.x)
+//                
+//                if let modelNode = parent.scene.rootNode.childNode(withName: "rock", recursively: true) {
+//                    var newAngleY = (x * Float(Double.pi)) / 180.0
+//                    newAngleY += parent.currentAngleY
+//                    modelNode.eulerAngles.y = newAngleY
+//                    
+//                    if gesture.state == .ended {
+//                        parent.currentAngleY = newAngleY
+//                    }
+//                }
+//            }
+//        }
+}
+
+#Preview {
+    HomeView()
 }

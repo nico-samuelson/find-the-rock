@@ -19,6 +19,7 @@
 		04F5BD092C05CE5B00AC5205 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04F5BD082C05CE5B00AC5205 /* Utilities.swift */; };
 		04F5BD0B2C05CE8200AC5205 /* ARController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04F5BD0A2C05CE8200AC5205 /* ARController.swift */; };
 		04FA9B392C087202002EC94D /* RoomViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04FA9B372C087202002EC94D /* RoomViewModel.swift */; };
+		924A44CA2C086B390002D8E1 /* art.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = 924A44C92C086B390002D8E1 /* art.scnassets */; };
 		A43A7A032C05DA0A00C46FAA /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A43A7A022C05DA0A00C46FAA /* HomeView.swift */; };
 		A43A7A062C05E27E00C46FAA /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = A43A7A042C05E27E00C46FAA /* Color.swift */; };
 		A43A7A092C05E54000C46FAA /* SkewedRoundedRectangle.swift in Sources */ = {isa = PBXBuildFile; fileRef = A43A7A082C05E54000C46FAA /* SkewedRoundedRectangle.swift */; };
@@ -69,6 +70,7 @@
 		04F5BD082C05CE5B00AC5205 /* Utilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
 		04F5BD0A2C05CE8200AC5205 /* ARController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARController.swift; sourceTree = "<group>"; };
 		04FA9B372C087202002EC94D /* RoomViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoomViewModel.swift; sourceTree = "<group>"; };
+		924A44C92C086B390002D8E1 /* art.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = art.scnassets; sourceTree = "<group>"; };
 		A43A7A022C05DA0A00C46FAA /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		A43A7A042C05E27E00C46FAA /* Color.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 		A43A7A082C05E54000C46FAA /* SkewedRoundedRectangle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkewedRoundedRectangle.swift; sourceTree = "<group>"; };
@@ -136,6 +138,7 @@
 				04FA9B382C087202002EC94D /* ViewModels */,
 				A4DAC4CB2C0865E40062CE38 /* Models */,
 				A43A7A0E2C07164800C46FAA /* Fonts */,
+				924A44C92C086B390002D8E1 /* art.scnassets */,
 				A43A7A072C05E4EF00C46FAA /* Components */,
 				A43A7A012C05D99E00C46FAA /* Views */,
 				A43A7A052C05E27E00C46FAA /* Style */,
@@ -346,6 +349,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				924A44CA2C086B390002D8E1 /* art.scnassets in Resources */,
 				04F5BCE22C05CD0200AC5205 /* Preview Assets.xcassets in Resources */,
 				04F5BCDF2C05CD0200AC5205 /* Assets.xcassets in Resources */,
 				A43A7A102C071C8900C46FAA /* Roboto-Black.ttf in Resources */,
