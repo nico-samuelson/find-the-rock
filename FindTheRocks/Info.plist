@@ -7,5 +7,9 @@
 		<string>_find-the-rock._tcp</string>
 		<string>_find-the-rock._udp</string>
 	</array>
+	<key>UIAppFonts</key>
+	<array>
+		<string>Fonts/Roboto-Black.ttf</string>
+	</array>
 </dict>
 </plist>

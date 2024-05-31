@@ -1,40 +1,41 @@
 /*
-See LICENSE folder for this sample’s licensing information.
+ See LICENSE folder for this sample’s licensing information.
+ 
+ Abstract:
+ A simple abstraction of the MultipeerConnectivity API as used in this app.
+ */
 
-Abstract:
-A simple abstraction of the MultipeerConnectivity API as used in this app.
-*/
-
+import Foundation
 import MultipeerConnectivity
 
 /// - Tag: MultipeerSession
+@Observable
 class MultipeerSession: NSObject {
-    static let serviceType = "ar-multi-player"
+    static let serviceType = "find-the-rock"
     
-    private let myPeerID = MCPeerID(displayName: UIDevice.current.name)
+    private var displayName:String
+    private var myPeerID:MCPeerID!
     private var session: MCSession!
     private var serviceAdvertiser: MCNearbyServiceAdvertiser!
     private var serviceBrowser: MCNearbyServiceBrowser!
-    private var nearbyPeers: [MCPeerID] = []
+    private var nearbyPeers: [Player] = []
     
-    private let receivedDataHandler: (Data, MCPeerID) -> Void
+//    private let receivedDataHandler: (Data, MCPeerID) -> Void
     
     /// - Tag: MultipeerSetup
-    init(receivedDataHandler: @escaping (Data, MCPeerID) -> Void ) {
-        self.receivedDataHandler = receivedDataHandler
+    init(displayName:String) {
+        self.displayName = displayName
+//        self.receivedDataHandler = receivedDataHandler
+        self.myPeerID = MCPeerID(displayName: displayName)
         
         super.init()
         
-        session = MCSession(peer: myPeerID, securityIdentity: nil, encryptionPreference: .required)
-        session.delegate = self
-        
-        serviceAdvertiser = MCNearbyServiceAdvertiser(peer: myPeerID, discoveryInfo: nil, serviceType: MultipeerSession.serviceType)
-        serviceAdvertiser.delegate = self
-        serviceAdvertiser.startAdvertisingPeer()
-        
-        serviceBrowser = MCNearbyServiceBrowser(peer: myPeerID, serviceType: MultipeerSession.serviceType)
-        serviceBrowser.delegate = self
-        serviceBrowser.startBrowsingForPeers()
+        setupSession()
+        startAdvertisingAndBrowsing()
+    }
+    
+    func getDisplayName() -> String {
+        return self.displayName
     }
     
     func sendToAllPeers(_ data: Data) {
@@ -45,23 +46,93 @@ class MultipeerSession: NSObject {
         }
     }
     
+    func notifyPeer(peer: MCPeerID, data: Data) {
+        do {
+            try session.send(data, toPeers: [peer], with: .reliable)
+        } catch {
+            print("error sending data to peers: \(error.localizedDescription)")
+        }
+    }
+    
     var connectedPeers: [MCPeerID] {
         return session.connectedPeers
     }
     
-    var detectedPeers: [MCPeerID] {
+    var detectedPeers: [Player] {
         return nearbyPeers
+    }
+    
+    private func setupSession(){
+        session = MCSession(peer: myPeerID, securityIdentity: nil, encryptionPreference: .required)
+        session.delegate = self
+    }
+    
+    private func startAdvertisingAndBrowsing() {
+        serviceAdvertiser = MCNearbyServiceAdvertiser(peer: myPeerID, discoveryInfo: nil, serviceType: MultipeerSession.serviceType)
+        serviceAdvertiser.delegate = self
+        serviceAdvertiser.startAdvertisingPeer()
+        
+        serviceBrowser = MCNearbyServiceBrowser(peer: myPeerID, serviceType: MultipeerSession.serviceType)
+        serviceBrowser.delegate = self
+        serviceBrowser.startBrowsingForPeers()
+    }
+    
+    private func stopAdvertisingAndBrowsing() {
+        serviceAdvertiser.stopAdvertisingPeer()
+        serviceAdvertiser.delegate = nil
+        serviceBrowser.stopBrowsingForPeers()
+        serviceBrowser.delegate = nil
+    }
+    
+    func updateDisplayName(_ newDisplayName: String) {
+        session.delegate = nil
+        session.disconnect()
+        stopAdvertisingAndBrowsing()
+        
+        self.session = nil
+        self.myPeerID = nil
+        self.serviceBrowser = nil
+        self.serviceAdvertiser = nil
+        
+        DispatchQueue.main.asyncAfter(deadline: (.now()+0.5)) {[weak self] in
+            guard let self = self else { return }
+            
+            self.displayName = newDisplayName
+            self.myPeerID = MCPeerID(displayName: newDisplayName)
+            
+            self.setupSession()
+            self.startAdvertisingAndBrowsing()
+        }
     }
 }
 
 extension MultipeerSession: MCSessionDelegate {
-    
     func session(_ session: MCSession, peer peerID: MCPeerID, didChange state: MCSessionState) {
-        // not used
+        switch state {
+        case .notConnected:
+            print("not connected")
+        case .connecting:
+            print("connecting")
+        case .connected:
+            print("connected")
+//            print(self.connectedPeers)
+        @unknown default:
+            print("Unknown error")
+        }
     }
     
     func session(_ session: MCSession, didReceive data: Data, fromPeer peerID: MCPeerID) {
-        receivedDataHandler(data, peerID)
+        if let data = String(data: data, encoding: .utf8) {
+            if data == "disconnected" {
+                serviceBrowser.stopBrowsingForPeers()
+                serviceAdvertiser.stopAdvertisingPeer()
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
+                    self.serviceBrowser.startBrowsingForPeers()
+                    self.serviceBrowser.stopBrowsingForPeers()
+                }
+            }
+        }
     }
     
     func session(_ session: MCSession, didReceive stream: InputStream, withName streamName: String, fromPeer peerID: MCPeerID) {
@@ -83,17 +154,29 @@ extension MultipeerSession: MCNearbyServiceBrowserDelegate {
     /// - Tag: FoundPeer
     public func browser(_ browser: MCNearbyServiceBrowser, foundPeer peerID: MCPeerID, withDiscoveryInfo info: [String: String]?) {
         // Invite the new peer to the session.
+        
         browser.invitePeer(peerID, to: session, withContext: nil, timeout: 10)
-        if !nearbyPeers.contains(peerID) {
-            nearbyPeers.append(peerID)
+        
+        DispatchQueue.main.async {
+            print(self.nearbyPeers.firstIndex(where: {$0.peerID == peerID}) == nil)
+            if self.nearbyPeers.firstIndex(where: { $0.peerID == peerID }) == nil {
+                self.nearbyPeers.append(Player(peerID: peerID, profile: "", status: .disconnected, point: 0))
+            }
+            print(self.nearbyPeers.map({($0.peerID, $0.peerID.displayName)}))
         }
     }
-
+    
     public func browser(_ browser: MCNearbyServiceBrowser, lostPeer peerID: MCPeerID) {
         // This app doesn't do anything with non-invited peers, so there's nothing to do here.
-        if let index = nearbyPeers.firstIndex(of: peerID) {
-            nearbyPeers.remove(at: index)
+        DispatchQueue.main.async {
+            print("lost peer: ", peerID)
+            
+            if let index = self.nearbyPeers.firstIndex(where: {$0.peerID == peerID}) {
+                self.nearbyPeers.remove(at: index)
+            }
+            print("after lost: ", self.nearbyPeers.map({($0.peerID, $0.peerID.displayName)}))
         }
+        
     }
     
 }
@@ -105,5 +188,5 @@ extension MultipeerSession: MCNearbyServiceAdvertiserDelegate {
         // Call handler to accept invitation and join the session.
         invitationHandler(true, self.session)
     }
-
+    
 }

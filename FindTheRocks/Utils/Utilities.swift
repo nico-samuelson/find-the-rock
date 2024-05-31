@@ -7,6 +7,7 @@ Convenience extensions on system types.
 
 import simd
 import ARKit
+import MultipeerConnectivity
 
 extension ARFrame.WorldMappingStatus: CustomStringConvertible {
     public var description: String {
@@ -24,3 +25,4 @@ extension ARFrame.WorldMappingStatus: CustomStringConvertible {
         }
     }
 }
+
