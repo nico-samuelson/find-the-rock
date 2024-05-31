@@ -19,7 +19,8 @@ class MultipeerSession: NSObject {
     private var serviceAdvertiser: MCNearbyServiceAdvertiser!
     private var serviceBrowser: MCNearbyServiceBrowser!
     private var nearbyPeers: [Player] = []
-    
+    var showInviteModal: ((String,MCPeerID, @escaping (Bool)->Void) -> Void)?
+    var confirmingRes: (()->Bool)?
 //    private let receivedDataHandler: (Data, MCPeerID) -> Void
     
     /// - Tag: MultipeerSetup
@@ -94,15 +95,12 @@ class MultipeerSession: NSObject {
         self.serviceBrowser = nil
         self.serviceAdvertiser = nil
         
-        DispatchQueue.main.asyncAfter(deadline: (.now()+1)) {[weak self] in
-            guard let self = self else { return }
-            
-            self.displayName = newDisplayName
-            self.myPeerID = MCPeerID(displayName: newDisplayName)
-            
-            self.setupSession()
-            self.startAdvertisingAndBrowsing()
-        }
+        // start updating the new name
+        self.displayName = newDisplayName
+        self.myPeerID = MCPeerID(displayName: newDisplayName)
+        
+        self.setupSession()
+        self.startAdvertisingAndBrowsing()
     }
     
     func invitePeer(peerID: MCPeerID, data: Data) {
@@ -173,6 +171,7 @@ extension MultipeerSession: MCNearbyServiceBrowserDelegate {
         
         
         DispatchQueue.main.async {
+            self.nearbyPeers.removeAll()
             print(self.nearbyPeers.firstIndex(where: {$0.peerID == peerID}) == nil)
             if self.nearbyPeers.firstIndex(where: { $0.peerID == peerID }) == nil {
                 self.nearbyPeers.append(Player(peerID: peerID, profile: "", status: .disconnected, point: 0))
@@ -198,11 +197,21 @@ extension MultipeerSession: MCNearbyServiceBrowserDelegate {
 
 extension MultipeerSession: MCNearbyServiceAdvertiserDelegate {
     
+    
     /// - Tag: AcceptInvite
     func advertiser(_ advertiser: MCNearbyServiceAdvertiser, didReceiveInvitationFromPeer peerID: MCPeerID, withContext context: Data?, invitationHandler: @escaping (Bool, MCSession?) -> Void) {
-        // Call handler to accept invitation and join the session.
-        print(String(data: context!, encoding: .utf8))
-//        invitationHandler(true, self.session)
+//        Open the modal dialog and use the callback
+        
+        guard let context = context else { return }
+        
+        if let contextString = String(data: context, encoding: .utf8) {
+            print("before connected",self.session.connectedPeers.map({$0.displayName}))
+            showInviteModal?(contextString, peerID, { accepted in
+                print("accepted: ", accepted)
+                invitationHandler(accepted, self.session)
+                print("after connected",self.session.connectedPeers.map({$0.displayName}))
+            })
+        }
     }
     
 }

@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SceneKit
+import MultipeerConnectivity
 
 struct HomeView: View {
     @State private var name: String = "Nico Samuel"
@@ -18,6 +19,9 @@ struct HomeView: View {
     @State private var avatarIndex: Int = 0
     @State private var isInvited:Bool = false
     @State private var time:Int  = 15
+    @State private var inviterName:String?
+    @State private var inviterProfile:String = "lancelot-avatar"
+    @State private var invitationHandler: ((Bool) -> Void)?
     
     let avatarImageNames = ["lancelot-avatar", "tigreal-avatar"]
     
@@ -217,6 +221,8 @@ struct HomeView: View {
                                         .onTapGesture{
                                             withAnimation{
                                                 isInvited = false
+                                                invitationHandler?(false)
+                                                self.invitationHandler = nil
                                             }
                                         }
                                     Text("Accept (\(time))")
@@ -227,6 +233,13 @@ struct HomeView: View {
                                         .background(){
                                             SkewedRoundedRectangle(topLeftYOffset: 2,bottomRightXOffset: 2,bottomLeftXOffset: 2,cornerRadius: 10)
                                                 .fill(Color.tersierGradient)
+                                        }
+                                        .onTapGesture{
+                                            withAnimation{
+                                                isInvited = false
+                                                invitationHandler?(true)
+                                                self.invitationHandler = nil
+                                            }
                                         }
                                     Spacer()
                                 }
@@ -251,17 +264,24 @@ struct HomeView: View {
             .background(Color.secondaryGradient)
             .ignoresSafeArea()
             .onAppear(){
-                invited()
+                multiPeerSession.showInviteModal = { profile, peerId, invitationHandler in
+                    inviterName = peerId.displayName
+                    inviterProfile = profile
+                    self.invitationHandler = invitationHandler
+                    isInvited = true
+                    time = 15
+                    cooldown()
+                }
+                print(multiPeerSession.connectedPeers.map({$0.displayName}))
             }
         }
     }
     
-    func invited(_ player: Player? = nil){
-//        inviting player
-        isInvited = true
-        time = 15
-        cooldown()
-    }
+//    func invited(profile: String,peerId: MCPeerID){
+//        isInvited = true
+//        time = 15
+//        cooldown()
+//    }
     
     private func cooldown(){
         if time > 0 {
@@ -272,6 +292,8 @@ struct HomeView: View {
         } else {
             withAnimation {
                 isInvited = false
+                invitationHandler?(false)
+                self.invitationHandler = nil
             }
         }
     }
