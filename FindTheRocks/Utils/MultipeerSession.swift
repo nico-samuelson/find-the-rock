@@ -20,12 +20,12 @@ class MultipeerSession: NSObject {
     private var serviceBrowser: MCNearbyServiceBrowser!
     private var nearbyPeers: [Player] = []
     
-    private let receivedDataHandler: (Data, MCPeerID) -> Void
+//    private let receivedDataHandler: (Data, MCPeerID) -> Void
     
     /// - Tag: MultipeerSetup
-    init(displayName:String,receivedDataHandler: @escaping (Data, MCPeerID) -> Void ) {
+    init(displayName:String) {
         self.displayName = displayName
-        self.receivedDataHandler = receivedDataHandler
+//        self.receivedDataHandler = receivedDataHandler
         self.myPeerID = MCPeerID(displayName: displayName)
         
         super.init()
@@ -91,11 +91,31 @@ class MultipeerSession: NSObject {
 
 extension MultipeerSession: MCSessionDelegate {
     func session(_ session: MCSession, peer peerID: MCPeerID, didChange state: MCSessionState) {
-        // not used
+        switch state {
+        case .notConnected:
+            print("not connected")
+        case .connecting:
+            print("connecting")
+        case .connected:
+            print("connected")
+//            print(self.connectedPeers)
+        @unknown default:
+            print("Unknown error")
+        }
     }
     
     func session(_ session: MCSession, didReceive data: Data, fromPeer peerID: MCPeerID) {
-        receivedDataHandler(data, peerID)
+        if let data = String(data: data, encoding: .utf8) {
+            if data == "disconnected" {
+                serviceBrowser.stopBrowsingForPeers()
+                serviceAdvertiser.stopAdvertisingPeer()
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
+                    self.serviceBrowser.startBrowsingForPeers()
+                    self.serviceBrowser.stopBrowsingForPeers()
+                }
+            }
+        }
     }
     
     func session(_ session: MCSession, didReceive stream: InputStream, withName streamName: String, fromPeer peerID: MCPeerID) {
@@ -120,21 +140,26 @@ extension MultipeerSession: MCNearbyServiceBrowserDelegate {
         
         browser.invitePeer(peerID, to: session, withContext: nil, timeout: 10)
         
-        print(nearbyPeers.firstIndex(where: {$0.peerID == peerID}) == nil)
-        if nearbyPeers.firstIndex(where: { $0.peerID == peerID }) == nil {
-            print("masuk")
-            nearbyPeers.append(Player(peerID: peerID, profile: "", status: .disconnected, point: 0))
+        DispatchQueue.main.async {
+            print(self.nearbyPeers.firstIndex(where: {$0.peerID == peerID}) == nil)
+            if self.nearbyPeers.firstIndex(where: { $0.peerID == peerID }) == nil {
+                self.nearbyPeers.append(Player(peerID: peerID, profile: "", status: .disconnected, point: 0))
+            }
+            print(self.nearbyPeers.map({($0.peerID, $0.peerID.displayName)}))
         }
-        print(self.nearbyPeers)
     }
     
     public func browser(_ browser: MCNearbyServiceBrowser, lostPeer peerID: MCPeerID) {
         // This app doesn't do anything with non-invited peers, so there's nothing to do here.
-        print("lost peer: ", peerID)
-        
-        if let index = nearbyPeers.firstIndex(where: {$0.peerID == peerID}) {
-            nearbyPeers.remove(at: index)
+        DispatchQueue.main.async {
+            print("lost peer: ", peerID)
+            
+            if let index = self.nearbyPeers.firstIndex(where: {$0.peerID == peerID}) {
+                self.nearbyPeers.remove(at: index)
+            }
+            print("after lost: ", self.nearbyPeers.map({($0.peerID, $0.peerID.displayName)}))
         }
+        
     }
     
 }
