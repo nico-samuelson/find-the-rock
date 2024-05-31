@@ -166,11 +166,14 @@ struct HomeView: View {
         if keyboardHeight > 0 {
             UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
             print("Text Hide")
+            isFocused = false
+            print("Text")
+            let displayName = name.isEmpty ? "Default" : name
+            multiPeerSession.updateDisplayName(displayName)
+        } else {
+            isFocused = false
+            print("Text 2")
         }
-        isFocused = false
-        print("Text")
-        let displayName = name.isEmpty ? "Default" : name
-        multiPeerSession.updateDisplayName(displayName)
     }
 }
 
