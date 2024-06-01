@@ -10,7 +10,7 @@ import SwiftData
 import MultipeerConnectivity
 
 struct ContentView: View {
-    @State var multipeerSession: MultipeerSession = MultipeerSession(displayName:"Seed")
+    @Binding var multipeerSession: MultipeerSession
 
     var body: some View {
         HomeView(multiPeerSession: $multipeerSession)

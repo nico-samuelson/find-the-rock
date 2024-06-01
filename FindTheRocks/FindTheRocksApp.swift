@@ -10,6 +10,8 @@ import SwiftData
 
 @main
 struct FindTheRocksApp: App {
+    @State var multipeerSession: MultipeerSession = MultipeerSession(displayName: UIDevice().systemName)
+    
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
             Item.self,
@@ -25,7 +27,7 @@ struct FindTheRocksApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView(multipeerSession: $multipeerSession)
         }
         .modelContainer(sharedModelContainer)
     }

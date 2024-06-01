@@ -15,7 +15,9 @@ class Room {
     var fakeRock: Int = 0
     var realRock: Int = 0
     
-    init() {}
+    init() {
+        
+    }
     
     init(teams: [Team], hideTime: Int, seekTime: Int, fakeRock: Int, realRock: Int) {
         self.teams = teams
