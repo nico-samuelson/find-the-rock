@@ -27,7 +27,7 @@ struct RoomView: View {
             player.status = .connected
 //        let dataToSend: [String: String] = ["profilePicture" : player.profile]
             let dataToSend: String = player.profile
-            multiPeerSession.invitePeer(peerID: player.peerID, data: try! NSKeyedArchiver.archivedData(withRootObject: player, requiringSecureCoding: true))
+            multiPeerSession.invitePeer(peerID: player.peerID, data: try! NSKeyedArchiver.archivedData(withRootObject: self.room, requiringSecureCoding: true))
         }
         
         // move player to another team
