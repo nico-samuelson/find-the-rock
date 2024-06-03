@@ -65,7 +65,7 @@ struct InGameView: View {
                             .background(Color.blueGradient)
                             .cornerRadius(15, corners: [.topRight])
                         }
-                        ARControllerRepresentable()
+                        ARControllerRepresentable(multipeerSession: $multiPeerSession)
                             .background(Color.white)
                             .cornerRadius(15, corners: [.bottomLeft, .bottomRight])
                             .padding(.bottom, 20)

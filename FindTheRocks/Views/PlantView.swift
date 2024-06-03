@@ -16,11 +16,11 @@ struct PlantView: View {
     @State var selectedButton = "real"
     @State var teamName = ""
     @Binding var multiPeerSession: MultipeerSession
-    @Binding var room: Room
+//    @Binding var room: Room
     
     func getMyTeam() {
-        let redTeamplayers = room.teams[0].players.map { $0.peerID }
-        let blueTeamPlayers = room.teams[1].players.map { $0.peerID }
+        let redTeamplayers = multiPeerSession.room.teams[0].players.map { $0.peerID }
+        let blueTeamPlayers = multiPeerSession.room.teams[1].players.map { $0.peerID }
         
         
         if redTeamplayers.contains(multiPeerSession.peerID) {
@@ -58,7 +58,7 @@ struct PlantView: View {
                             .padding(.horizontal, 10)
                             .padding(.vertical, 10)
                     }
-                    ARControllerRepresentable(multiPeerSession: $multiPeerSession)
+                    ARControllerRepresentable(multipeerSession: $multiPeerSession)
                         .background(Color.white)
                         .cornerRadius(15)
                     HStack {
