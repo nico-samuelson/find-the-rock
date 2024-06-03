@@ -86,6 +86,11 @@ class MultipeerSession: NSObject {
         return nearbyPeers
     }
     
+    var peerID: MCPeerID {
+        return myPeerID
+    }
+    
+    
     private func setupSession(){
         session = MCSession(peer: myPeerID, securityIdentity: nil, encryptionPreference: .required)
         session.delegate = self

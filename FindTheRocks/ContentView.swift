@@ -11,6 +11,7 @@ import MultipeerConnectivity
 
 struct ContentView: View {
     @Binding var multipeerSession: MultipeerSession
+    @State var room: Room = Room()
 
     var body: some View {
 //        HomeView(multiPeerSession: $multipeerSession)
