@@ -12,7 +12,8 @@ import ARKit
 import MultipeerConnectivity
 
 struct PlantView: View {
-    @State var team = ['red', 'blue']
+//    @State var team = ['red', 'blue']
+    @Binding var multiPeerSession: MultipeerSession
     
     var body: some View {
         NavigationStack(){
@@ -23,27 +24,33 @@ struct PlantView: View {
                             .frame(height: 60)
                             .padding(.horizontal, 90)
                             .padding(.vertical, 30)
-                            .foregroundStyle(winner == "DRAW" ? Color.tersierGradient : winner == "RED TEAM" ? Color.redGradient : Color.blueGradient)
+                            .foregroundStyle(Color.redGradient)
                             .overlay(
-                                Text(winner)
+                                Text("RED TEAM")
                                     .foregroundStyle(.white)
                                     .fontWeight(.bold)
                                     .font(.system(size: 32))
                             )
                     }
-                    ARControllerRepresentable()
+                    ARControllerRepresentable(multipeerSession: $multiPeerSession)
                 }
                 .padding(.horizontal,20)
                 .padding(.vertical,0)
-            }.background(Color.primaryGradient)
+            }
+            .background(Color.primaryGradient)
+//            .onChange(of: multiPeerSession.newAnchor, perform: { anchor in
+//                print("on change anchor:", anchor)
+//            })
         }
     }
 }
 
 struct ARControllerRepresentable: UIViewControllerRepresentable {
+    @Binding var multipeerSession: MultipeerSession
+    
     func makeUIViewController(context: Context) -> ARController {
         // Return an instance of your ARController
-        return ARController()
+        return ARController(multipeerSession: multipeerSession)
     }
 
     func updateUIViewController(_ uiViewController: ARController, context: Context) {
@@ -51,6 +58,6 @@ struct ARControllerRepresentable: UIViewControllerRepresentable {
     }
 }
 
-#Preview {
-    PlantView()
-}
+//#Preview {
+//    PlantView()
+//}

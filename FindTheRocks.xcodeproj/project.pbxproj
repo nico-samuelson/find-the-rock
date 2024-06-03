@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		04E64FEB2C0E08D2008CF4E7 /* MultipeerSceneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04E64FEA2C0E08D2008CF4E7 /* MultipeerSceneView.swift */; };
 		04F5B2BB2C0B0C50008DACC3 /* ResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04F5B2BA2C0B0C50008DACC3 /* ResultView.swift */; };
 		04F5BCD92C05CD0000AC5205 /* FindTheRocksApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04F5BCD82C05CD0000AC5205 /* FindTheRocksApp.swift */; };
 		04F5BCDB2C05CD0000AC5205 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04F5BCDA2C05CD0000AC5205 /* ContentView.swift */; };
@@ -56,6 +57,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		04E64FEA2C0E08D2008CF4E7 /* MultipeerSceneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultipeerSceneView.swift; sourceTree = "<group>"; };
 		04F5B2BA2C0B0C50008DACC3 /* ResultView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResultView.swift; sourceTree = "<group>"; };
 		04F5BCD52C05CD0000AC5205 /* FindTheRocks.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FindTheRocks.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		04F5BCD82C05CD0000AC5205 /* FindTheRocksApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FindTheRocksApp.swift; sourceTree = "<group>"; };
@@ -188,6 +190,7 @@
 				04F5BD062C05CDE200AC5205 /* MultipeerSession.swift */,
 				04F5BD082C05CE5B00AC5205 /* Utilities.swift */,
 				04F5BD0A2C05CE8200AC5205 /* ARController.swift */,
+				04E64FEA2C0E08D2008CF4E7 /* MultipeerSceneView.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -398,6 +401,7 @@
 				A4DAC4CD2C08660F0062CE38 /* RoomModel.swift in Sources */,
 				04F5BD092C05CE5B00AC5205 /* Utilities.swift in Sources */,
 				A43A7A062C05E27E00C46FAA /* Color.swift in Sources */,
+				04E64FEB2C0E08D2008CF4E7 /* MultipeerSceneView.swift in Sources */,
 				A4DAC4D12C0866340062CE38 /* PlayerModel.swift in Sources */,
 				04F5BD0B2C05CE8200AC5205 /* ARController.swift in Sources */,
 				04FA9B392C087202002EC94D /* RoomViewModel.swift in Sources */,
@@ -568,11 +572,12 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"FindTheRocks/Preview Content\"";
-				DEVELOPMENT_TEAM = Y834K368F4;
+				DEVELOPMENT_TEAM = S9J78CS67W;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = FindTheRocks/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Find The Rock";
+				INFOPLIST_KEY_NSCameraUsageDescription = "This application will use camera to view surrounding areas";
 				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "This application will use local network to discover nearby devices";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -599,11 +604,12 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"FindTheRocks/Preview Content\"";
-				DEVELOPMENT_TEAM = Y834K368F4;
+				DEVELOPMENT_TEAM = S9J78CS67W;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = FindTheRocks/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Find The Rock";
+				INFOPLIST_KEY_NSCameraUsageDescription = "This application will use camera to view surrounding areas";
 				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "This application will use local network to discover nearby devices";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
