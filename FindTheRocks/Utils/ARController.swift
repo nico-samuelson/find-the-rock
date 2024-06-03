@@ -10,6 +10,7 @@ import SwiftUI
 import ARKit
 import SceneKit
 import MultipeerConnectivity
+import Vision
 
 class ARController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     
@@ -17,20 +18,25 @@ class ARController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     var cameraPosition: SCNVector3? = SCNVector3(x: 0, y: 0, z: 0)
     var addedNodes = [ARAnchor : SCNNode]()
     var multipeerSession: MultipeerSession!
+    var detectionRadius: CGFloat = 0.5 // Default radius in meters
+    
+    let virtualObjectLoader = VirtualObjectLoader()
     
     override func viewDidLoad() {
-        super.viewDidLoad()
+        
+        print("ARController Running...")
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleSceneTap))
-        
+        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress))
+
         self.view.addGestureRecognizer(tapGesture)
-        
+        self.view.addGestureRecognizer(longPressGesture)
         setup()
         
         sceneView.session.delegate = self
         sceneView.delegate = self
         
-        multipeerSession = MultipeerSession(displayName:"Nico")
+        multipeerSession = MultipeerSession(displayName:"No Name")
     }
     
     private lazy var sessionInfoView: UIView = {
@@ -130,35 +136,45 @@ class ARController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         UIApplication.shared.isIdleTimerDisabled = true
     }
     
+//    func renderer(_ renderer: SCNSceneRenderer, didUpdate node: SCNNode, for anchor: ARAnchor) {
+//        if let objectAtAnchor = self.virtualObjectLoader.loadedObjects.first(where: { $0.anchor == anchor }) {
+//            objectAtAnchor.simdPosition = anchor.transform.translation
+//            objectAtAnchor.anchor = anchor
+//        }
+//    }
+    
     func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
-        print("new anchor")
+        print("New Anchor Added")
         guard let frame = sceneView.session.currentFrame else { return }
         guard let cameraPosition = cameraPosition else { return }
         guard let cameraTransform = cameraTransform else { return }
+        
         self.cameraTransform = SCNMatrix4(frame.camera.transform)
         self.cameraPosition = SCNVector3(cameraTransform.m41, cameraTransform.m42, cameraTransform.m43)
         
-        if let planeAnchor = anchor as? ARPlaneAnchor, planeAnchor.alignment == .vertical || planeAnchor.alignment == .horizontal {
-            let planeNode = createPlaneNode(with: planeAnchor)
-            planeNode.renderingOrder = -1
-            node.addChildNode(planeNode)
-        }
+//        if let planeAnchor = anchor as? ARPlaneAnchor, planeAnchor.alignment == .vertical || planeAnchor.alignment == .horizontal {
+//            let planeNode = createPlaneNode(with: planeAnchor)
+//            planeNode.renderingOrder = -1
+//            node.addChildNode(planeNode)
+//        }
+//        
+//        print("print camera \(self.cameraPosition)")
         
-        print("print camera \(self.cameraPosition)")
-        
-        if let name = anchor.name, name.hasPrefix("panda") {
+        if let name = anchor.name, name.hasPrefix("panda") || name.hasPrefix("rock") {
             let pandaNode = loadRedPandaModel()
             pandaNode.renderingOrder = 0
-            pandaNode.name = "panda"
+            pandaNode.name = "Rock Node"
             print(pandaNode.name)
             node.addChildNode(pandaNode)
             addedNodes[anchor] = pandaNode
             let pandaTransform = SCNVector3(x: anchor.transform.columns.3.x, y: anchor.transform.columns.3.y, z: anchor.transform.columns.3.z)
             let distance = SCNVector3Distance(vectorStart: cameraPosition, vectorEnd: pandaTransform)
-            pandaNode.isHidden = distance > 1
+            pandaNode.isHidden = distance > 2
         }
         
-        print("\(node.childNodes.map { $0.name })")
+        print("Node name: \(node.name)")
+        print("Node.childNodes: \(node.childNodes.map { $0 })")
+        print("AddedNodes: \(addedNodes.map {$0.value})")
     }
     
     func SCNVector3Distance(vectorStart: SCNVector3, vectorEnd: SCNVector3) -> Float {
@@ -182,10 +198,15 @@ class ARController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         return planeNode
     }
     
+    func showVirtualContent() {
+        virtualObjectLoader.loadedObjects.forEach { $0.isHidden = false }
+    }
+    
     // MARK: - ARSessionDelegate
     
     func session(_ session: ARSession, cameraDidChangeTrackingState camera: ARCamera) {
         updateSessionInfoLabel(for: session.currentFrame!, trackingState: camera.trackingState)
+        showVirtualContent()
     }
     
     /// - Tag: CheckMappingStatus
@@ -220,7 +241,7 @@ class ARController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         guard let cameraPosition = self.cameraPosition else { return }
         for (anchor, node) in addedNodes {
             let distance = SCNVector3Distance(vectorStart: cameraPosition, vectorEnd: SCNVector3(x: anchor.transform.columns.3.x, y: anchor.transform.columns.3.y, z: anchor.transform.columns.3.z))
-            node.isHidden = distance > 1
+            node.isHidden = distance > 2
         }
     }
     
@@ -333,15 +354,61 @@ class ARController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     
     // MARK: - AR session management
     private func loadRedPandaModel() -> SCNNode {
-        let sceneURL = Bundle.main.url(forResource: "max", withExtension: "scn", subdirectory: "art.scnassets")!
+        let sceneURL = Bundle.main.url(forResource: "rock", withExtension: "scn", subdirectory: "art.scnassets/models")!
         let referenceNode = SCNReferenceNode(url: sceneURL)!
         referenceNode.load()
         
+        // adjust scale
+        let scale: Float = 0.1
+        referenceNode.scale = SCNVector3(x: scale, y: scale, z: scale)
+        referenceNode.name = "Rock SCNNode"
+        
         return referenceNode
     }
-    
+
+    @objc func handleLongPress(_ gesture: UITapGestureRecognizer) {
+        if gesture.state == .ended {
+            let touchLocation = gesture.location(in: sceneView)
+            
+            let hitTestOptions: [SCNHitTestOption: Any] = [.boundingBoxOnly: true]
+            let hitTestResults = sceneView.hitTest(touchLocation, options: hitTestOptions)
+            
+            if let longPressedNode = hitTestResults.lazy.compactMap{ result in return result.node}.first {
+                
+                longPressedNode.removeFromParentNode()
+                print("\(longPressedNode) berhasil ditekan")
+
+            } else  {
+                print("tidak ditemukan object yang tertekan")
+            }
+        }
+    }
+
+    func findClosestNode(to point: simd_float3) -> SCNNode? {
+        var closestNode: SCNNode?
+        var minimumDistance: Float = .greatestFiniteMagnitude
+
+        for (_, node) in addedNodes {
+            let nodePosition = node.simdWorldPosition
+            let distance = simd_distance(nodePosition, point)
+
+            if distance < minimumDistance {
+                minimumDistance = distance
+                closestNode = node
+            }
+        }
+
+        return closestNode
+    }
+
+    // Helper function to calculate the distance between two points
+    func distanceBetweenPoints(pointA: SCNVector3, pointB: SCNVector3) -> CGFloat {
+        let vector = SCNVector3Make(pointA.x - pointB.x, pointA.y - pointB.y, pointA.z - pointB.z)
+        return CGFloat(sqrt(vector.x * vector.x + vector.y * vector.y + vector.z * vector.z))
+    }
+
     @objc func handleSceneTap(_ sender: UITapGestureRecognizer) {
-        print("taptap")
+        print("Tap Detected")
         // Hit test to find a place for a virtual object.
         guard let hitTestResult = sceneView
             .hitTest(sender.location(in: sceneView), types: [.existingPlaneUsingGeometry, .estimatedHorizontalPlane])
@@ -349,13 +416,15 @@ class ARController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         else { return }
         
         // Place an anchor for a virtual character. The model appears in renderer(_:didAdd:for:).
-        let anchor = ARAnchor(name: "panda", transform: hitTestResult.worldTransform)
+        let anchor = ARAnchor(name: "rockARAnchor", transform: hitTestResult.worldTransform)
         sceneView.session.add(anchor: anchor)
         
         // Send the anchor info to peers, so they can place the same content.
         guard let data = try? NSKeyedArchiver.archivedData(withRootObject: anchor, requiringSecureCoding: true)
         else { fatalError("can't encode anchor") }
         //        self.multipeerSession.sendToAllPeers(data)
+        
+        print(addedNodes)
     }
 }
 

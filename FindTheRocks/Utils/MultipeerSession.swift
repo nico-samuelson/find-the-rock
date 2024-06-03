@@ -7,6 +7,7 @@
 
 import Foundation
 import MultipeerConnectivity
+import ARKit
 
 /// - Tag: MultipeerSession
 @Observable
@@ -205,8 +206,8 @@ extension MultipeerSession: MCNearbyServiceAdvertiserDelegate {
         
         guard let context = context else { return }
         
-        let player = try! NSKeyedUnarchiver.unarchivedObject(ofClasses: [Player.self, MCPeerID.self, NSString.self], from: context) as? Player
-        print(player?.peerID.displayName)
+        let room = try! NSKeyedUnarchiver.unarchivedObject(ofClasses: [Room.self, Player.self, Team.self, Rock.self, MCPeerID.self, NSString.self, ARAnchor.self, SCNNode.self, NSArray.self], from: context) as? Room
+        print(room?.fakeRock)
         
         if let contextString = String(data: context, encoding: .utf8) {
             print("before connected",self.session.connectedPeers.map({$0.displayName}))
