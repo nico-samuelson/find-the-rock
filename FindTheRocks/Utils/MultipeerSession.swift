@@ -22,12 +22,13 @@ class MultipeerSession: NSObject {
     private var nearbyPeers: [Player] = []
     var showInviteModal: ((String,MCPeerID, @escaping (Bool)->Void) -> Void)?
     var confirmingRes: (()->Bool)?
-//    private let receivedDataHandler: (Data, MCPeerID) -> Void
+    var room: String!
+    //    private let receivedDataHandler: (Data, MCPeerID) -> Void
     
     /// - Tag: MultipeerSetup
     init(displayName:String) {
         self.displayName = displayName
-//        self.receivedDataHandler = receivedDataHandler
+        //        self.receivedDataHandler = receivedDataHandler
         self.myPeerID = MCPeerID(displayName: displayName)
         
         super.init()
@@ -73,7 +74,7 @@ class MultipeerSession: NSObject {
         serviceAdvertiser = MCNearbyServiceAdvertiser(peer: myPeerID, discoveryInfo: nil, serviceType: MultipeerSession.serviceType)
         serviceAdvertiser.delegate = self
         serviceAdvertiser.startAdvertisingPeer()
-//        serviceAdvertiser.discoveryInfo = ["code": "room 1"]
+        //        serviceAdvertiser.discoveryInfo = ["code": "room 1"]
         
         serviceBrowser = MCNearbyServiceBrowser(peer: myPeerID, serviceType: MultipeerSession.serviceType)
         serviceBrowser.delegate = self
@@ -88,25 +89,41 @@ class MultipeerSession: NSObject {
     }
     
     func updateDisplayName(_ newDisplayName: String) {
-//        session.delegate = nil
-//        session.disconnect()
+        //        session.delegate = nil
+        //        session.disconnect()
         stopAdvertisingAndBrowsing()
         
-//        self.session = nil
-//        self.myPeerID = nil
-//        self.serviceBrowser = nil
-//        self.serviceAdvertiser = nil
+        //        self.session = nil
+        //        self.myPeerID = nil
+        //        self.serviceBrowser = nil
+        //        self.serviceAdvertiser = nil
         
         // start updating the new name
         self.displayName = newDisplayName
         self.myPeerID = MCPeerID(displayName: newDisplayName)
         
-//        self.setupSession()
+        //        self.setupSession()
         self.startAdvertisingAndBrowsing()
     }
     
     func invitePeer(peerID: MCPeerID, data: Data) {
-        serviceBrowser.invitePeer(peerID, to: self.session, withContext: data, timeout: 10)
+        serviceBrowser.invitePeer(peerID, to: self.session, withContext: data, timeout: 15)
+    }
+    
+    func createRoom(){
+        serviceAdvertiser.stopAdvertisingPeer()
+        serviceAdvertiser.delegate = nil
+        
+        //        Create room id
+        self.room = displayName.isEmpty ? "Player \(Int.random(in:1...100))" : "\(displayName) \(Int.random(in:1...100))"
+        
+        //        new advertiser and run
+        serviceAdvertiser = MCNearbyServiceAdvertiser(peer:self.myPeerID,discoveryInfo: ["room":self.room],serviceType: serviceBrowser.serviceType)
+        serviceAdvertiser.delegate = self
+        serviceAdvertiser.startAdvertisingPeer()
+    }
+    func getPeerId() -> MCPeerID {
+        return self.myPeerID
     }
 }
 
@@ -119,7 +136,7 @@ extension MultipeerSession: MCSessionDelegate {
             print("connecting")
         case .connected:
             print("connected")
-//            print(self.connectedPeers)
+            //            print(self.connectedPeers)
         @unknown default:
             print("Unknown error")
         }
@@ -127,9 +144,9 @@ extension MultipeerSession: MCSessionDelegate {
     
     func session(_ session: MCSession, didReceive data: Data, fromPeer peerID: MCPeerID) {
         do {
-//            if let data = try NSKeyedUnarchiver.unarchivedObject(ofClass: Player.self, from: data) {
-//                print(data.peerID.displayName)
-//            }
+            //            if let data = try NSKeyedUnarchiver.unarchivedObject(ofClass: Player.self, from: data) {
+            //                print(data.peerID.displayName)
+            //            }
             
             if let data = String(data: data, encoding: .utf8) {
                 if data == "disconnected" {
@@ -167,13 +184,16 @@ extension MultipeerSession: MCNearbyServiceBrowserDelegate {
     
     /// - Tag: FoundPeer
     public func browser(_ browser: MCNearbyServiceBrowser, foundPeer peerID: MCPeerID, withDiscoveryInfo info: [String: String]?) {
-        // Invite the new peer to the session.
-        
-//        browser.invitePeer(peerID, to: session, withContext: nil, timeout: 10)
-        
+        // check for discoveryInfo
+        if let info = info {
+            //            if exist the same room and connected peers, and not connected yet
+            if self.room == info["room"]! && (self.connectedPeers.firstIndex(where: { $0 == peerID }) == nil) {
+                browser.invitePeer(peerID,to:self.session,withContext:"approved".data(using:.utf8),timeout:10)
+            }
+        }
         
         DispatchQueue.main.async {
-//            self.nearbyPeers.removeAll()
+            //            self.nearbyPeers.removeAll()
             print(self.nearbyPeers.firstIndex(where: {$0.peerID == peerID}) == nil)
             if self.nearbyPeers.firstIndex(where: { $0.peerID == peerID }) == nil {
                 self.nearbyPeers.append(Player(peerID: peerID, profile: "", status: .disconnected, point: 0))
@@ -202,23 +222,34 @@ extension MultipeerSession: MCNearbyServiceAdvertiserDelegate {
     
     /// - Tag: AcceptInvite
     func advertiser(_ advertiser: MCNearbyServiceAdvertiser, didReceiveInvitationFromPeer peerID: MCPeerID, withContext context: Data?, invitationHandler: @escaping (Bool, MCSession?) -> Void) {
-//        Open the modal dialog and use the callback
+        //        Open the modal dialog and use the callback
         
         guard let context = context else { return }
         
-        let room = try! NSKeyedUnarchiver.unarchivedObject(ofClasses: [Room.self, Player.self, Team.self, Rock.self, MCPeerID.self, NSString.self, ARAnchor.self, SCNNode.self, NSArray.self], from: context) as? Room
-        print(room?.fakeRock)
+        let object = try! NSKeyedUnarchiver.unarchivedObject(ofClasses: [Room.self, Player.self, Team.self, Rock.self, MCPeerID.self, NSString.self, ARAnchor.self, SCNNode.self, NSArray.self], from: context)
         
-        if let contextString = String(data: context, encoding: .utf8) {
-            print("before connected",self.session.connectedPeers.map({$0.displayName}))
-            showInviteModal?(contextString, peerID, { accepted in
-                print("accepted: ", accepted)
-                invitationHandler(accepted, self.session)
-                print("after connected",self.session.connectedPeers.map({$0.displayName}))
-            })
+        switch object {
+        case let string as NSString:
+            handleInvitationString(text: string, invitationHandler: invitationHandler)
+        case let player as Player:
+            handleInvitationPlayer(peer: peerID, player: player, invitationHandler: invitationHandler)
+        default:
+            print("Unknown type received")
+        }
+        
+    }
+    
+    func handleInvitationString(text: NSString,invitationHandler: @escaping (Bool, MCSession?) -> Void){
+        if text == "approved"{
+            invitationHandler(true,self.session)
         }
     }
     
+    func handleInvitationPlayer(peer: MCPeerID, player: Player,invitationHandler: @escaping (Bool, MCSession?) -> Void){
+        showInviteModal?(player.profile, peer, { accepted in
+            invitationHandler(accepted, self.session)
+        })
+    }
 }
 
 extension MCPeerID: NSSecureCoding {
