@@ -11,9 +11,11 @@ import MultipeerConnectivity
 
 struct ContentView: View {
     @Binding var multipeerSession: MultipeerSession
+    @State var room: Room = Room()
 
     var body: some View {
-        PlantView()
+//        HomeView(multiPeerSession: $multipeerSession)
+        PlantView(multiPeerSession: $multipeerSession, room: $room)
         
 //        HomeView(multiPeerSession: $multipeerSession)
 //        NavigationSplitView {

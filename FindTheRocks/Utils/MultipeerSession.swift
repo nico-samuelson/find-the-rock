@@ -22,7 +22,7 @@ class MultipeerSession: NSObject {
     private var nearbyPeers: [Player] = []
     var showInviteModal: ((String,MCPeerID, @escaping (Bool)->Void) -> Void)?
     var confirmingRes: (()->Bool)?
-    var room: Room!
+    var room: Room! = Room()
     //    private let receivedDataHandler: (Data, MCPeerID) -> Void
     
     /// - Tag: MultipeerSetup
@@ -64,6 +64,11 @@ class MultipeerSession: NSObject {
     var detectedPeers: [Player] {
         return nearbyPeers
     }
+    
+    var peerID: MCPeerID {
+        return myPeerID
+    }
+    
     
     private func setupSession(){
         session = MCSession(peer: myPeerID, securityIdentity: nil, encryptionPreference: .required)
