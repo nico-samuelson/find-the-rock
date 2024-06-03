@@ -22,7 +22,7 @@ class MultipeerSession: NSObject {
     private var nearbyPeers: [Player] = []
     var showInviteModal: ((String,MCPeerID, @escaping (Bool)->Void) -> Void)?
     var confirmingRes: (()->Bool)?
-    var room: String!
+    var room: Room!
     //    private let receivedDataHandler: (Data, MCPeerID) -> Void
     
     /// - Tag: MultipeerSetup
@@ -115,10 +115,10 @@ class MultipeerSession: NSObject {
         serviceAdvertiser.delegate = nil
         
         //        Create room id
-        self.room = displayName.isEmpty ? "Player \(Int.random(in:1...100))" : "\(displayName) \(Int.random(in:1...100))"
+        self.room = displayName.isEmpty ? Room() : Room(name:"\(displayName) \(Int.random(in:1...100))")
         
         //        new advertiser and run
-        serviceAdvertiser = MCNearbyServiceAdvertiser(peer:self.myPeerID,discoveryInfo: ["room":self.room],serviceType: serviceBrowser.serviceType)
+        serviceAdvertiser = MCNearbyServiceAdvertiser(peer:self.myPeerID,discoveryInfo: ["room":self.room.name],serviceType: serviceBrowser.serviceType)
         serviceAdvertiser.delegate = self
         serviceAdvertiser.startAdvertisingPeer()
     }
@@ -136,7 +136,6 @@ extension MultipeerSession: MCSessionDelegate {
             print("connecting")
         case .connected:
             print("connected")
-            //            print(self.connectedPeers)
         @unknown default:
             print("Unknown error")
         }
@@ -187,7 +186,7 @@ extension MultipeerSession: MCNearbyServiceBrowserDelegate {
         // check for discoveryInfo
         if let info = info {
             //            if exist the same room and connected peers, and not connected yet
-            if self.room == info["room"]! && (self.connectedPeers.firstIndex(where: { $0 == peerID }) == nil) {
+            if self.room.name == info["room"]! && (self.connectedPeers.firstIndex(where: { $0 == peerID }) == nil) {
                 browser.invitePeer(peerID,to:self.session,withContext:"approved".data(using:.utf8),timeout:10)
             }
         }
