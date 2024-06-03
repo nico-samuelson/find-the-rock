@@ -9,51 +9,35 @@ import Foundation
 import MultipeerConnectivity
 
 @Observable
-class Player {
+class Player: NSObject, NSCoding, NSSecureCoding {
     static var supportsSecureCoding: Bool = true
-    
-//    func encode(with coder: NSCoder) {
-//        coder.encode(peerID, forKey: "peerID")
-//        coder.encode(profile, forKey: "profile")
-//        coder.encode(status, forKey: "status")
-//        coder.encode(point, forKey: "point")
-//    }
-//    
-//    required init?(coder aDecoder: NSCoder) {
-//        guard let peerID = aDecoder.decodeObject(forKey: "peerID") as? MCPeerID,
-//              let profile = aDecoder.decodeObject(forKey: "profile") as? String,
-//              let status = aDecoder.decodeObject(forKey: "status") as? PlayerStatus,
-//              let point = aDecoder.decodeObject(forKey: "point") as? Int
-//        else {
-//            return nil
-//        }
-//        
-//        self.peerID = peerID
-//        self.profile = profile
-//        self.status = status
-//        self.point = point
-//    }
-//    
-//    func encode(to encoder: Encoder) throws {
-//        var container = encoder.container(keyedBy: CodingKeys.self)
-//        try container.encode(profile, forKey: .profile)
-//        try container.encode(point, forKey: .point)
-//    }
-//    
-//    required init(from decoder: Decoder) throws {
-//        let container = try decoder.container(keyedBy: CodingKeys.self)
-////        peerID = try container.decode(String.self, forKey: .peerID)
-////        status = try container.decode(PlayerStatus.self, forKey: .status)
-//        profile = try container.decode(String.self, forKey: .profile)
-//        point = try container.decode(Int.self, forKey: .point)
-//        
-//        
-//    }
-    
     var peerID: MCPeerID = MCPeerID(displayName: UIDevice().systemName)
     var profile: String = "default profile"
     var status: PlayerStatus = .disconnected
     var point: Int = 0
+    
+    func encode(with coder: NSCoder) {
+        coder.encode(peerID, forKey: "peerID")
+        coder.encode(profile, forKey: "profile")
+        coder.encode(status.rawValue, forKey: "status")
+        coder.encode(point, forKey: "point")
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        guard let peerID = aDecoder.decodeObject(forKey: "peerID") as? MCPeerID,
+              let profile = aDecoder.decodeObject(forKey: "profile") as? String,
+              let statusRawValue = aDecoder.decodeObject(forKey: "status") as? String,
+              let status = PlayerStatus(rawValue: statusRawValue),
+              let point = aDecoder.decodeInteger(forKey: "point") as? Int
+        else {
+            return nil
+        }
+        
+        self.peerID = peerID
+        self.profile = profile
+        self.status = status
+        self.point = point
+    }
     
     init(peerID: MCPeerID, profile: String, status: PlayerStatus, point: Int) {
         self.peerID = peerID
