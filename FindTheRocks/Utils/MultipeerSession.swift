@@ -72,6 +72,7 @@ class MultipeerSession: NSObject {
         serviceAdvertiser = MCNearbyServiceAdvertiser(peer: myPeerID, discoveryInfo: nil, serviceType: MultipeerSession.serviceType)
         serviceAdvertiser.delegate = self
         serviceAdvertiser.startAdvertisingPeer()
+//        serviceAdvertiser.discoveryInfo = ["code": "room 1"]
         
         serviceBrowser = MCNearbyServiceBrowser(peer: myPeerID, serviceType: MultipeerSession.serviceType)
         serviceBrowser.delegate = self
@@ -204,6 +205,9 @@ extension MultipeerSession: MCNearbyServiceAdvertiserDelegate {
         
         guard let context = context else { return }
         
+        let player = try! NSKeyedUnarchiver.unarchivedObject(ofClasses: [Player.self, MCPeerID.self, NSString.self], from: context) as? Player
+        print(player?.peerID.displayName)
+        
         if let contextString = String(data: context, encoding: .utf8) {
             print("before connected",self.session.connectedPeers.map({$0.displayName}))
             showInviteModal?(contextString, peerID, { accepted in
@@ -214,4 +218,8 @@ extension MultipeerSession: MCNearbyServiceAdvertiserDelegate {
         }
     }
     
+}
+
+extension MCPeerID: NSSecureCoding {
+    public static var supportsSecureCoding: Bool = true
 }
