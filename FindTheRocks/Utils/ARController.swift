@@ -20,7 +20,7 @@ class ARController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     var multipeerSession: MultipeerSession!
     var detectionRadius: CGFloat = 0.5 // Default radius in meters
     
-    let virtualObjectLoader = VirtualObjectLoader()
+//    let virtualObjectLoader = VirtualObjectLoader()
     
     override func viewDidLoad() {
         
@@ -198,16 +198,12 @@ class ARController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         return planeNode
     }
     
-    func showVirtualContent() {
-        virtualObjectLoader.loadedObjects.forEach { $0.isHidden = false }
-    }
-    
     // MARK: - ARSessionDelegate
     
-    func session(_ session: ARSession, cameraDidChangeTrackingState camera: ARCamera) {
-        updateSessionInfoLabel(for: session.currentFrame!, trackingState: camera.trackingState)
-        showVirtualContent()
-    }
+//    func session(_ session: ARSession, cameraDidChangeTrackingState camera: ARCamera) {
+//        updateSessionInfoLabel(for: session.currentFrame!, trackingState: camera.trackingState)
+//        showVirtualContent()
+//    }
     
     /// - Tag: CheckMappingStatus
     func session(_ session: ARSession, didUpdate frame: ARFrame) {
