@@ -13,7 +13,9 @@ struct ContentView: View {
     @Binding var multipeerSession: MultipeerSession
 
     var body: some View {
-        HomeView(multiPeerSession: $multipeerSession)
+        PlantView()
+        
+//        HomeView(multiPeerSession: $multipeerSession)
 //        NavigationSplitView {
 //            List {
 //                ForEach(items) { item in
