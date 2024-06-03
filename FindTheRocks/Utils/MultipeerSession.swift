@@ -86,20 +86,20 @@ class MultipeerSession: NSObject {
     }
     
     func updateDisplayName(_ newDisplayName: String) {
-        session.delegate = nil
-        session.disconnect()
+//        session.delegate = nil
+//        session.disconnect()
         stopAdvertisingAndBrowsing()
         
-        self.session = nil
-        self.myPeerID = nil
-        self.serviceBrowser = nil
-        self.serviceAdvertiser = nil
+//        self.session = nil
+//        self.myPeerID = nil
+//        self.serviceBrowser = nil
+//        self.serviceAdvertiser = nil
         
         // start updating the new name
         self.displayName = newDisplayName
         self.myPeerID = MCPeerID(displayName: newDisplayName)
         
-        self.setupSession()
+//        self.setupSession()
         self.startAdvertisingAndBrowsing()
     }
     
@@ -171,7 +171,7 @@ extension MultipeerSession: MCNearbyServiceBrowserDelegate {
         
         
         DispatchQueue.main.async {
-            self.nearbyPeers.removeAll()
+//            self.nearbyPeers.removeAll()
             print(self.nearbyPeers.firstIndex(where: {$0.peerID == peerID}) == nil)
             if self.nearbyPeers.firstIndex(where: { $0.peerID == peerID }) == nil {
                 self.nearbyPeers.append(Player(peerID: peerID, profile: "", status: .disconnected, point: 0))

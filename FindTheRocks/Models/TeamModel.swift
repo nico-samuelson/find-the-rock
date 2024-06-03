@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import MultipeerConnectivity
 
 @Observable
 class Team {

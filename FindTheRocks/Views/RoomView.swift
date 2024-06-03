@@ -70,6 +70,7 @@ struct RoomView: View {
                     
                     
                     HStack(spacing: 20) {
+                        // MARK: Red team
                         VStack(spacing: 0) {
                             SkewedRoundedRectangle(topRightXOffset: 10, topRightYOffset: -6, bottomRightXOffset: 8.5, bottomRightYOffset: 5, topRightCornerRadius: 20)
                                 .frame(height: 60)
@@ -101,6 +102,8 @@ struct RoomView: View {
                                             .lineLimit(0)
                                             .truncationMode(.tail)
                                             .rotationEffect(.degrees(-0.48))
+                                        
+                                        Spacer()
                                         
                                         Button{
                                             kickPlayer(player: player)
@@ -158,6 +161,7 @@ struct RoomView: View {
                                 .foregroundStyle(.white.opacity(0.2))
                         )
                         
+                        // MARK: Blue team
                         VStack(spacing: 0) {
                             SkewedRoundedRectangle(topLeftXOffset: 3.2, topLeftYOffset: -5, topRightYOffset: -10, bottomRightYOffset: 5, bottomLeftXOffset: 4.5, topLeftCornerRadius: 20)
                                 .frame(height: 55)
@@ -203,6 +207,8 @@ struct RoomView: View {
                                         }
                                         .padding(0)
                                         .frame(maxWidth: 25, maxHeight: 25)
+                                        
+                                        Spacer()
                                         
                                         Text(player.peerID.displayName.uppercased())
                                             .font(.system(size: 12))
@@ -303,7 +309,7 @@ struct RoomView: View {
                     )
                     .frame(maxHeight: 250)
                     
-                    Button{} label: {
+                    NavigationLink(destination: HomeView(multiPeerSession: $multiPeerSession), label: {
                         SkewedRoundedRectangle(topRightYOffset: -2, bottomRightXOffset: -3, bottomRightYOffset: -1, cornerRadius: 20)
                             .frame(maxHeight: 60)
                             .padding(.horizontal, 60)
@@ -314,10 +320,11 @@ struct RoomView: View {
                                     .fontWeight(.bold)
                                     .font(.system(size: 40))
                             )
-                    }
-                    .padding(.top, 30)
+                            .padding(.top, 30)
+                    })
                     
-                    Button{} label: {
+                    
+                    NavigationLink(destination: ResultView(multiPeerSession: $multiPeerSession, room: $room),label:{
                         SkewedRoundedRectangle(topRightYOffset: -5, bottomRightXOffset: 3, bottomRightYOffset: 3, bottomLeftXOffset: 6, cornerRadius: 20)
                             .frame(maxHeight: 75)
                             .padding(.horizontal, 50)
@@ -328,18 +335,33 @@ struct RoomView: View {
                                     .fontWeight(.bold)
                                     .font(.system(size: 40))
                             )
-                    }
-                    .padding(.top, 15)
-                    .padding(.bottom, 25)
+                            .padding(.top, 15)
+                            .padding(.bottom, 25)
+                    })
+//                    Button{} label: {
+//                        SkewedRoundedRectangle(topRightYOffset: -5, bottomRightXOffset: 3, bottomRightYOffset: 3, bottomLeftXOffset: 6, cornerRadius: 20)
+//                            .frame(maxHeight: 75)
+//                            .padding(.horizontal, 50)
+//                            .foregroundStyle(Color.tersierGradient)
+//                            .overlay(
+//                                Text("START")
+//                                    .foregroundStyle(Color.white)
+//                                    .fontWeight(.bold)
+//                                    .font(.system(size: 40))
+//                            )
+//                    }
+//                    .padding(.top, 15)
+//                    .padding(.bottom, 25)
                 }
                 .background(Color.primaryGradient)
             }
+            .navigationBarBackButtonHidden()
         }
-        .onChange(of: multiPeerSession.connectedPeers) { peers in
-            print("connected berubah")
-            let allPlayers = room.teams[0].players + room.teams[1].players
-            
-        }
+//        .onChange(of: multiPeerSession.connectedPeers) { peers in
+//            print("connected berubah")
+//            let allPlayers = room.teams[0].players + room.teams[1].players
+//            
+//        }
 //        .onAppear(perform: {
 //            self.roomVM = RoomViewModel(room: $room, multipeerSession: $multiPeerSession)
 //        })
