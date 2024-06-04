@@ -14,24 +14,24 @@ struct ResultView: View {
     var body: some View {
         NavigationStack {
             GeometryReader { gp in
-                VStack(alignment: .center) {
+                VStack(alignment: .center, spacing: 0) {
                     
                     Text("THE WINNER:")
                         .fontWeight(.bold)
                         .font(.system(size: 44))
                         .foregroundStyle(.white)
                         .padding(.top, 10)
+                        .padding(.bottom, 0)
                     
                     //MARK: Trophy
-                    Image(systemName: "trophy.fill")
-                        .resizable()
-                        .foregroundStyle(.yellow)
-                        .frame(width: 150, height: 150)
-                    
+                    LegacySceneView(scene: Self.loadScene(named: "art.scnassets/models/champion.scn"))
+                        .frame(width: gp.size.width)
+//                        .background(.white)
+                        .padding(10)
+//                        .offset(y: -10)
                     SkewedRoundedRectangle(topLeftYOffset: -2, topRightXOffset: 5, topRightYOffset: 1, bottomLeftXOffset: -2, cornerRadius: 15)
                         .frame(height: 60)
                         .padding(.horizontal, 90)
-                        .padding(.vertical, 30)
                         .foregroundStyle(winner == "DRAW" ? Color.tersierGradient : winner == "RED TEAM" ? Color.redGradient : Color.blueGradient)
                         .overlay(
                             Text(winner)
@@ -39,6 +39,7 @@ struct ResultView: View {
                                 .fontWeight(.bold)
                                 .font(.system(size: 32))
                         )
+                        .padding(.bottom, 30)
                     
                     HStack(spacing: 20) {
                         // MARK: Red team score

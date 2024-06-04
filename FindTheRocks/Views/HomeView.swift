@@ -50,9 +50,9 @@ struct HomeView: View {
                         }
                         Spacer()
                         // 3d Asset
-                        LegacySceneView(scene: Self.loadScene(named: "art.scnassets/models/rock.scn"))
-                            .frame(width: gp.size.width)
-                        Spacer()
+                    LegacySceneView(scene: Self.loadScene(named: "art.scnassets/models/rock-home.scn"))
+                        .frame(width: gp.size.width)
+                    Spacer()
                         
                         /// Bottom Action BAR
                         VStack(){
@@ -340,11 +340,11 @@ struct LegacySceneView: UIViewRepresentable {
         
         view.scene = scene
         view.backgroundColor = UIColor.clear
-        //        view.pointOfView = cameraNode
-        view.allowsCameraControl = true
-        //        view.autoenablesDefaultLighting = true
-        view.isUserInteractionEnabled = true
-        //        view.isMultipleTouchEnabled = false
+//        view.pointOfView = cameraNode
+//        view.allowsCameraControl = true
+//        view.autoenablesDefaultLighting = true
+        view.isUserInteractionEnabled = false
+//        view.isMultipleTouchEnabled = false
         
         //        let panGesture = UIPanGestureRecognizer(target: context.coordinator, action: #selector(Coordinator.handlePan(_:)))
         //        view.addGestureRecognizer(panGesture)
