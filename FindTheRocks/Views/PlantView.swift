@@ -12,29 +12,9 @@ import ARKit
 import MultipeerConnectivity
 
 struct PlantView: View {
-//    @Binding var room: Room
     @State var selectedButton = "real"
-    @State var teamName = ""
+    @State var myTeam = -1
     @Binding var multiPeerSession: MultipeerSession
-//    @Binding var room: Room
-    
-    func getMyTeam() {
-        let redTeamplayers = multiPeerSession.room.teams[0].players.map { $0.peerID }
-        let blueTeamPlayers = multiPeerSession.room.teams[1].players.map { $0.peerID }
-        
-        
-        if redTeamplayers.contains(multiPeerSession.peerID) {
-            teamName = "red"
-        }
-        else if redTeamplayers.contains(multiPeerSession.peerID) {
-            teamName = "blue"
-        }
-        else {
-            teamName = "none"
-        }
-        
-        print("label: \(teamName)")
-    }
     
     var body: some View {
         NavigationStack(){
@@ -48,11 +28,11 @@ struct PlantView: View {
                         }
                         SkewedRoundedRectangle(topLeftYOffset: -2, topRightXOffset: -2, topRightYOffset: -0.5, bottomLeftXOffset: 2, cornerRadius: 10)
                             .frame(height: 40)
-                            .foregroundStyle(teamName == "red" ? Color.redGradient : teamName == "blue" ? Color.blueGradient : Color.whiteGradient)
+                            .foregroundStyle(myTeam == 0 ? Color.redGradient : myTeam == 1 ? Color.blueGradient : Color.whiteGradient)
                             .overlay(
-                                Text("Blue Team Planting")
+                                Text(myTeam == 0 ? "Red Team Planting" : "Blue Team Planting")
                                     .font(.custom("TitanOne", size: 18))
-                                    .foregroundColor(teamName == "none" ? Color(hex: "CB9FF9") : Color.white)
+                                    .foregroundColor(myTeam == -1 ? Color(hex: "CB9FF9") : Color.white)
                                     .fontWeight(.bold)
                             )
                             .padding(.horizontal, 10)
@@ -81,10 +61,10 @@ struct PlantView: View {
                                 .bold()
                         }
                         .frame(height: 100)
-                        .background(selectedButton == "real" ? Color.tersierGradient.opacity(1) : Color.whiteGradient.opacity(0.2))
+                        .background(!multiPeerSession.isPlantingFakeRock ? Color.tersierGradient.opacity(1) : Color.whiteGradient.opacity(0.2))
                         .cornerRadius(15)
                         .onTapGesture {
-                            selectedButton = "real"
+                            multiPeerSession.isPlantingFakeRock = false
                         }
                         
                         // Button Fake Rock
@@ -106,10 +86,10 @@ struct PlantView: View {
                                 .bold()
                         }
                         .frame(height: 100)
-                        .background(selectedButton == "fake" ? Color.tersierGradient.opacity(1) : Color.whiteGradient.opacity(0.2))
+                        .background(multiPeerSession.isPlantingFakeRock ? Color.tersierGradient.opacity(1) : Color.whiteGradient.opacity(0.2))
                         .cornerRadius(15)
                         .onTapGesture {
-                            selectedButton = "fake"
+                            multiPeerSession.isPlantingFakeRock = true
                         }
                     }
                     .padding(.top, 10)
@@ -119,7 +99,7 @@ struct PlantView: View {
             }
             .background(Color.primaryGradient)
             .onAppear {
-                self.getMyTeam()
+                self.myTeam = multiPeerSession.getMyTeam()
             }
         }
     }

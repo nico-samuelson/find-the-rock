@@ -11,6 +11,7 @@ import ARKit
 
 @Observable
 class Rock: NSObject, NSCoding, NSSecureCoding {
+    var id: UUID = UUID.init()
     var isFake: Bool = false
     var anchor: ARAnchor = ARAnchor(name: "", transform: simd_float4x4())
     var node: SCNNode = SCNNode()

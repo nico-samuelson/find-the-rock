@@ -44,6 +44,9 @@ class ARController: UIViewController {
         super.viewWillAppear(animated)
         
         let configuration = ARWorldTrackingConfiguration()
+//        configuration.isCollaborationEnabled = true
+        configuration.environmentTexturing = .automatic
+        configuration.worldAlignment = .gravityAndHeading
         multipeerSession.sceneView.session.run(configuration)
     }
     
@@ -89,16 +92,18 @@ class ARController: UIViewController {
 //        }
 //    }
     
-    @objc func shareSession() {
-        print("masuk gan")
-        multipeerSession.sceneView.session.getCurrentWorldMap { worldMap, error in
-            guard let map = worldMap
-            else { print("Error: \(error!.localizedDescription)"); return }
-            guard let data = try? NSKeyedArchiver.archivedData(withRootObject: map, requiringSecureCoding: true)
-            else { fatalError("can't encode map") }
-            self.multipeerSession.sendToAllPeers(data)
-        }
-    }
+//    @objc func shareSession() {
+//        print("masuk gan")
+//        multipeerSession.sceneView.session.getCurrentWorldMap { worldMap, error in
+//            guard let map = worldMap
+//            else { print("Error: \(error!.localizedDescription)"); return }
+//            guard let data = try? NSKeyedArchiver.archivedData(withRootObject: map, requiringSecureCoding: true)
+//            else { fatalError("can't encode map") }
+//            self.multipeerSession.sendToAllPeers(data) { success in
+//
+//            }
+//        }
+//    }
     
     // MARK: - AR session management
     private func updateSessionInfoLabel(for frame: ARFrame, trackingState: ARCamera.TrackingState) {
@@ -164,7 +169,7 @@ class ARController: UIViewController {
 //    }
     
     @objc func handleSceneTap(_ sender: UITapGestureRecognizer) {
-        print("Tap Detected")
+//        print("Tap Detected")
         // Hit test to find a place for a virtual object.
         guard let hitTestResult = multipeerSession.sceneView
             .hitTest(sender.location(in: multipeerSession.sceneView), types: [.existingPlaneUsingGeometry, .estimatedHorizontalPlane])
@@ -172,29 +177,27 @@ class ARController: UIViewController {
         else { return }
         
         // Place an anchor for a virtual character. The model appears in renderer(_:didAdd:for:).
+//        print("tap"
         let anchor = ARAnchor(name: "rockARAnchor", transform: hitTestResult.worldTransform)
         multipeerSession.sceneView.session.add(anchor: anchor)
+//        print(multipeerSession.sceneView.session.currentFrame?.anchors[0])
+//        ARWorldTrackingConfiguration.
+//         Send the anchor info to peers, so they can place the same content.
         
-        // Send the anchor info to peers, so they can place the same content.
-        DispatchQueue.main.async {
-            guard let data = try? NSKeyedArchiver.archivedData(withRootObject: anchor, requiringSecureCoding: true)
-            else { fatalError("can't encode anchor") }
-            self.multipeerSession.sendToAllPeers(data)
-            
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                self.multipeerSession.sceneView.session.getCurrentWorldMap { worldMap, error in
-                    guard let map = worldMap
-                        else { print("Error: \(error!.localizedDescription)"); return }
-                    guard let data = try? NSKeyedArchiver.archivedData(withRootObject: map, requiringSecureCoding: true)
-                        else { fatalError("can't encode map") }
-                    self.multipeerSession.sendToAllPeers(data)
+//        print("taptap")
+        
+        // send anchor data to all peers
+        var tries = 0
+        var timer: Timer?
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
+                self.sendAnchor(anchor, timer: timer)
+                tries += 1
+                if (tries >= 5) {
+                    timer?.invalidate()
                 }
             }
         }
-        
-//        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-//            
-//        }
     }
     
     @objc func handleLongPress(_ gesture: UITapGestureRecognizer) {
@@ -211,6 +214,42 @@ class ARController: UIViewController {
 
             } else  {
                 print("tidak ditemukan object yang tertekan")
+            }
+        }
+    }
+    
+    func sendAnchor(_ anchor: ARAnchor, timer: Timer?) {
+        DispatchQueue.global().async {
+            // only send data when there's no world update
+            if (!self.multipeerSession.isUpdatingWorldMap) {
+                self.multipeerSession.isUpdatingWorldMap = true
+                
+                // send room data
+                guard let room = try? NSKeyedArchiver.archivedData(withRootObject: self.multipeerSession.room, requiringSecureCoding: true)
+                else { fatalError("can't encode room") }
+                
+                self.multipeerSession.sendARData(room) { success in
+                    print("success sending room: ", success)
+                    // invalidate timer when room is failed to sent
+                    if (!success) { timer?.invalidate() }
+                    
+                    // send AR world map data
+                    else {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                            self.multipeerSession.sceneView.session.getCurrentWorldMap { worldMap, error in
+                                guard let map = worldMap
+                                else { print("Error: \(error!)"); return }
+                                guard let data = try? NSKeyedArchiver.archivedData(withRootObject: map, requiringSecureCoding: true)
+                                else { fatalError("can't encode map") }
+                                self.multipeerSession.sendARData(data) { success in
+                                    print("success sending world map: ", success)
+                                    if (success) { timer?.invalidate() }
+                                }
+                                self.multipeerSession.isUpdatingWorldMap = false
+                            }
+                        }
+                    }
+                }
             }
         }
     }
