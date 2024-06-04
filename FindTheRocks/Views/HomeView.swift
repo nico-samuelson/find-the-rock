@@ -54,7 +54,7 @@ struct HomeView: View {
     //                        .aspectRatio(contentMode: .fit)
     //                        .frame(width:gp.size.width/2)
                         // 3d Asset
-                    LegacySceneView(scene: Self.loadScene(named: "art.scnassets/models/rock.scn"))
+                    LegacySceneView(scene: Self.loadScene(named: "art.scnassets/models/rock-home.scn"))
                         .frame(width: gp.size.width)
                     Spacer()
                         
@@ -374,9 +374,9 @@ struct LegacySceneView: UIViewRepresentable {
         view.scene = scene
         view.backgroundColor = UIColor.clear
 //        view.pointOfView = cameraNode
-        view.allowsCameraControl = true
+//        view.allowsCameraControl = true
 //        view.autoenablesDefaultLighting = true
-        view.isUserInteractionEnabled = true
+        view.isUserInteractionEnabled = false
 //        view.isMultipleTouchEnabled = false
         
 //        let panGesture = UIPanGestureRecognizer(target: context.coordinator, action: #selector(Coordinator.handlePan(_:)))
