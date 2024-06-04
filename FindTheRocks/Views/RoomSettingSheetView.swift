@@ -8,14 +8,16 @@
 import SwiftUI
 
 struct RoomSettingSheetView: View {
-    @State var hideTime:Int = 10
-    @State var seekTime:Int = 10
-    @State var fakeRock:Int = 3
-    @State var realRock:Int = 3
+    @Environment(\.dismiss) var dismiss
+    @Binding var multiPeerSession: MultipeerSession
+    @State var tempHideTime: Int
+    @State var tempSeekTime: Int
+    @State var tempFakeRock: Int
+    @State var tempRealRock: Int
     
     var body: some View {
         let hides = [5, 10, 15]
-        let seeks = [5, 10, 15,0]
+        let seeks = [5, 10, 15, 0]
         
         NavigationStack(){
             GeometryReader{gp in
@@ -42,7 +44,7 @@ struct RoomSettingSheetView: View {
                         HStack{
                             ForEach(hides, id: \.self){element in
                                 Spacer()
-                                ButtonPillComponent(value: element ,padding:16, activeController: $hideTime)
+                                ButtonPillComponent(value: element ,padding:16, activeController: $multiPeerSession.room.hideTime)
                             }
                         }.padding(.trailing,4)
                         Text("Seek")
@@ -54,7 +56,7 @@ struct RoomSettingSheetView: View {
                         HStack{
                             ForEach(seeks, id: \.self){element in
                                 Spacer()
-                                ButtonPillComponent(value: element ,padding:5, activeController: $seekTime)
+                                ButtonPillComponent(value: element ,padding:5, activeController: $multiPeerSession.room.seekTime)
                             }
                         }.padding(.trailing,4)
                     }
@@ -80,14 +82,14 @@ struct RoomSettingSheetView: View {
                             .padding(.leading,24)
                         Spacer()
                             .frame(height:8)
-                        CustomStepperComponent(value:$fakeRock)
+                        CustomStepperComponent(value:$multiPeerSession.room.fakeRock)
                         Text("Real")
                             .font(.custom("Roboto",size:22))
                             .foregroundStyle(.white)
                             .padding(.leading,24)
                         Spacer()
                             .frame(height:8)
-                        CustomStepperComponent(value:$realRock)
+                        CustomStepperComponent(value:$multiPeerSession.room.realRock)
                     }
                     .frame(width:gp.size.width-40,height:200)
                     .background{
@@ -105,6 +107,13 @@ struct RoomSettingSheetView: View {
                                 SkewedRoundedRectangle(topLeftYOffset: 5,topRightXOffset:5,cornerRadius: 20)
                                     .fill(Color.white)
                             }
+                            .onTapGesture {
+                                multiPeerSession.room.hideTime = tempHideTime
+                                multiPeerSession.room.seekTime = tempSeekTime
+                                multiPeerSession.room.fakeRock = tempFakeRock
+                                multiPeerSession.room.realRock = tempRealRock
+                                dismiss()
+                            }
                         Text("Apply")
                             .font(.custom("Roboto",size:28,relativeTo: .title))
                             .foregroundStyle(.white)
@@ -114,6 +123,10 @@ struct RoomSettingSheetView: View {
                                 SkewedRoundedRectangle(topLeftYOffset: 5,bottomRightXOffset: 5,bottomLeftXOffset: 5,cornerRadius: 20)
                                     .fill(Color.tersierGradient)
                             }
+                            .onTapGesture {
+                                multiPeerSession.syncRoom()
+                                dismiss()
+                            }
                     }
                     .frame(width:gp.size.width-40)
                 }
@@ -122,8 +135,4 @@ struct RoomSettingSheetView: View {
             }.background(Color.primaryGradient)
         }
     }
-}
-
-#Preview {
-    RoomSettingSheetView()
 }

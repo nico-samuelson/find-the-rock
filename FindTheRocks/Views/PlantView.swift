@@ -12,7 +12,7 @@ import ARKit
 import MultipeerConnectivity
 
 struct PlantView: View {
-    @State var team = ['red', 'blue']
+//    @State var team = ['red', 'blue']
     
     var body: some View {
         NavigationStack(){
@@ -23,13 +23,13 @@ struct PlantView: View {
                             .frame(height: 60)
                             .padding(.horizontal, 90)
                             .padding(.vertical, 30)
-                            .foregroundStyle(winner == "DRAW" ? Color.tersierGradient : winner == "RED TEAM" ? Color.redGradient : Color.blueGradient)
-                            .overlay(
-                                Text(winner)
-                                    .foregroundStyle(.white)
-                                    .fontWeight(.bold)
-                                    .font(.system(size: 32))
-                            )
+//                            .foregroundStyle(winner == "DRAW" ? Color.tersierGradient : winner == "RED TEAM" ? Color.redGradient : Color.blueGradient)
+//                            .overlay(
+//                                Text(winner)
+//                                    .foregroundStyle(.white)
+//                                    .fontWeight(.bold)
+//                                    .font(.system(size: 32))
+//                            )
                     }
                     ARControllerRepresentable()
                 }
