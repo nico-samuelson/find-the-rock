@@ -14,6 +14,7 @@ struct WaitingView: View {
     @Binding var invitationHandler: ((Bool) -> Void)?
     @State var isDestroyed = false
     @State var message:String = "destroy"
+    @State var navigateToHome = false
     
     var body: some View {
         NavigationStack{
@@ -137,7 +138,16 @@ struct WaitingView: View {
                         }
                         .frame(maxHeight: 200)
                         Spacer()
-                        NavigationLink(destination: HomeView(multiPeerSession: $multiPeerSession), label: {
+                        // MARK: BACK BUTTON
+                        Button(action: {
+                            // Your custom logic here
+                            // e.g., update some state, print a message, etc.
+                            print("Logic Executed, destroying room!")
+                            multiPeerSession.quitRoom()
+                            
+                            // After your logic, set navigateToHome to true to trigger navigation
+                            navigateToHome = true
+                        }) {
                             SkewedRoundedRectangle(topRightYOffset: -2, bottomRightXOffset: -3, bottomRightYOffset: -1, cornerRadius: 20)
                                 .frame(maxHeight: 60)
                                 .padding(.horizontal, 60)
@@ -149,7 +159,10 @@ struct WaitingView: View {
                                         .font(.system(size: 40))
                                 )
                                 .padding(.top, 30)
-                        })
+                        }
+                        .navigationDestination(isPresented: $navigateToHome){
+                            HomeView(multiPeerSession: $multiPeerSession)
+                        }
                         Spacer()
                     }
                     if isDestroyed {

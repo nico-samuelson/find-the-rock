@@ -40,6 +40,7 @@ class MultipeerSession: NSObject {
         
         return sceneView
     }()
+    
     var mappingStatusLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -93,7 +94,6 @@ class MultipeerSession: NSObject {
     var peerID: MCPeerID {
         return myPeerID
     }
-    
     
     private func setupSession(){
         session = MCSession(peer: myPeerID, securityIdentity: nil, encryptionPreference: .required)
@@ -195,7 +195,7 @@ class MultipeerSession: NSObject {
             serviceBrowser.stopBrowsingForPeers()
             serviceAdvertiser.stopAdvertisingPeer()
             
-            DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
                 self.serviceBrowser.startBrowsingForPeers()
                 self.serviceBrowser.stopBrowsingForPeers()
             }
@@ -380,15 +380,22 @@ extension MultipeerSession: MCNearbyServiceBrowserDelegate {
         }
     }
     
+    /// - Tag: Lost Peer
     public func browser(_ browser: MCNearbyServiceBrowser, lostPeer peerID: MCPeerID) {
         // This app doesn't do anything with non-invited peers, so there's nothing to do here.
         DispatchQueue.main.async {
-//            print("lost peer: ", peerID)
-            
             if let index = self.nearbyPeers.firstIndex(where: {$0.peerID == peerID}) {
                 self.nearbyPeers.remove(at: index)
             }
-//            print("after lost: ", self.nearbyPeers.map({($0.peerID, $0.peerID.displayName)}))
+            // Changing the room teams
+            if self.isMaster {
+                for x in 0...1 {
+                    if let index = self.room.teams[x].players.firstIndex(where: {$0.peerID == peerID}){
+                        self.room.teams[x].players.remove(at: index)
+                    }
+                }
+                self.syncRoom()
+            }
         }
         
     }
