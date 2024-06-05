@@ -28,19 +28,19 @@ extension MultipeerSession: ARSCNViewDelegate, ARSessionDelegate {
             pandaNode.name = "Rock Node"
             node.addChildNode(pandaNode)
             
-//            print(anchor.transform)
+//            print(anchor.transform)s
             
             // create new rock model
-            let rock = Rock(isFake: self.isPlantingFakeRock, anchor: anchor, node: node)
-            
-            if (self.isPlantingFakeRock) {
-//                print("fake")
-                self.room.teams[self.getMyTeam()].fakePlanted.append(rock)
-            }
-            else {
-//                print("real")
-                self.room.teams[self.getMyTeam()].realPlanted.append(rock)
-            }
+            let rock = Rock(isFake: self.isPlantingFakeRock, anchor: anchor)
+//            
+//            if (self.isPlantingFakeRock) {
+////                print("fake")
+//                self.room.teams[self.getMyTeam()].fakePlanted.append(rock)
+//            }
+//            else {
+////                print("real")
+//                self.room.teams[self.getMyTeam()].realPlanted.append(rock)
+//            }
         }
     }
     
@@ -79,7 +79,7 @@ extension MultipeerSession: ARSCNViewDelegate, ARSessionDelegate {
         guard let cameraPosition = self.cameraPosition else { return }
         guard let cameraTransform = self.cameraTransform else { return }
         
-        updatePanda()
+        updateRock()
 //        switch frame.worldMappingStatus {
 //        case .notAvailable, .limited:
 //            sessionShareWorldButton.isEnabled = false
@@ -101,35 +101,35 @@ extension MultipeerSession: ARSCNViewDelegate, ARSessionDelegate {
         self.mappingStatusLabel.text = frame.worldMappingStatus.description
     }
     
-    func session(_ session: ARSession, didUpdate anchors: [ARAnchor]) {
-        
-    }
-    
-    func session(_ session: ARSession, didOutputCollaborationData data: ARSession.CollaborationData) {
-//        guard let multipeerSession = self.multipeerSession else { return }
-//        print("output collaboration data")
-        if !self.connectedPeers.isEmpty {
-            guard let encodedData = try? NSKeyedArchiver.archivedData(withRootObject: data, requiringSecureCoding: true)
-            else { fatalError("Unexpectedly failed to encode collaboration data.") }
-            // Use reliable mode if the data is critical, and unreliable mode if the data is optional.
-            let dataIsCritical = data.priority == .critical
-            
-//            var tries = 0
-//            var timer: Timer?
-//            timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
-            self.sendToAllPeers(encodedData)
-//                tries += 1
-//                if (tries >= 5) {
-//                    timer?.invalidate()
-//                }
-//            }
-        } else {
-            print("Deferred sending collaboration to later because there are no peers.")
-        }
-    }
+//    func session(_ session: ARSession, didUpdate anchors: [ARAnchor]) {
+//        
+//    }
+//    
+//    func session(_ session: ARSession, didOutputCollaborationData data: ARSession.CollaborationData) {
+////        guard let multipeerSession = self.multipeerSession else { return }
+////        print("output collaboration data")
+//        if !self.connectedPeers.isEmpty {
+//            guard let encodedData = try? NSKeyedArchiver.archivedData(withRootObject: data, requiringSecureCoding: true)
+//            else { fatalError("Unexpectedly failed to encode collaboration data.") }
+//            // Use reliable mode if the data is critical, and unreliable mode if the data is optional.
+//            let dataIsCritical = data.priority == .critical
+//            
+////            var tries = 0
+////            var timer: Timer?
+////            timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
+//            self.sendToAllPeers(encodedData)
+////                tries += 1
+////                if (tries >= 5) {
+////                    timer?.invalidate()
+////                }
+////            }
+//        } else {
+//            print("Deferred sending collaboration to later because there are no peers.")
+//        }
+//    }
     
     // MARK: Update Model Visibility
-    func updatePanda() {
+    func updateRock() {
         guard let cameraPosition = self.cameraPosition else { return }
         var allRocksPlanted = self.room.teams[0].fakePlanted
         allRocksPlanted += self.room.teams[0].realPlanted
@@ -138,7 +138,7 @@ extension MultipeerSession: ARSCNViewDelegate, ARSessionDelegate {
         
         for rock in allRocksPlanted {
             let distance = SCNVector3Distance(vectorStart: cameraPosition, vectorEnd: SCNVector3(x: rock.anchor.transform.columns.3.x, y: rock.anchor.transform.columns.3.y, z: rock.anchor.transform.columns.3.z))
-            rock.node.isHidden = distance > 2
+//            rock.node.isHidden = distance > 2
         }
     }
     

@@ -14,7 +14,7 @@ struct ContentView: View {
     @State var room: Room = Room()
 
     var body: some View {
-        HomeView(multiPeerSession: $multipeerSession)
+        PlantView(multiPeerSession: $multipeerSession)
 //        PlantView(multiPeerSession: $multipeerSession)
         
 //        NavigationSplitView {
