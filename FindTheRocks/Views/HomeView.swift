@@ -10,7 +10,7 @@ import SceneKit
 import MultipeerConnectivity
 
 struct HomeView: View {
-    @State private var name: String = "Nico Samuel"
+    @State private var name: String = ""
     @Binding var multiPeerSession: MultipeerSession
     @State private var keyboardHeight:CGFloat = 0
     @State private var isFocused:Bool = false
@@ -49,12 +49,8 @@ struct HomeView: View {
                                 .shadow(color:.init(.black.opacity(0.25)),radius: 20,x:0,y:4)
                         }
                         Spacer()
-    //                    Image(systemName: "magnifyingglass.circle.fill")
-    //                        .resizable()
-    //                        .aspectRatio(contentMode: .fit)
-    //                        .frame(width:gp.size.width/2)
                         // 3d Asset
-                    LegacySceneView(scene: Self.loadScene(named: "art.scnassets/models/rock.scn"))
+                    LegacySceneView(scene: Self.loadScene(named: "art.scnassets/models/rock-home.scn"))
                         .frame(width: gp.size.width)
                     Spacer()
                         
@@ -73,26 +69,6 @@ struct HomeView: View {
                                 .padding(.top,-35)
                                 .offset(avatarOffset)
                                 .opacity(avatarOpacity)
-                            //                            .gesture(
-                            //                                DragGesture()
-                            //                                    .onChanged { value in
-                            //                                        avatarOffset = value.translation
-                            //                                        avatarOpacity = 0.5 // Change opacity when dragging
-                            //                                    }
-                            //                                    .onEnded { value in
-                            //                                        // Reset offset and opacity when drag ends
-                            //                                        withAnimation {
-                            //                                            avatarOffset = .zero
-                            //                                            avatarOpacity = 1.0
-                            //                                            // Change the image source if dragged beyond a threshold
-                            //                                            let threshold: CGFloat = 100
-                            //                                            if abs(value.translation.width) > threshold {
-                            //                                                let increment = value.translation.width > 0 ? 1 : -1
-                            //                                                avatarIndex = (avatarIndex + increment + avatarImageNames.count) % avatarImageNames.count
-                            //                                            }
-                            //                                        }
-                            //                                    }
-                            //                            )
                                 .onTapGesture(){
                                     avatarIndex = (avatarIndex + 1) % avatarImageNames.count
                                 }
@@ -145,7 +121,7 @@ struct HomeView: View {
                             
                             Spacer()
                                 .frame(height:12)
-                            NavigationLink(destination: RoomView(multiPeerSession: $multiPeerSession),label:{
+                            NavigationLink(destination: RoomView(multiPeerSession: $multiPeerSession, myself: Player(peerID: multiPeerSession.getPeerId(), profile:"lancelot-avatar", status: .connected, point: 0)),label:{
                                 Text("CREATE ROOM")
                                     .font(.custom("Roboto",size:28,relativeTo: .title))
                                     .foregroundStyle(.white)
@@ -172,7 +148,7 @@ struct HomeView: View {
                     }
                 }
                 
-//                Modal for invitation
+                //  Modal for invitation
                 if isInvited {
                     VStack{
                         Spacer()
@@ -188,7 +164,7 @@ struct HomeView: View {
                                 Spacer()
                                 HStack(){
                                     Spacer()
-                                    Image("lancelot-avatar")
+                                    Image(inviterProfile)
                                         .resizable()
                                         .aspectRatio(contentMode: .fit)
                                         .clipShape(Circle())
@@ -200,7 +176,7 @@ struct HomeView: View {
                                         }
                                     Spacer()
                                         .frame(width:12)
-                                    Text("Nico Samuel")
+                                    Text(inviterName!)
                                         .font(.custom("Roboto",size:26))
                                         .foregroundStyle(.white)
                                         .bold()
@@ -225,22 +201,17 @@ struct HomeView: View {
                                                 self.invitationHandler = nil
                                             }
                                         }
-                                    Text("Accept (\(time))")
-                                        .font(.custom("Roboto",size:18,relativeTo: .title))
-                                        .foregroundStyle(.white)
-                                        .bold()
-                                        .frame(width:(gp.size.width/2) - 40,height:40)
-                                        .background(){
-                                            SkewedRoundedRectangle(topLeftYOffset: 2,bottomRightXOffset: 2,bottomLeftXOffset: 2,cornerRadius: 10)
-                                                .fill(Color.tersierGradient)
-                                        }
-                                        .onTapGesture{
-                                            withAnimation{
-                                                isInvited = false
-                                                invitationHandler?(true)
-                                                self.invitationHandler = nil
+                                    NavigationLink(destination: WaitingView(multiPeerSession: $multiPeerSession,isInvited: $isInvited, invitationHandler: $invitationHandler),label:{
+                                        Text("Accept \(time)")
+                                            .font(.custom("Roboto",size:18,relativeTo: .title))
+                                            .foregroundStyle(.white)
+                                            .bold()
+                                            .frame(width:(gp.size.width/2) - 40,height:40)
+                                            .background(){
+                                                SkewedRoundedRectangle(topLeftYOffset: 2,bottomRightXOffset: 2,bottomLeftXOffset: 2,cornerRadius: 10)
+                                                    .fill(Color.tersierGradient)
                                             }
-                                        }
+                                    })
                                     Spacer()
                                 }
                                 Spacer()
@@ -272,16 +243,12 @@ struct HomeView: View {
                     time = 15
                     cooldown()
                 }
+                name = multiPeerSession.getDisplayName()
                 print(multiPeerSession.connectedPeers.map({$0.displayName}))
             }
+            .navigationBarBackButtonHidden()
         }
     }
-    
-//    func invited(profile: String,peerId: MCPeerID){
-//        isInvited = true
-//        time = 15
-//        cooldown()
-//    }
     
     private func cooldown(){
         if time > 0 {
@@ -374,14 +341,14 @@ struct LegacySceneView: UIViewRepresentable {
         view.scene = scene
         view.backgroundColor = UIColor.clear
 //        view.pointOfView = cameraNode
-        view.allowsCameraControl = true
+//        view.allowsCameraControl = true
 //        view.autoenablesDefaultLighting = true
-        view.isUserInteractionEnabled = true
+        view.isUserInteractionEnabled = false
 //        view.isMultipleTouchEnabled = false
         
-//        let panGesture = UIPanGestureRecognizer(target: context.coordinator, action: #selector(Coordinator.handlePan(_:)))
-//        view.addGestureRecognizer(panGesture)
-//        
+        //        let panGesture = UIPanGestureRecognizer(target: context.coordinator, action: #selector(Coordinator.handlePan(_:)))
+        //        view.addGestureRecognizer(panGesture)
+        //
         return view
     }
     
@@ -389,28 +356,28 @@ struct LegacySceneView: UIViewRepresentable {
         // ... existing code ...
     }
     
-// 
-//
-//    class Coordinator: NSObject {
-//            var parent: LegacySceneView
-//            
-//            init(_ parent: LegacySceneView) {
-//                self.parent = parent
-//            }
-//            
-//            @objc func handlePan(_ gesture: UIPanGestureRecognizer) {
-//                let translation = gesture.translation(in: gesture.view!)
-//                let x = Float(translation.x)
-//                
-//                if let modelNode = parent.scene.rootNode.childNode(withName: "rock", recursively: true) {
-//                    var newAngleY = (x * Float(Double.pi)) / 180.0
-//                    newAngleY += parent.currentAngleY
-//                    modelNode.eulerAngles.y = newAngleY
-//                    
-//                    if gesture.state == .ended {
-//                        parent.currentAngleY = newAngleY
-//                    }
-//                }
-//            }
-//        }
+    // 
+    //
+    //    class Coordinator: NSObject {
+    //            var parent: LegacySceneView
+    //
+    //            init(_ parent: LegacySceneView) {
+    //                self.parent = parent
+    //            }
+    //
+    //            @objc func handlePan(_ gesture: UIPanGestureRecognizer) {
+    //                let translation = gesture.translation(in: gesture.view!)
+    //                let x = Float(translation.x)
+    //
+    //                if let modelNode = parent.scene.rootNode.childNode(withName: "rock", recursively: true) {
+    //                    var newAngleY = (x * Float(Double.pi)) / 180.0
+    //                    newAngleY += parent.currentAngleY
+    //                    modelNode.eulerAngles.y = newAngleY
+    //
+    //                    if gesture.state == .ended {
+    //                        parent.currentAngleY = newAngleY
+    //                    }
+    //                }
+    //            }
+    //        }
 }

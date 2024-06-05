@@ -9,30 +9,29 @@ import SwiftUI
 
 struct ResultView: View {
     @Binding var multiPeerSession: MultipeerSession
-    @Binding var room: Room
     @State var winner: String = ""
     
     var body: some View {
         NavigationStack {
             GeometryReader { gp in
-                VStack(alignment: .center) {
+                VStack(alignment: .center, spacing: 0) {
                     
                     Text("THE WINNER:")
                         .fontWeight(.bold)
                         .font(.system(size: 44))
                         .foregroundStyle(.white)
                         .padding(.top, 10)
+                        .padding(.bottom, 0)
                     
                     //MARK: Trophy
-                    Image(systemName: "trophy.fill")
-                        .resizable()
-                        .foregroundStyle(.yellow)
-                        .frame(width: 150, height: 150)
-                    
+                    LegacySceneView(scene: Self.loadScene(named: "art.scnassets/models/champion.scn"))
+                        .frame(width: gp.size.width)
+//                        .background(.white)
+                        .padding(10)
+//                        .offset(y: -10)
                     SkewedRoundedRectangle(topLeftYOffset: -2, topRightXOffset: 5, topRightYOffset: 1, bottomLeftXOffset: -2, cornerRadius: 15)
                         .frame(height: 60)
                         .padding(.horizontal, 90)
-                        .padding(.vertical, 30)
                         .foregroundStyle(winner == "DRAW" ? Color.tersierGradient : winner == "RED TEAM" ? Color.redGradient : Color.blueGradient)
                         .overlay(
                             Text(winner)
@@ -40,6 +39,7 @@ struct ResultView: View {
                                 .fontWeight(.bold)
                                 .font(.system(size: 32))
                         )
+                        .padding(.bottom, 30)
                     
                     HStack(spacing: 20) {
                         // MARK: Red team score
@@ -48,7 +48,7 @@ struct ResultView: View {
                                 .frame(height: 40)
                                 .foregroundStyle(Color.redGradient)
                                 .overlay(
-                                    Text("\(room.teams[0].players.map{$0.point}.reduce(0, +))")
+                                    Text("\(multiPeerSession.room.teams[0].players.map{$0.point}.reduce(0, +))")
                                         .foregroundStyle(.white)
                                         .fontWeight(.bold)
                                         .font(.system(size: 24))
@@ -57,7 +57,7 @@ struct ResultView: View {
                                 )
                             
                             List {
-                                ForEach(room.teams[0].players.sorted { $0.point > $1.point }, id: \.peerID) { player in
+                                ForEach(multiPeerSession.room.teams[0].players.sorted { $0.point > $1.point }, id: \.peerID) { player in
                                     HStack(alignment: .center) {
                                         Circle()
                                             .foregroundStyle(Color.lightRed)
@@ -111,7 +111,7 @@ struct ResultView: View {
                                 .frame(height: 35)
                                 .foregroundStyle(Color.blueGradient)
                                 .overlay(
-                                    Text("\(room.teams[1].players.map{$0.point}.reduce(0, +))")
+                                    Text("\(multiPeerSession.room.teams[1].players.map{$0.point}.reduce(0, +))")
                                         .foregroundStyle(.white)
                                         .fontWeight(.bold)
                                         .font(.system(size: 24))
@@ -120,7 +120,7 @@ struct ResultView: View {
                                 )
                             
                             List {
-                                ForEach(room.teams[1].players.sorted { $0.point > $1.point }, id: \.peerID) { player in
+                                ForEach(multiPeerSession.room.teams[1].players.sorted { $0.point > $1.point }, id: \.peerID) { player in
                                     HStack(alignment: .center) {
                                         Circle()
                                             .foregroundStyle(Color.lightBlue)
@@ -186,7 +186,7 @@ struct ResultView: View {
                     })
                     .padding(.top, 30)
                     
-                    NavigationLink(destination: RoomView(multiPeerSession: $multiPeerSession, room: room),label:{
+                    NavigationLink(destination: RoomView(multiPeerSession: $multiPeerSession, myself:Player(peerID: multiPeerSession.getPeerId(), profile:"lancelot-avatar", status: .connected, point: 0)),label:{
                         SkewedRoundedRectangle(topRightYOffset: -5, bottomRightXOffset: 3, bottomRightYOffset: 3, bottomLeftXOffset: 6, cornerRadius: 20)
                             .frame(maxHeight: 75)
                             .padding(.horizontal, 50)
@@ -206,8 +206,8 @@ struct ResultView: View {
             .background(Color.primaryGradient)
         }
         .onAppear(perform: {
-            let redTeamScore = room.teams[0].players.reduce(0) { $0 + $1.point }
-            let blueTeamScore = room.teams[1].players.reduce(0) { $0 + $1.point }
+            let redTeamScore = multiPeerSession.room.teams[0].players.reduce(0) { $0 + $1.point }
+            let blueTeamScore = multiPeerSession.room.teams[1].players.reduce(0) { $0 + $1.point }
             if redTeamScore == blueTeamScore {
                 winner = "DRAW"
             }

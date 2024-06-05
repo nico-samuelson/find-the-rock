@@ -144,12 +144,12 @@ extension MultipeerSession: ARSCNViewDelegate, ARSessionDelegate {
     
     // MARK: - AR session management
     private func loadRockModel() -> SCNNode {
-        let sceneURL = Bundle.main.url(forResource: "rock", withExtension: "scn", subdirectory: "art.scnassets/models")!
+        let sceneURL = Bundle.main.url(forResource: "rock-2", withExtension: "scn", subdirectory: "art.scnassets/models")!
         let referenceNode = SCNReferenceNode(url: sceneURL)!
         referenceNode.load()
         
         // adjust scale
-        let scale: Float = 0.1
+        let scale: Float = 0.05
         referenceNode.scale = SCNVector3(x: scale, y: scale, z: scale)
         referenceNode.name = "Rock SCNNode"
         
