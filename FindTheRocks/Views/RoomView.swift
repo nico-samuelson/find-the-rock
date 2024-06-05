@@ -97,24 +97,24 @@ struct RoomView: View {
                                             .rotationEffect(.degrees(-0.48))
                                         
                                         Spacer()
-                                        
-                                        SkewedRoundedRectangle(topRightYOffset: 0.5, bottomRightYOffset: -0.5, bottomLeftXOffset: 0.5,
-                                                               topLeftCornerRadius: 10,
-                                                               topRightCornerRadius: 10,
-                                                               bottomLeftCornerRadius: 10,
-                                                               bottomRightCornerRadius: 10)
-                                        .foregroundStyle(.white)
-                                        .frame(width: 25, height: 25)
-                                        .overlay(
-                                            Image(systemName: "xmark")
-                                                .resizable()
-                                                .frame(width: 10, height: 10)
-                                                .foregroundStyle(Color.primaryGradient)
-                                        )
-                                        .onTapGesture{
-                                           kickPlayer(player: player)
+                                        if player.peerID != multiPeerSession.getPeerId() {
+                                            SkewedRoundedRectangle(topRightYOffset: 0.5, bottomRightYOffset: -0.5, bottomLeftXOffset: 0.5,
+                                                                   topLeftCornerRadius: 10,
+                                                                   topRightCornerRadius: 10,
+                                                                   bottomLeftCornerRadius: 10,
+                                                                   bottomRightCornerRadius: 10)
+                                            .foregroundStyle(.white)
+                                            .frame(width: 25, height: 25)
+                                            .overlay(
+                                                Image(systemName: "xmark")
+                                                    .resizable()
+                                                    .frame(width: 10, height: 10)
+                                                    .foregroundStyle(Color.primaryGradient)
+                                            )
+                                            .onTapGesture{
+                                                kickPlayer(player: player)
+                                            }
                                         }
-                                        
                                         SkewedRoundedRectangle(topRightYOffset: 0.5, bottomRightYOffset: -0.5, bottomLeftXOffset: 0.5,
                                                                topLeftCornerRadius: 10,
                                                                topRightCornerRadius: 10,
@@ -185,21 +185,23 @@ struct RoomView: View {
                                             assignToTeam(player: player, to: 0)
                                         }
                                         
-                                        SkewedRoundedRectangle(topRightYOffset: 0.5, bottomRightYOffset: -0.5, bottomLeftXOffset: 0.5,
-                                                               topLeftCornerRadius: 10,
-                                                               topRightCornerRadius: 10,
-                                                               bottomLeftCornerRadius: 10,
-                                                               bottomRightCornerRadius: 10)
-                                        .foregroundStyle(.white)
-                                        .frame(width: 25, height: 25)
-                                        .overlay(
-                                            Image(systemName: "xmark")
-                                                .resizable()
-                                                .frame(width: 10, height: 10)
-                                                .foregroundStyle(Color.primaryGradient)
-                                        )
-                                        .onTapGesture{
-                                            kickPlayer(player: player)
+                                        if player.peerID != multiPeerSession.getPeerId() {
+                                            SkewedRoundedRectangle(topRightYOffset: 0.5, bottomRightYOffset: -0.5, bottomLeftXOffset: 0.5,
+                                                                   topLeftCornerRadius: 10,
+                                                                   topRightCornerRadius: 10,
+                                                                   bottomLeftCornerRadius: 10,
+                                                                   bottomRightCornerRadius: 10)
+                                            .foregroundStyle(.white)
+                                            .frame(width: 25, height: 25)
+                                            .overlay(
+                                                Image(systemName: "xmark")
+                                                    .resizable()
+                                                    .frame(width: 10, height: 10)
+                                                    .foregroundStyle(Color.primaryGradient)
+                                            )
+                                            .onTapGesture{
+                                                kickPlayer(player: player)
+                                            }
                                         }
                                         
                                         Spacer()
