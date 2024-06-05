@@ -70,7 +70,7 @@ class MultipeerSession: NSObject {
     }
     
     func sendToAllPeers(_ data: Data) {
-//        print("connected: ", self.session.connectedPeers)
+        //        print("connected: ", self.session.connectedPeers)
         do {
             try session.send(data, toPeers: session.connectedPeers, with: .reliable)
         } catch {
@@ -118,7 +118,7 @@ class MultipeerSession: NSObject {
             myTeam = 1
         }
         
-//        print("my team: ", myTeam)
+        //        print("my team: ", myTeam)
         return myTeam
     }
     
@@ -177,7 +177,7 @@ class MultipeerSession: NSObject {
     func joinRoom(){
         serviceAdvertiser.stopAdvertisingPeer()
         serviceAdvertiser.delegate = nil
-
+        
         serviceAdvertiser = MCNearbyServiceAdvertiser(peer:self.myPeerID,discoveryInfo: ["room":self.room.name],serviceType: serviceBrowser.serviceType)
         serviceAdvertiser.delegate = self
         serviceAdvertiser.startAdvertisingPeer()
@@ -189,9 +189,9 @@ class MultipeerSession: NSObject {
         print("sending destroyed")
         sendToAllPeers("destroyed".data(using:.utf8)!)
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    self.quitRoom()
-                    self.isMaster = false
-                }
+            self.quitRoom()
+            self.isMaster = false
+        }
     }
     
     func quitRoom(){
@@ -218,15 +218,15 @@ class MultipeerSession: NSObject {
     }
     
     func disconnect() {
-//        if data == "disconnected" {
-            serviceBrowser.stopBrowsingForPeers()
-            serviceAdvertiser.stopAdvertisingPeer()
-            
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-                self.serviceBrowser.startBrowsingForPeers()
-                self.serviceBrowser.stopBrowsingForPeers()
-            }
-//        }
+        //        if data == "disconnected" {
+        serviceBrowser.stopBrowsingForPeers()
+        serviceAdvertiser.stopAdvertisingPeer()
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+            self.serviceBrowser.startBrowsingForPeers()
+            self.serviceBrowser.stopBrowsingForPeers()
+        }
+        //        }
     }
     
     
@@ -238,29 +238,29 @@ class MultipeerSession: NSObject {
         
         // Get current device transform (position and orientation)
         let currentTransform = currentFrame.camera.transform
-
+        
         // Extract the translation and rotation components of the current transform
         let currentTranslation = currentTransform.columns.3
         let currentRotation = simd_quatf(currentTransform)
-
+        
         // Extract the translation and rotation components of the received anchor's transform
         let anchorTranslation = anchor.transform.columns.3
         let anchorRotation = simd_quatf(anchor.transform)
-
+        
         // Calculate the new position: your current position + the relative position of the anchor
         let newTranslation = currentTranslation + anchorTranslation
-
+        
         // Combine the rotations: your current rotation * anchor's rotation
         let newRotation = currentRotation * anchorRotation
-
+        
         // Construct the new transform with the combined translation and rotation
         var newTransform = matrix_identity_float4x4
         newTransform.columns.3 = newTranslation
         newTransform = matrix_float4x4(newRotation)
         newTransform.columns.3 = newTranslation
         
-//        print(anchor.name)
-
+        //        print(anchor.name)
+        
         // Create a new anchor with the transformed position and orientation
         let newAnchor = ARAnchor(name: anchor.name!, transform: anchor.transform)
         
@@ -275,47 +275,48 @@ class MultipeerSession: NSObject {
         
         self.sceneView.session.run(configuration, options: [.resetTracking, .removeExistingAnchors])
         
-//        print("map rock name: ", sceneView.session.currentFrame?.anchors.map { $0.name})
-//        print("map rock transform: ", sceneView.session.currentFrame?.anchors.map {$0.transform})
-//        print("received from map rock identifier: ", map.anchors.map {$0.identifier})
-//        print("initial world rock transform: ", configuration.initialWorldMap?.anchors.map {$0.transform})
-//        print("rock identifier: ", self.room.teams[1].realPlanted[0].anchor.identifier)
-//        print("rock transform: ", self.room.teams[1].realPlanted[0].anchor.transform)
+        //        print("map rock name: ", sceneView.session.currentFrame?.anchors.map { $0.name})
+        //        print("map rock transform: ", sceneView.session.currentFrame?.anchors.map {$0.transform})
+        //        print("received from map rock identifier: ", map.anchors.map {$0.identifier})
+        //        print("initial world rock transform: ", configuration.initialWorldMap?.anchors.map {$0.transform})
+        //        print("rock identifier: ", self.room.teams[1].realPlanted[0].anchor.identifier)
+        //        print("rock transform: ", self.room.teams[1].realPlanted[0].anchor.transform)
         
         let allRocks = self.room.teams[0].fakePlanted + self.room.teams[0].realPlanted + self.room.teams[1].fakePlanted + self.room.teams[1].realPlanted
         
-//        scene
+        //        scene
         
-//        if let anchors = configuration.initialWorldMap?.anchors {
-            for rock in allRocks {
-//                print("rock transform: ", rock.anchor.transform)
-//                print("Map rock transform: ", map.anchors.first(where: {$0.identifier == rock.anchor.identifier})?.transform)
-//                print("AR frame rock transform: ", sceneView.session.currentFrame?.anchors.first(where: {$0.identifier == rock.anchor.identifier})?.transform)
-                if let name = rock.anchor.name, name.hasPrefix("rock"), let newAnchor = alignNewAnchor(anchor: rock.anchor) {
-                    sceneView.session.add(anchor: newAnchor)
-                    
-                    //                    sceneView.session.currentFrame?.anchors.removeAll(where: { $0.identifier == anchor.identifier })
-                    //                    configuration.initialWorldMap?.anchors.removeAll(where: { $0.identifier == anchor.identifier })
-                }
+        //        if let anchors = configuration.initialWorldMap?.anchors {
+        for rock in allRocks {
+            //                print("rock transform: ", rock.anchor.transform)
+            //                print("Map rock transform: ", map.anchors.first(where: {$0.identifier == rock.anchor.identifier})?.transform)
+            //                print("AR frame rock transform: ", sceneView.session.currentFrame?.anchors.first(where: {$0.identifier == rock.anchor.identifier})?.transform)
+            if let name = rock.anchor.name, name.hasPrefix("rock"), let newAnchor = alignNewAnchor(anchor: rock.anchor) {
+                sceneView.session.add(anchor: newAnchor)
+                
+                //                    sceneView.session.currentFrame?.anchors.removeAll(where: { $0.identifier == anchor.identifier })
+                //                    configuration.initialWorldMap?.anchors.removeAll(where: { $0.identifier == anchor.identifier })
             }
-//        }
+        }
+        //        }
     }
     
     func receiveCollaborationData(_ collaborationData: ARSession.CollaborationData) {
         print("received collaboration data")
-//        collaborationData.
+        //        collaborationData.
         self.sceneView.session.update(with: collaborationData)
         
-//        guard let anchors = sceneView.session.currentFrame?.anchors else { return }
-//        for anchor in anchors {
-//            
-//        }
+        //        guard let anchors = sceneView.session.currentFrame?.anchors else { return }
+        //        for anchor in anchors {
+        //
+        //        }
     }
-//    func receive
+    //    func receive
 }
 
 // MARK: Received Data Handler
 extension MultipeerSession: MCSessionDelegate {
+    
     func session(_ session: MCSession, peer peerID: MCPeerID, didChange state: MCSessionState) {
         switch state {
         case .notConnected:
@@ -387,34 +388,35 @@ extension MultipeerSession: MCSessionDelegate {
                     handleDataRoom(room)
                 case let data as Data:
                     handleDataString(String(decoding: data, as: UTF8.self))
-//                    case let anchor as ARAnchor:
-//                addNewObject(anchor: anchor)
-            case let newRoom as Room:
-                if (!isUpdatingWorldMap) {
-                    self.isUpdatingWorldMap = true
-                    self.room = newRoom
-                    self.isUpdatingWorldMap = false
+                    //                    case let anchor as ARAnchor:
+                    //                addNewObject(anchor: anchor)
+                case let newRoom as Room:
+                    if (!isUpdatingWorldMap) {
+                        self.isUpdatingWorldMap = true
+                        self.room = newRoom
+                        self.isUpdatingWorldMap = false
+                    }
+                    
+                case let map as ARWorldMap:
+                    //                print("able to receive map: ", !self.isUpdatingWorldMap)
+                    if (!isUpdatingWorldMap) {
+                        self.isUpdatingWorldMap = true
+                        setWorldMap(map: map)
+                        self.isUpdatingWorldMap = false
+                    }
+                    //            case let collaborationData as ARSession.CollaborationData:
+                    //                self.isUpdatingWorldMap = true
+                    //                receiveCollaborationData(collaborationData)
+                    //                self.isUpdatingWorldMap = false
+                default:
+                    print("unknown type received")
                 }
-                
-            case let map as ARWorldMap:
-//                print("able to receive map: ", !self.isUpdatingWorldMap)
-                if (!isUpdatingWorldMap) {
-                    self.isUpdatingWorldMap = true
-                    setWorldMap(map: map)
-                    self.isUpdatingWorldMap = false
-                }
-//            case let collaborationData as ARSession.CollaborationData:
-//                self.isUpdatingWorldMap = true
-//                receiveCollaborationData(collaborationData)
-//                self.isUpdatingWorldMap = false
-            default:
-                print("unknown type received")
             }
+            //            catch {
+            //                print(error.localizedDescription)
+            //            }
+            
         }
-        catch {
-            print(error.localizedDescription)
-        }
-        
     }
     
     func session(_ session: MCSession, didReceive stream: InputStream, withName streamName: String, fromPeer peerID: MCPeerID) {

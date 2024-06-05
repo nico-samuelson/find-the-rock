@@ -201,13 +201,14 @@ class ARController: UIViewController {
     }
     
     @objc func handleLongPress(_ gesture: UITapGestureRecognizer) {
-        if gesture.state == .ended {
+        if gesture.state == .ended { 
             let touchLocation = gesture.location(in: multipeerSession.sceneView)
             
             let hitTestOptions: [SCNHitTestOption: Any] = [.boundingBoxOnly: true]
             let hitTestResults = multipeerSession.sceneView.hitTest(touchLocation, options: hitTestOptions)
             
             if let longPressedNode = hitTestResults.lazy.compactMap{ result in return result.node}.first {
+                
                 
                 longPressedNode.removeFromParentNode()
                 print("\(longPressedNode) berhasil ditekan")
@@ -223,6 +224,8 @@ class ARController: UIViewController {
             // only send data when there's no world update
             if (!self.multipeerSession.isUpdatingWorldMap) {
                 self.multipeerSession.isUpdatingWorldMap = true
+                
+                print("anchor to be send: ", anchor.transform)
                 
                 // send room data
                 guard let room = try? NSKeyedArchiver.archivedData(withRootObject: self.multipeerSession.room, requiringSecureCoding: true)
