@@ -29,6 +29,8 @@ class ARController: UIViewController {
     override func viewDidLoad() {
         print("ARController Running...")
         
+        print("loaded nodes: ", multipeerSession.sceneView.scene.rootNode.childNodes.map { $0.hashValue })
+        
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleSceneTap))
         let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress))
 
@@ -75,6 +77,8 @@ class ARController: UIViewController {
         let configuration = ARWorldTrackingConfiguration()
         configuration.planeDetection = [.horizontal, .vertical]
         multipeerSession.sceneView.session.run(configuration)
+        
+    
         
         // Set a delegate to track the number of plane anchors for providing UI feedback.
         multipeerSession.sceneView.session.delegate = multipeerSession
@@ -176,7 +180,6 @@ class ARController: UIViewController {
             .hitTest(sender.location(in: multipeerSession.sceneView), types: [.existingPlaneUsingGeometry, .estimatedHorizontalPlane])
             .first
         else { return }
-        
         // Place an anchor for a virtual character. The model appears in renderer(_:didAdd:for:).
 //        print("tap"
         let anchor = ARAnchor(name: "rockARAnchor", transform: hitTestResult.worldTransform)
@@ -187,6 +190,7 @@ class ARController: UIViewController {
         else { print("babi"); return }
         
         print("taptap")
+        print(anchor.transform)
         
         if self.multipeerSession.isMaster {
             self.multipeerSession.handleAnchorChange(anchor, "add", !self.multipeerSession.isPlantingFakeRock, self.multipeerSession.peerID)
@@ -222,18 +226,49 @@ class ARController: UIViewController {
         if gesture.state == .ended { 
             let touchLocation = gesture.location(in: multipeerSession.sceneView)
             
-            let hitTestOptions: [SCNHitTestOption: Any] = [.boundingBoxOnly: true]
+            let hitTestOptions: [SCNHitTestOption: Any] = [.firstFoundOnly: true]
             let hitTestResults = multipeerSession.sceneView.hitTest(touchLocation, options: hitTestOptions)
             
-            if let longPressedNode = hitTestResults.lazy.compactMap{ result in return result.node}.first {
+//            print(hitTestResults)
+            print("root node names: ", multipeerSession.sceneView.scene.rootNode.childNodes.map { $0.childNodes.map { $0.name } })
+            
+//            print("hit test results: ", hitTestResults)
+//            hitTestResults.first.
+//            print("hit test result: ", hitTestResults.map { $0.node.childNodes.map {$0.childNodes.map {$0.name}}})
+            print("hit test result: ", hitTestResults.map { $0.node.parent?.name })
+            if let longPressedNode = hitTestResults.map { $0.node }.first {
                 
+//                print(longPressedNode.worldTransform)
+//                print(longPressedNode.simdWorldTransform)
                 
-                longPressedNode.removeFromParentNode()
-                print("\(longPressedNode) berhasil ditekan")
-
+//                print(long)
+                longPressedNode.parent?.parent?.removeFromParentNode()
+//                print("\(longPressedNode) berhasil ditekan")
+                
+                for rock in multipeerSession.room.getAllPlantedRocks() {
+//                    print("pressed node name: ", longPressedNode.childNodes.map {$0.name})
+//                    print(rock.anchor.identifier)
+                    if rock.anchor.identifier == UUID(uuidString: longPressedNode.parent?.name ?? "") {
+                        print("anchor found")
+                        guard let anchor = try? NSKeyedArchiver.archivedData(withRootObject: CustomAnchor(anchor: rock.anchor, action: "remove", isReal: rock.isFake), requiringSecureCoding: true)
+                        else { return }
+                        
+                        if self.multipeerSession.isMaster {
+                            self.multipeerSession.handleAnchorChange(rock.anchor, "remove", !self.multipeerSession.isPlantingFakeRock, self.multipeerSession.peerID)
+                        }
+                        else {
+                            self.multipeerSession.sendToAllPeers(anchor)
+                        }
+//                        self.multipeerSession.sendToAllPeers(anchor)
+                    }
+//                    if rock.anchor.transform == longPressedNode.simdWorldTransform {
+//
+//                    }
+                }
             } else  {
                 print("tidak ditemukan object yang tertekan")
             }
+            print("root node names: ", multipeerSession.sceneView.scene.rootNode.childNodes.map { $0.childNodes.map { $0.name } })
         }
     }
     

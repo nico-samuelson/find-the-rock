@@ -20,7 +20,7 @@ class MultipeerSession: NSObject {
     private var serviceAdvertiser: MCNearbyServiceAdvertiser!
     private var serviceBrowser: MCNearbyServiceBrowser!
     private var nearbyPeers: [Player] = []
-    var isMaster:Bool = false
+    var isMaster: Bool = true
     private var isJoined:Bool = false
     var showInviteModal: ((String,MCPeerID, @escaping (Bool)->Void) -> Void)?
     var showDestroyModal: ((String)->Void)?
@@ -331,11 +331,6 @@ extension MultipeerSession: MCSessionDelegate {
     func handleAnchorChange(_ newAnchor: ARAnchor, _ mode: String, _ isReal: Bool, _ sender: MCPeerID) {
         let team = self.getTeam(sender)
         
-//        guard let addedAnchor = alignNewAnchor(anchor: anchor) else {
-//            print("can't align new anchor")
-//            return
-//        }
-        
         guard isMaster else { return }
         if (mode == "add") {
             if (isReal && room.teams[team].realPlanted.count + 1 <= room.realRock) {
@@ -369,27 +364,35 @@ extension MultipeerSession: MCSessionDelegate {
     
     // players will receive the world map from master
     func receiveWorldMap(data: ARData) {
-        print("receive new world map and room data")
-        let configuration = ARWorldTrackingConfiguration()
-        configuration.planeDetection = [.horizontal, .vertical]
-        configuration.initialWorldMap = data.map
-        configuration.initialWorldMap?.anchors.removeAll()
-        configuration.worldAlignment = .gravityAndHeading
-        
-        self.room = data.room
-        self.sceneView.session.run(configuration, options: [.resetTracking, .removeExistingAnchors])
-        
-        let allRocks = self.room.teams[0].fakePlanted + self.room.teams[0].realPlanted + self.room.teams[1].fakePlanted + self.room.teams[1].realPlanted
-        
-        print(allRocks.count)
-        
-        for rock in allRocks {
-            sceneView.session.add(anchor: rock.anchor)
-//            if let name = rock.anchor.name, name.hasPrefix("rock"), let newAnchor = alignNewAnchor(anchor: rock.anchor) {
-//                print(name)
-//                sceneView.session.add(anchor: rock.anchor)
-//            }
+        if (!isMaster) {
+            print("receive new world map and room data")
+            let configuration = ARWorldTrackingConfiguration()
+            configuration.planeDetection = [.horizontal, .vertical]
+            configuration.initialWorldMap = data.map
+            configuration.initialWorldMap?.anchors.removeAll()
+            configuration.worldAlignment = .gravityAndHeading
+            
+            self.room = data.room
+            
+    //        for rock in room.getAllPlantedRocks() {
+    //            guard let alignedAnchor = alignNewAnchor(anchor: rock.anchor) else { return }
+    //            rock.anchor = alignedAnchor
+    //        }
+            self.sceneView.session.run(configuration, options: [.resetTracking, .removeExistingAnchors])
+            
+            let allRocks = room.getAllPlantedRocks()
+            
+            print(allRocks.count)
+            
+            for rock in allRocks {
+                sceneView.session.add(anchor: rock.anchor)
+    //            if let name = rock.anchor.name, name.hasPrefix("rock"), let newAnchor = alignNewAnchor(anchor: rock.anchor) {
+    //                print(name)
+    //                sceneView.session.add(anchor: rock.anchor)
+    //            }
+            }
         }
+        
     }
     
     func session(_ session: MCSession, didReceive data: Data, fromPeer peerID: MCPeerID) {

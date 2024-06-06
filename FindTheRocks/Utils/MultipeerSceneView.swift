@@ -21,17 +21,26 @@ extension MultipeerSession: ARSCNViewDelegate, ARSessionDelegate {
         self.cameraPosition = SCNVector3(cameraTransform.m41, cameraTransform.m42, cameraTransform.m43)
         
         if let name = anchor.name, name.hasPrefix("rock") {
+            
+            print(sceneView.scene.rootNode.childNodes.count)
 //            print(node.)
 //            print(node.position)
-            print(anchor.transform)
+//            print(anchor.transform)
 //            print(node.simdWorldTransform)
 //            print(node.simdTransform)
 //            print("new anchor added")
             // load rock model
             let pandaNode = loadRockModel()
             pandaNode.renderingOrder = 0
-            pandaNode.name = "Rock Node"
+//            pandaNode.name = "Rock Node"
+            pandaNode.name = anchor.identifier.uuidString
             node.addChildNode(pandaNode)
+//            print(node.name)
+//            print(
+//            print(sceneView.scene.rootNode.childNodes.map { $0.name })
+//            sceneView.scene.rootNode.childNodes[sceneView.scene.rootNode.childNodes.count - 1].removeFromParentNode()
+            sceneView.scene.rootNode.addChildNode(node)
+//            print(sceneView.scene.rootNode.childNodes.map { $0.name })
             
 //            print(anchor.transform)s
             
@@ -136,10 +145,7 @@ extension MultipeerSession: ARSCNViewDelegate, ARSessionDelegate {
     // MARK: Update Model Visibility
     func updateRock() {
         guard let cameraPosition = self.cameraPosition else { return }
-        var allRocksPlanted = self.room.teams[0].fakePlanted
-        allRocksPlanted += self.room.teams[0].realPlanted
-        allRocksPlanted += self.room.teams[1].fakePlanted
-        allRocksPlanted += self.room.teams[1].realPlanted
+        let allRocksPlanted = room.getAllPlantedRocks()
         
         for rock in allRocksPlanted {
             let distance = SCNVector3Distance(vectorStart: cameraPosition, vectorEnd: SCNVector3(x: rock.anchor.transform.columns.3.x, y: rock.anchor.transform.columns.3.y, z: rock.anchor.transform.columns.3.z))
@@ -150,13 +156,19 @@ extension MultipeerSession: ARSCNViewDelegate, ARSessionDelegate {
     // MARK: - AR session management
     private func loadRockModel() -> SCNNode {
         let sceneURL = Bundle.main.url(forResource: "rock-2", withExtension: "scn", subdirectory: "art.scnassets/models")!
-        let referenceNode = SCNReferenceNode(url: sceneURL)!
-        referenceNode.load()
         
+//        sceneURL
+        let referenceNode = SCNReferenceNode(url: sceneURL)!
+        
+        referenceNode.name = "Rock SCNNode"
         // adjust scale
         let scale: Float = 0.05
         referenceNode.scale = SCNVector3(x: scale, y: scale, z: scale)
-        referenceNode.name = "Rock SCNNode"
+        
+        referenceNode.load()
+        
+        
+       
         
         return referenceNode
     }
