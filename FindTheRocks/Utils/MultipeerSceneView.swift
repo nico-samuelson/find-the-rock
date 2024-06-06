@@ -20,41 +20,17 @@ extension MultipeerSession: ARSCNViewDelegate, ARSessionDelegate {
         self.cameraTransform = SCNMatrix4(frame.camera.transform)
         self.cameraPosition = SCNVector3(cameraTransform.m41, cameraTransform.m42, cameraTransform.m43)
         
-        if let name = anchor.name, name.hasPrefix("rock") {
-            
+        if let name = anchor.name, name.contains("rock") {
             print(sceneView.scene.rootNode.childNodes.count)
-//            print(node.)
-//            print(node.position)
-//            print(anchor.transform)
-//            print(node.simdWorldTransform)
-//            print(node.simdTransform)
-//            print("new anchor added")
             // load rock model
-            let pandaNode = loadRockModel()
+            let pandaNode = name.hasPrefix("fake") ? loadRockModel(false): loadRockModel(true)
             pandaNode.renderingOrder = 0
-//            pandaNode.name = "Rock Node"
             pandaNode.name = anchor.identifier.uuidString
             node.addChildNode(pandaNode)
-//            print(node.name)
-//            print(
-//            print(sceneView.scene.rootNode.childNodes.map { $0.name })
-//            sceneView.scene.rootNode.childNodes[sceneView.scene.rootNode.childNodes.count - 1].removeFromParentNode()
             sceneView.scene.rootNode.addChildNode(node)
-//            print(sceneView.scene.rootNode.childNodes.map { $0.name })
-            
-//            print(anchor.transform)s
             
             // create new rock model
             let rock = Rock(isFake: self.isPlantingFakeRock, anchor: anchor)
-//            
-//            if (self.isPlantingFakeRock) {
-////                print("fake")
-//                self.room.teams[self.getMyTeam()].fakePlanted.append(rock)
-//            }
-//            else {
-////                print("real")
-//                self.room.teams[self.getMyTeam()].realPlanted.append(rock)
-//            }
         }
     }
     
@@ -154,9 +130,8 @@ extension MultipeerSession: ARSCNViewDelegate, ARSessionDelegate {
     }
     
     // MARK: - AR session management
-    private func loadRockModel() -> SCNNode {
-        let sceneURL = Bundle.main.url(forResource: "rock-2", withExtension: "scn", subdirectory: "art.scnassets/models")!
-        
+    private func loadRockModel(_ isReal: Bool) -> SCNNode {
+        let sceneURL = isReal ? Bundle.main.url(forResource: "rock-1", withExtension: "scn", subdirectory: "art.scnassets/models")! : Bundle.main.url(forResource: "rock-2", withExtension: "scn", subdirectory: "art.scnassets/models")!
 //        sceneURL
         let referenceNode = SCNReferenceNode(url: sceneURL)!
         
@@ -167,8 +142,6 @@ extension MultipeerSession: ARSCNViewDelegate, ARSessionDelegate {
         
         referenceNode.load()
         
-        
-       
         
         return referenceNode
     }

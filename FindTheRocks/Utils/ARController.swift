@@ -134,7 +134,8 @@ class ARController: UIViewController {
             else { return }
             
             // Place an anchor for a virtual character. The model appears in renderer(_:didAdd:for:).
-            let anchor = ARAnchor(name: "rockARAnchor", transform: hitTestResult.worldTransform)
+            let anchor = multipeerSession.isPlantingFakeRock ? ARAnchor(name: "fakerockARAnchor", transform: hitTestResult.worldTransform) : ARAnchor(name: "rockARAnchor", transform: hitTestResult.worldTransform)
+            
             let newAnchor = CustomAnchor(anchor: anchor, action: "add", isReal: !self.multipeerSession.isPlantingFakeRock)
             
             guard let data = try? NSKeyedArchiver.archivedData(withRootObject: newAnchor, requiringSecureCoding: true)
