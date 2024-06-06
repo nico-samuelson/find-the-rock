@@ -11,10 +11,10 @@ import Foundation
 class Room: NSObject, NSCoding, NSSecureCoding {
     var name: String = "Player \(Int.random(in:1...100))"
     var teams: [Team] = [Team(), Team()]
-    var hideTime: Int = 0
-    var seekTime: Int = 0
-    var fakeRock: Int = 0
-    var realRock: Int = 0
+    var hideTime: Int = 10
+    var seekTime: Int = 10
+    var fakeRock: Int = 3
+    var realRock: Int = 3
     static var supportsSecureCoding: Bool = true
     
     func encode(with coder: NSCoder) {
@@ -62,5 +62,9 @@ class Room: NSObject, NSCoding, NSSecureCoding {
     
     private enum CodingKeys: String, CodingKey {
         case name, teams, hideTime, seekTime, fakeRock, realRock
+    }
+    
+    func getAllPlantedRocks() -> [Rock] {
+        return teams[0].fakePlanted + teams[0].realPlanted + teams[1].fakePlanted + teams[1].realPlanted
     }
 }

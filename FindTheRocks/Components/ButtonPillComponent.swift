@@ -13,7 +13,7 @@ struct ButtonPillComponent: View {
     @Binding var activeController:Int
     var body: some View {
         Text(value == 0 ? "∞" : "\(value) MIN")
-            .font(.custom("Roboto",size:15))
+            .font(.custom("Staatliches-Regular",size:22))
             .foregroundStyle(activeController == value ? .white : .init(red:142/255.0,green:111/255.0,blue:255/255.0))
             .bold()
             .padding(10)
