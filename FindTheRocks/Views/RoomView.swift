@@ -46,7 +46,7 @@ struct RoomView: View {
                 VStack(alignment: .leading) {
                     HStack {
                         Text(multiPeerSession.room.name)
-                            .font(.system(size: 40))
+                            .font(.custom("TitanOne",size: 40))
                             .fontWeight(.bold)
                             .foregroundStyle(.white)
                         Spacer()
@@ -72,7 +72,7 @@ struct RoomView: View {
                                     Text("RED TEAM")
                                         .foregroundStyle(.white)
                                         .fontWeight(.bold)
-                                        .font(.system(size: 24))
+                                        .font(.custom("Staatliches-Regular",size: 32))
                                         .rotationEffect(.degrees(-2))
                                         .offset(x: -2, y: -2)
                                 )
@@ -90,7 +90,7 @@ struct RoomView: View {
                                             }
                                         
                                         Text(player.peerID.displayName.uppercased())
-                                            .font(.system(size: 12))
+                                            .font(.custom("Staatliches-Regular",size: 21))
                                             .fontWeight(.medium)
                                             .lineLimit(0)
                                             .truncationMode(.tail)
@@ -160,7 +160,7 @@ struct RoomView: View {
                                     Text("BLUE TEAM")
                                         .foregroundStyle(.white)
                                         .fontWeight(.bold)
-                                        .font(.system(size: 24))
+                                        .font(.custom("Staatliches-Regular",size: 32))
                                         .rotationEffect(.degrees(-2))
                                         .offset(x: 2, y: -2)
                                 )
@@ -207,7 +207,7 @@ struct RoomView: View {
                                         Spacer()
                                         
                                         Text(player.peerID.displayName.uppercased())
-                                            .font(.system(size: 12))
+                                            .font(.custom("Staatliches-Regular",size: 21))
                                             .fontWeight(.medium)
                                             .lineLimit(0)
                                             .truncationMode(.tail)
@@ -245,7 +245,7 @@ struct RoomView: View {
                     
                     //MARK: Nearby
                     Text("Nearby")
-                        .font(.system(size: 40))
+                        .font(.custom("TitanOne",size: 38))
                         .fontWeight(.bold)
                         .foregroundStyle(.white)
                         .padding(10)
@@ -266,7 +266,7 @@ struct RoomView: View {
                                 Text(peer.peerID.displayName.uppercased())
                                     .foregroundStyle(.black)
                                     .fontWeight(.medium)
-                                    .font(.system(size: 20))
+                                    .font(.custom("Staatliches-Regular",size: 21))
                                     .padding(.leading, 5)
                                 
                                 Spacer()
@@ -280,7 +280,7 @@ struct RoomView: View {
                                             Text("INVITE")
                                                 .foregroundStyle(.white)
                                                 .fontWeight(.bold)
-                                                .font(.system(size: 16))
+                                                .font(.custom("Staatliches-Regular",size: 18))
                                         )
                                 }
                                 .padding(0)
@@ -324,7 +324,7 @@ struct RoomView: View {
                                 Text("BACK")
                                     .foregroundStyle(Color.primaryPurple)
                                     .fontWeight(.bold)
-                                    .font(.system(size: 40))
+                                    .font(.custom("Staatliches-Regular",size: 36))
                             )
                             .padding(.top, 30)
                     }
@@ -342,7 +342,7 @@ struct RoomView: View {
                                 Text("START")
                                     .foregroundStyle(Color.white)
                                     .fontWeight(.bold)
-                                    .font(.system(size: 40))
+                                    .font(.custom("Staatliches-Regular",size: 36))
                             )
                             .padding(.top, 15)
                             .padding(.bottom, 25)

@@ -14,7 +14,7 @@ struct CustomStepperComponent: View {
             ActionStepperComponent(action:"minus",value:$value)
             Spacer()
             Text("\(value) ROCKS")
-                .font(.custom("Roboto",size:15))
+                .font(.custom("Staatliches-Regular",size:20))
                 .foregroundStyle(Color.init(red:142/255.0,green:111/255.0,blue:255/255.0))
                 .bold()
                 .frame(width:160,height:40)
