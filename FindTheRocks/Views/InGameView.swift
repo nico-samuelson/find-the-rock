@@ -34,11 +34,11 @@ struct InGameView: View {
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     
     @Binding var multiPeerSession: MultipeerSession
-    @Binding var room: Room
+//    @Binding var room: Room
     
     func getPoint() {
-        redPoints = room.teams[0].players.reduce(0) { $0 + $1.point }
-        bluePoints = room.teams[1].players.reduce(0) { $0 + $1.point }
+        redPoints = multiPeerSession.room.teams[0].players.reduce(0) { $0 + $1.point }
+        bluePoints = multiPeerSession.room.teams[1].players.reduce(0) { $0 + $1.point }
     }
     
     func changeModeToInGame() {
@@ -86,7 +86,7 @@ struct InGameView: View {
                             // Score
                             HStack(spacing: 0) {
                                 VStack {
-                                    Text(mode == Mode.plant ? "\(room.teams[0].players.reduce(0) { $0 + $1.point })" : "")
+                                    Text(mode == Mode.plant ? "\(multiPeerSession.room.teams[0].players.reduce(0) { $0 + $1.point })" : "")
                                         .font(.custom("TitanOne", size: 40))
                                         .foregroundColor(Color.white)
                                 }
@@ -94,7 +94,7 @@ struct InGameView: View {
                                 .background(Color.redGradient)
                                 .cornerRadius(15, corners: [.topLeft])
                                 VStack {
-                                    Text(mode == Mode.plant ? "\(room.teams[1].players.reduce(0) { $0 + $1.point })" : "")
+                                    Text(mode == Mode.plant ? "\(multiPeerSession.room.teams[1].players.reduce(0) { $0 + $1.point })" : "")
                                         .font(.custom("TitanOne", size: 40))
                                         .foregroundColor(Color.white)
                                 }
@@ -203,6 +203,19 @@ struct InGameView: View {
             }
         }
         .background(Color.primaryGradient)
+    }
+}
+
+struct ARControllerRepresentable: UIViewControllerRepresentable {
+    @Binding var multipeerSession: MultipeerSession
+    
+    func makeUIViewController(context: Context) -> ARController {
+        // Return an instance of your ARController
+        return ARController(multipeerSession: multipeerSession)
+    }
+
+    func updateUIViewController(_ uiViewController: ARController, context: Context) {
+        // Update the view controller if needed
     }
 }
 

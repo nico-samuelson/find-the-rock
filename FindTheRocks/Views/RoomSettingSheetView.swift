@@ -14,7 +14,6 @@ struct RoomSettingSheetView: View {
     @State var tempSeekTime: Int
     @State var tempFakeRock: Int
     @State var tempRealRock: Int
-    @Binding var isSettingActive:Bool
     
     var body: some View {
         let hides = [5, 10, 15]
@@ -135,15 +134,15 @@ struct RoomSettingSheetView: View {
                 .padding(.vertical,0)
             }.background(Color.primaryGradient)
         }
-        .gesture(DragGesture(minimumDistance: 1, coordinateSpace: .local)
-            .onEnded({ value in
-                if value.translation.height > 1 {
-                    isSettingActive.toggle()
-                }
-            }))
+//        .gesture(DragGesture(minimumDistance: 1, coordinateSpace: .local)
+//            .onEnded({ value in
+//                if value.translation.height > 1 {
+//                    isSettingActive.toggle()
+//                }
+//            }))
     }
 }
 
-#Preview {
-    RoomSettingSheetView()
-}
+//#Preview {
+//    RoomSettingSheetView()
+//}

@@ -333,7 +333,7 @@ struct RoomView: View {
                     }
                     
                     
-                    NavigationLink(destination: InGameView(multiPeerSession: $multiPeerSession, room: $room),label:{
+                    NavigationLink(destination: InGameView(multiPeerSession: $multiPeerSession),label:{
                         SkewedRoundedRectangle(topRightYOffset: -5, bottomRightXOffset: 3, bottomRightYOffset: 3, bottomLeftXOffset: 6, cornerRadius: 20)
                             .frame(maxHeight: 75)
                             .padding(.horizontal, 50)
@@ -347,20 +347,6 @@ struct RoomView: View {
                             .padding(.top, 15)
                             .padding(.bottom, 25)
                     })
-//                    Button{} label: {
-//                        SkewedRoundedRectangle(topRightYOffset: -5, bottomRightXOffset: 3, bottomRightYOffset: 3, bottomLeftXOffset: 6, cornerRadius: 20)
-//                            .frame(maxHeight: 75)
-//                            .padding(.horizontal, 50)
-//                            .foregroundStyle(Color.tersierGradient)
-//                            .overlay(
-//                                Text("START")
-//                                    .foregroundStyle(Color.white)
-//                                    .fontWeight(.bold)
-//                                    .font(.system(size: 40))
-//                            )
-//                    }
-//                    .padding(.top, 15)
-//                    .padding(.bottom, 25)
                 }
                 .background(Color.primaryGradient)
             }

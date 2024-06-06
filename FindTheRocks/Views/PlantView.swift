@@ -105,18 +105,7 @@ struct PlantView: View {
     }
 }
 
-struct ARControllerRepresentable: UIViewControllerRepresentable {
-    @Binding var multipeerSession: MultipeerSession
-    
-    func makeUIViewController(context: Context) -> ARController {
-        // Return an instance of your ARController
-        return ARController(multipeerSession: multipeerSession)
-    }
 
-    func updateUIViewController(_ uiViewController: ARController, context: Context) {
-        // Update the view controller if needed
-    }
-}
 
 //#Preview {
 //    PlantView()
