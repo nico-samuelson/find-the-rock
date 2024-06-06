@@ -24,17 +24,17 @@ enum PlantButton {
 }
 
 struct InGameView: View {
+    @Binding var multiPeerSession: MultipeerSession
     @State var selectedButton: PlantButton = PlantButton.real
-    @State var timeRemaining: Int = 60
-    @State var isTimerActive: Bool = false
-//    @State var mode: Mode = Mode.plant
+    @State var plantTimeRemainig: Int = 60
+    @State var seekTimeRemainig: Int = 60
+    @State var isPlantTimerActive: Bool = false
+    @State var isSeekTimerActive: Bool = false
     @State var redPoints: Int = 0
     @State var bluePoints: Int = 0
     
-    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
-    
-    @Binding var multiPeerSession: MultipeerSession
-//    @Binding var room: Room
+    let plantTimer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    let seekTimer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     
     func getPoint() {
         redPoints = multiPeerSession.room.teams[0].players.reduce(0) { $0 + $1.point }
@@ -58,61 +58,71 @@ struct InGameView: View {
                     VStack(alignment: .leading) {
                         HStack {
                             VStack {
-                                Text("\(format(seconds: timeRemaining))")
+                                Text("\(format(seconds: plantTimeRemainig > 0 ? plantTimeRemainig : seekTimeRemainig))")
                                     .font(.custom("TitanOne", size: 30))
                                     .foregroundColor(Color.white)
-                                    .onReceive(timer) { _ in
-                                        if timeRemaining > 0 && isTimerActive {
-                                            timeRemaining -= 1
-                                        } else {
-                                            isTimerActive = false
+                                    .onReceive(plantTimer) { _ in
+                                        if plantTimeRemainig > 0 && isPlantTimerActive {
+                                            plantTimeRemainig -= 1
+                                        }
+                                        else if seekTimeRemainig > 0 && isSeekTimerActive {
+                                            seekTimeRemainig -= 1
+                                        }
+                                        else if plantTimeRemainig == 0 {
+                                            isPlantTimerActive = false
+                                            isSeekTimerActive = true
                                             multiPeerSession.isPlanting = false
                                         }
-                                        
                                     }
                             }
                             SkewedRoundedRectangle(topLeftYOffset: -2, topRightXOffset: -2, topRightYOffset: -0.5, bottomLeftXOffset: 2, cornerRadius: 10)
                                 .frame(height: 40)
-                                .foregroundStyle(Color.whiteGradient)
+                                .foregroundStyle(!multiPeerSession.isPlanting ? Color.whiteGradient : multiPeerSession.getTeam(multiPeerSession.peerID) == 0 ? Color.redGradient : Color.blueGradient)
                                 .overlay(
-                                    Text("FIND THE ROCK!")
+                                    Text(!multiPeerSession.isPlanting ? "FIND THE ROCK!" : multiPeerSession.getTeam(multiPeerSession.peerID) == 0 ? "RED TEAM PLANTING" : "BLUE TEAM PLANTING")
                                         .font(.custom("TitanOne", size: 20))
-                                        .foregroundColor(Color(hex: "CB9FF9"))
+                                        .foregroundStyle(!multiPeerSession.isPlanting ? Color(hex: "8E6FFF") : Color.white)
                                         .fontWeight(.bold)
                                 )
                                 .padding(.horizontal, 10)
                                 .padding(.vertical, 10)
                         }
+    
                         VStack(spacing: 0) {
                             // MARK: Score
-                            HStack(spacing: 0) {
-                                VStack {
-                                    Text(!multiPeerSession.isPlanting ? "\(multiPeerSession.room.teams[0].players.reduce(0) { $0 + $1.point })" : "")
-                                        .font(.custom("TitanOne", size: 40))
-                                        .foregroundColor(Color.white)
+                            if !multiPeerSession.isPlanting {
+                                HStack(spacing: 0) {
+                                    VStack {
+                                        Text(!multiPeerSession.isPlanting ? "\(multiPeerSession.room.teams[0].players.reduce(0) { $0 + $1.point })" : "")
+                                            .font(.custom("TitanOne", size: 40))
+                                            .foregroundColor(Color.white)
+                                    }
+                                    .frame(maxWidth: .infinity, maxHeight: 50)
+                                    .background(Color.redGradient)
+                                    .cornerRadius(15, corners: [.topLeft])
+                                    VStack {
+                                        Text(!multiPeerSession.isPlanting ? "\(multiPeerSession.room.teams[1].players.reduce(0) { $0 + $1.point })" : "")
+                                            .font(.custom("TitanOne", size: 40))
+                                            .foregroundColor(Color.white)
+                                    }
+                                    .frame(maxWidth: .infinity, maxHeight: 50)
+                                    .background(Color.blueGradient)
+                                    .cornerRadius(15, corners: [.topRight])
                                 }
-                                .frame(maxWidth: .infinity, maxHeight: 50)
-                                .background(Color.redGradient)
-                                .cornerRadius(15, corners: [.topLeft])
-                                VStack {
-                                    Text(!multiPeerSession.isPlanting ? "\(multiPeerSession.room.teams[1].players.reduce(0) { $0 + $1.point })" : "")
-                                        .font(.custom("TitanOne", size: 40))
-                                        .foregroundColor(Color.white)
-                                }
-                                .frame(maxWidth: .infinity, maxHeight: 50)
-                                .background(Color.blueGradient)
-                                .cornerRadius(15, corners: [.topRight])
                             }
+                           
+                            // MARK: AR View
                             ARControllerRepresentable(multipeerSession: $multiPeerSession)
                                 .background(Color.white)
                                 .cornerRadius(15, corners: [.bottomLeft, .bottomRight])
                                 .padding(.bottom, 20)
                         }
                         
+                        // MARK: Rock selector
                         if multiPeerSession.isPlanting {
                             HStack {
                                 // Button Real Rock
-                                VStack {
+                                VStack(spacing: 0) {
                                     VStack {
                                         Image(systemName: "circle.fill")
                                     }
@@ -125,11 +135,14 @@ struct InGameView: View {
                                         .font(.custom("Staatliches-Regular", size: 26))
                                         .padding(.horizontal, 10)
                                         .foregroundColor(Color.white)
-                                        .padding([.bottom, .leading, .trailing], 10)
+                                        .padding([.bottom, .leading, .trailing], 5)
                                         .padding(.top, 5)
                                         .bold()
+                                    
+                                    Text("Remaining: \(multiPeerSession.room.realRock - multiPeerSession.room.teams[multiPeerSession.getTeam(multiPeerSession.peerID)].realPlanted.count)")
+                                        .font(.custom("Staatliches-Regular", size: 15))
                                 }
-                                .frame(height: 100)
+                                .frame(height: 140)
                                 .background(!multiPeerSession.isPlantingFakeRock ? Color.tersierGradient.opacity(1) : Color.whiteGradient.opacity(0.2))
                                 .cornerRadius(15)
                                 .onTapGesture {
@@ -137,7 +150,7 @@ struct InGameView: View {
                                 }
                                 
                                 // Button Fake Rock
-                                VStack {
+                                VStack(spacing: 0) {
                                     VStack {
                                         Image(systemName: "circle.fill")
                                     }
@@ -150,11 +163,13 @@ struct InGameView: View {
                                         .font(.custom("Staatliches-Regular", size: 26))
                                         .padding(.horizontal, 10)
                                         .foregroundColor(Color.white)
-                                        .padding([.bottom, .leading, .trailing], 10)
+                                        .padding([.bottom, .leading, .trailing], 5)
                                         .padding(.top, 5)
                                         .bold()
+                                    Text("Remaining: \(multiPeerSession.room.fakeRock - multiPeerSession.room.teams[multiPeerSession.getTeam(multiPeerSession.peerID)].fakePlanted.count)")
+                                        .font(.custom("Staatliches-Regular", size: 15))
                                 }
-                                .frame(height: 100)
+                                .frame(height: 140)
                                 .background(multiPeerSession.isPlantingFakeRock ? Color.tersierGradient.opacity(1) : Color.whiteGradient.opacity(0.2))
                                 .cornerRadius(15)
                                 .onTapGesture {
@@ -163,21 +178,17 @@ struct InGameView: View {
                             }
                             .padding(.top, 10)
                         }
-                        //                    else if mode == Mode.inGame  {
-                        //
-                        //
-                        //                    }
                     }
                     .transition(.move(edge: .bottom))
                     .animation(.default, value: multiPeerSession.isPlanting)
                     .padding(.horizontal,20)
                     .padding(.vertical,0)
                     .onAppear {
-                        isTimerActive = true
+                        isPlantTimerActive = true
                     }
                     
                     // Modal Countdown
-//                    if timeRemaining <= 0 && multiPeerSession.isPlanting {
+//                    if plantTimeRemaining <= 0 && multiPeerSession.isPlanting {
 //                        VStack{
 //                            Spacer()
 //                            HStack{
@@ -201,8 +212,13 @@ struct InGameView: View {
 //                    }
                 }
             }
+            .navigationBarBackButtonHidden()
         }
         .background(Color.primaryGradient)
+        .onAppear {
+//            seekTimeRemainig = multiPeerSession.room.seekTime * 60
+//            plantTimeRemainig = multiPeerSession.room.hideTime * 60
+        }
     }
 }
 

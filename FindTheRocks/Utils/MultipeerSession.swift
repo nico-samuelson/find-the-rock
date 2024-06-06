@@ -374,10 +374,45 @@ extension MultipeerSession: MCSessionDelegate {
             print(allRocks.count)
             
             for rock in allRocks {
+                // change the orientation of the rock subsequent to the reciever anchor
+                
                 sceneView.session.add(anchor: rock.anchor)
             }
         }
         
+    }
+    
+    func changeOrientation(_ anchor: ARAnchor) -> ARAnchor{
+        guard let currentFrame = sceneView.session.currentFrame else {
+            print("Couldn't get current frame")
+            return anchor
+        }
+        let currentTransform = currentFrame.camera.transform
+        
+        // Extract the translation and rotation components of the current transform
+        let currentTranslation = currentTransform.columns.3
+        let currentRotation = simd_quatf(currentTransform)
+        
+        // Extract the translation and rotation components of the received anchor's transform
+        let anchorTranslation = anchor.transform.columns.3
+        let anchorRotation = simd_quatf(anchor.transform)
+        
+        // Calculate the new position: your current position + the relative position of the anchor
+        let newTranslation = currentTranslation + anchorTranslation
+        
+        // Combine the rotations: your current rotation * anchor's rotation
+        let newRotation = currentRotation * anchorRotation
+        
+        // Construct the new transform with the combined translation and rotation
+        var newTransform = matrix_identity_float4x4
+        newTransform.columns.3 = newTranslation
+        newTransform = matrix_float4x4(newRotation)
+        newTransform.columns.3 = newTranslation
+        
+        // Create a new anchor with the transformed position and orientation
+        let newAnchor = ARAnchor(name: anchor.name!, transform: newTransform)
+        
+        return newAnchor
     }
     
     func session(_ session: MCSession, didReceive data: Data, fromPeer peerID: MCPeerID) {
