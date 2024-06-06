@@ -26,8 +26,8 @@ enum PlantButton {
 struct InGameView: View {
     @Binding var multiPeerSession: MultipeerSession
     @State var selectedButton: PlantButton = PlantButton.real
-    @State var plantTimeRemainig: Int = 60
-    @State var seekTimeRemainig: Int = 60
+    @State var plantTimeRemainig: Int = 15
+    @State var seekTimeRemainig: Int = 30
     @State var isPlantTimerActive: Bool = false
     @State var isSeekTimerActive: Bool = false
     @State var redPoints: Int = 0
@@ -113,8 +113,8 @@ struct InGameView: View {
                            
                             // MARK: AR View
                             ARControllerRepresentable(multipeerSession: $multiPeerSession)
-                                .background(Color.white)
-                                .cornerRadius(15, corners: [.bottomLeft, .bottomRight])
+//                                .background(Color.white)
+                                .cornerRadius(15, corners: multiPeerSession.isPlanting ? [.topLeft, .topRight, .bottomLeft, .bottomRight] : [.bottomLeft, .bottomRight])
                                 .padding(.bottom, 20)
                         }
                         
@@ -135,12 +135,14 @@ struct InGameView: View {
                                         .font(.custom("Staatliches-Regular", size: 26))
                                         .padding(.horizontal, 10)
                                         .foregroundColor(Color.white)
-                                        .padding([.bottom, .leading, .trailing], 5)
+                                        .padding([.leading, .trailing], 5)
+                                        .padding(.bottom, 0)
                                         .padding(.top, 5)
                                         .bold()
                                     
                                     Text("Remaining: \(multiPeerSession.room.realRock - multiPeerSession.room.teams[multiPeerSession.getTeam(multiPeerSession.peerID)].realPlanted.count)")
                                         .font(.custom("Staatliches-Regular", size: 15))
+                                        .padding(.bottom, 5)
                                 }
                                 .frame(height: 140)
                                 .background(!multiPeerSession.isPlantingFakeRock ? Color.tersierGradient.opacity(1) : Color.whiteGradient.opacity(0.2))
@@ -163,11 +165,13 @@ struct InGameView: View {
                                         .font(.custom("Staatliches-Regular", size: 26))
                                         .padding(.horizontal, 10)
                                         .foregroundColor(Color.white)
-                                        .padding([.bottom, .leading, .trailing], 5)
+                                        .padding([.leading, .trailing], 5)
+                                        .padding(.bottom, 0)
                                         .padding(.top, 5)
                                         .bold()
                                     Text("Remaining: \(multiPeerSession.room.fakeRock - multiPeerSession.room.teams[multiPeerSession.getTeam(multiPeerSession.peerID)].fakePlanted.count)")
                                         .font(.custom("Staatliches-Regular", size: 15))
+                                        .padding(.bottom, 5)
                                 }
                                 .frame(height: 140)
                                 .background(multiPeerSession.isPlantingFakeRock ? Color.tersierGradient.opacity(1) : Color.whiteGradient.opacity(0.2))
