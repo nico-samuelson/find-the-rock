@@ -15,7 +15,7 @@ struct ContentView: View {
 
     var body: some View {
         HomeView(multiPeerSession: $multipeerSession)
-//        PlantView(multiPeerSession: $multipeerSession)
+//        InGameView(multiPeerSession: $multipeerSession, room: $room)
         
 //        HomeView(multiPeerSession: $multipeerSession)
 //        NavigationSplitView {

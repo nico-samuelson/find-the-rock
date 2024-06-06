@@ -11,6 +11,7 @@ import MultipeerConnectivity
 struct RoomView: View {
     @Binding var multiPeerSession: MultipeerSession
     @State var room: Room = Room()
+    @State var isSettingActive: Bool = true
     
     func assignToTeam(player: Player, to: Int = -1) {
         print("player: ", player)
@@ -58,6 +59,9 @@ struct RoomView: View {
                         Image(systemName: "gear")
                             .foregroundColor(.white)
                             .font(/*@START_MENU_TOKEN@*/.title/*@END_MENU_TOKEN@*/)
+                            .onTapGesture {
+                                isSettingActive.toggle()
+                            }
                     }
                     .padding(10)
                     .padding(.horizontal, 25)
@@ -318,7 +322,7 @@ struct RoomView: View {
                     })
                     
                     
-                    NavigationLink(destination: ResultView(multiPeerSession: $multiPeerSession, room: $room),label:{
+                    NavigationLink(destination: InGameView(multiPeerSession: $multiPeerSession, room: $room),label:{
                         SkewedRoundedRectangle(topRightYOffset: -5, bottomRightXOffset: 3, bottomRightYOffset: 3, bottomLeftXOffset: 6, cornerRadius: 20)
                             .frame(maxHeight: 75)
                             .padding(.horizontal, 50)
@@ -351,6 +355,16 @@ struct RoomView: View {
             }
             .navigationBarBackButtonHidden()
         }
+        .fullScreenCover(isPresented: $isSettingActive, content: {
+            withAnimation(.easeIn(duration: 3.0).delay(2)) {
+                RoomSettingSheetView(isSettingActive: $isSettingActive)
+                    .onAppear {
+//                            let impactMed = UIImpactFeedbackGenerator(style: .heavy)
+//                            impactMed.impactOccurred(intensity: 1)
+                    }
+//                        .presentationBackground(.white)
+            }
+        })
 //        .onChange(of: multiPeerSession.connectedPeers) { peers in
 //            print("connected berubah")
 //            let allPlayers = room.teams[0].players + room.teams[1].players

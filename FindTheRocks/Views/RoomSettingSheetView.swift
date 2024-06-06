@@ -12,6 +12,7 @@ struct RoomSettingSheetView: View {
     @State var seekTime:Int = 10
     @State var fakeRock:Int = 3
     @State var realRock:Int = 3
+    @Binding var isSettingActive:Bool
     
     var body: some View {
         let hides = [5, 10, 15]
@@ -25,7 +26,7 @@ struct RoomSettingSheetView: View {
                         .foregroundStyle(.white)
                     Spacer()
                         .frame(height:12)
-//                    Duration Settings
+                    //                    Duration Settings
                     Text("Duration")
                         .font(.custom("Roboto",size:25))
                         .foregroundStyle(.white)
@@ -66,7 +67,7 @@ struct RoomSettingSheetView: View {
                     }
                     Spacer()
                         .frame(height:24)
-//                    Rock Settings
+                    //                    Rock Settings
                     Text("Rock(s)")
                         .font(.custom("Roboto",size:25))
                         .foregroundStyle(.white)
@@ -96,7 +97,7 @@ struct RoomSettingSheetView: View {
                     }
                     Spacer()
                     VStack(alignment:.center,spacing:16){
-                        Text("Reset")
+                        Text("Cancel")
                             .font(.custom("Roboto",size:28,relativeTo: .title))
                             .foregroundStyle(Color.init(red: 142/255.0,green:111/255.0,blue:255/255.0))
                             .bold()
@@ -104,6 +105,9 @@ struct RoomSettingSheetView: View {
                             .background(){
                                 SkewedRoundedRectangle(topLeftYOffset: 5,topRightXOffset:5,cornerRadius: 20)
                                     .fill(Color.white)
+                            }
+                            .onTapGesture {
+                                isSettingActive.toggle()
                             }
                         Text("Apply")
                             .font(.custom("Roboto",size:28,relativeTo: .title))
@@ -114,6 +118,9 @@ struct RoomSettingSheetView: View {
                                 SkewedRoundedRectangle(topLeftYOffset: 5,bottomRightXOffset: 5,bottomLeftXOffset: 5,cornerRadius: 20)
                                     .fill(Color.tersierGradient)
                             }
+                            .onTapGesture {
+                                isSettingActive.toggle()
+                            }
                     }
                     .frame(width:gp.size.width-40)
                 }
@@ -121,9 +128,15 @@ struct RoomSettingSheetView: View {
                 .padding(.vertical,0)
             }.background(Color.primaryGradient)
         }
+        .gesture(DragGesture(minimumDistance: 1, coordinateSpace: .local)
+            .onEnded({ value in
+                if value.translation.height > 1 {
+                    isSettingActive.toggle()
+                }
+            }))
     }
 }
 
-#Preview {
-    RoomSettingSheetView()
-}
+//#Preview {
+//    RoomSettingSheetView()
+//}

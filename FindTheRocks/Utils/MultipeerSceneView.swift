@@ -111,7 +111,7 @@ extension MultipeerSession: ARSCNViewDelegate, ARSessionDelegate {
     
     // MARK: - AR session management
     private func loadRockModel() -> SCNNode {
-        let sceneURL = Bundle.main.url(forResource: "rock-2", withExtension: "scn", subdirectory: "art.scnassets/models")!
+        let sceneURL = Bundle.main.url(forResource: "rock-1", withExtension: "scn", subdirectory: "art.scnassets/models")!
         let referenceNode = SCNReferenceNode(url: sceneURL)!
         referenceNode.load()
         

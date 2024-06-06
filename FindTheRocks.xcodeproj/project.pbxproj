@@ -26,6 +26,7 @@
 		92DBDBDB2C0DE38A002C28B0 /* InGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92DBDBDA2C0DE38A002C28B0 /* InGameView.swift */; };
 		92DBDBDD2C0EF8F8002C28B0 /* Staatliches-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 92DBDBDC2C0EF8F8002C28B0 /* Staatliches-Regular.ttf */; };
 		92DBDBDF2C0EF901002C28B0 /* TitanOne-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 92DBDBDE2C0EF901002C28B0 /* TitanOne-Regular.ttf */; };
+		92E0B1142C118F0B0009E2BB /* ModalCountDownComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E0B1132C118F0B0009E2BB /* ModalCountDownComponent.swift */; };
 		A43A7A032C05DA0A00C46FAA /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A43A7A022C05DA0A00C46FAA /* HomeView.swift */; };
 		A43A7A062C05E27E00C46FAA /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = A43A7A042C05E27E00C46FAA /* Color.swift */; };
 		A43A7A092C05E54000C46FAA /* SkewedRoundedRectangle.swift in Sources */ = {isa = PBXBuildFile; fileRef = A43A7A082C05E54000C46FAA /* SkewedRoundedRectangle.swift */; };
@@ -83,6 +84,7 @@
 		92DBDBDA2C0DE38A002C28B0 /* InGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InGameView.swift; sourceTree = "<group>"; };
 		92DBDBDC2C0EF8F8002C28B0 /* Staatliches-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Staatliches-Regular.ttf"; path = "../../../../../Downloads/Staatliches,Titan_One/Staatliches/Staatliches-Regular.ttf"; sourceTree = "<group>"; };
 		92DBDBDE2C0EF901002C28B0 /* TitanOne-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "TitanOne-Regular.ttf"; path = "../../../../../Downloads/Staatliches,Titan_One/Titan_One/TitanOne-Regular.ttf"; sourceTree = "<group>"; };
+		92E0B1132C118F0B0009E2BB /* ModalCountDownComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModalCountDownComponent.swift; sourceTree = "<group>"; };
 		A43A7A022C05DA0A00C46FAA /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		A43A7A042C05E27E00C46FAA /* Color.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 		A43A7A082C05E54000C46FAA /* SkewedRoundedRectangle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkewedRoundedRectangle.swift; sourceTree = "<group>"; };
@@ -238,6 +240,7 @@
 				A43A7A132C072B0C00C46FAA /* ButtonPillComponent.swift */,
 				A43A7A152C07374300C46FAA /* CustomStepperComponent.swift */,
 				A43A7A172C0737B900C46FAA /* ActionStepperComponent.swift */,
+				92E0B1132C118F0B0009E2BB /* ModalCountDownComponent.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -401,6 +404,7 @@
 				A43A7A142C072B0C00C46FAA /* ButtonPillComponent.swift in Sources */,
 				A4DAC4CF2C0866260062CE38 /* TeamModel.swift in Sources */,
 				04F5BD072C05CDE200AC5205 /* MultipeerSession.swift in Sources */,
+				92E0B1142C118F0B0009E2BB /* ModalCountDownComponent.swift in Sources */,
 				A43A7A0B2C06411800C46FAA /* CustomRandomShape.swift in Sources */,
 				A43A7A032C05DA0A00C46FAA /* HomeView.swift in Sources */,
 				04F5B2BB2C0B0C50008DACC3 /* ResultView.swift in Sources */,
