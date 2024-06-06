@@ -25,7 +25,7 @@ struct HomeView: View {
     @State private var topOffset:CGFloat = 0
     @State private var botOffset:CGFloat = 0
     
-    let avatarImageNames = ["lancelot-avatar", "tigreal-avatar"]
+    let avatarImageNames = ["male-avatar", "female-avatar"]
     
     var body: some View {
         NavigationStack() {
@@ -153,7 +153,7 @@ struct HomeView: View {
                         hideKeyboard()
                     }
                     .onAppear(){
-                        DispatchQueue.main.asyncAfter(deadline:.now()){
+                        DispatchQueue.main.asyncAfter(deadline:.now() + 0.05){
                             withAnimation(.spring(response: 0.6, dampingFraction: 0.8, blendDuration: 0.4)){
                                 topOffset = gp.size.height/30*5
                                 botOffset = gp.size.height/30*7

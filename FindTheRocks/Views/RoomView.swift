@@ -50,12 +50,18 @@ struct RoomView: View {
                             .fontWeight(.bold)
                             .foregroundStyle(.white)
                         Spacer()
-                        Image(systemName: "gear")
-                            .foregroundColor(.white)
-                            .font(/*@START_MENU_TOKEN@*/.title/*@END_MENU_TOKEN@*/)
+                        LegacySceneView(scene: Self.loadScene(named: "art.scnassets/models/gear.scn"))
                             .onTapGesture {
                                 isSettingSheet = true
                             }
+                            .frame(width: 50, height: 50)
+                            .offset(x: 5)
+                        //                        Image(systemName: "gear")
+                        //                            .foregroundColor(.white)
+                        //                            .font(/*@START_MENU_TOKEN@*/.title/*@END_MENU_TOKEN@*/)
+                        //                            .onTapGesture {
+                        //                                isSettingSheet = true
+                        //                            }
                         
                     }
                     .padding(10)
@@ -359,14 +365,14 @@ struct RoomView: View {
                 multiPeerSession.room.teams[0].players.append(myself)
             }
         }
-//        .onChange(of: multiPeerSession.connectedPeers) { peers in
-//            print("connected berubah")
-//            let allPlayers = room.teams[0].players + room.teams[1].players
-//            
-//        }
-//        .onAppear(perform: {
-//            self.roomVM = RoomViewModel(room: $room, multipeerSession: $multiPeerSession)
-//        })
+        //        .onChange(of: multiPeerSession.connectedPeers) { peers in
+        //            print("connected berubah")
+        //            let allPlayers = room.teams[0].players + room.teams[1].players
+        //
+        //        }
+        //        .onAppear(perform: {
+        //            self.roomVM = RoomViewModel(room: $room, multipeerSession: $multiPeerSession)
+        //        })
     }
 }
 
