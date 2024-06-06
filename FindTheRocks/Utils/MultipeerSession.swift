@@ -59,8 +59,6 @@ class MultipeerSession: NSObject {
         self.myPeerID = MCPeerID(displayName: displayName)
         super.init()
         
-        self.room.teams[1].players.append(Player(peerID: self.myPeerID, profile: "default", status: .disconnected, point: 0))
-        
         setupSession()
         startAdvertisingAndBrowsing()
     }
@@ -75,16 +73,6 @@ class MultipeerSession: NSObject {
             try session.send(data, toPeers: session.connectedPeers, with: .reliable)
         } catch {
             print("error sending data to peers: \(error.localizedDescription)")
-        }
-    }
-    
-    func sendARData(_ data : Data, completion: @escaping (Bool) -> Void) {
-        do {
-            try session.send(data, toPeers: session.connectedPeers, with: .reliable)
-            completion(isUpdatingWorldMap)
-        } catch {
-            print("error sending data to peers: \(error.localizedDescription)")
-            completion(false)
         }
     }
     
@@ -373,11 +361,6 @@ extension MultipeerSession: MCSessionDelegate {
             configuration.worldAlignment = .gravityAndHeading
             
             self.room = data.room
-            
-    //        for rock in room.getAllPlantedRocks() {
-    //            guard let alignedAnchor = alignNewAnchor(anchor: rock.anchor) else { return }
-    //            rock.anchor = alignedAnchor
-    //        }
             self.sceneView.session.run(configuration, options: [.resetTracking, .removeExistingAnchors])
             
             let allRocks = room.getAllPlantedRocks()
@@ -386,10 +369,6 @@ extension MultipeerSession: MCSessionDelegate {
             
             for rock in allRocks {
                 sceneView.session.add(anchor: rock.anchor)
-    //            if let name = rock.anchor.name, name.hasPrefix("rock"), let newAnchor = alignNewAnchor(anchor: rock.anchor) {
-    //                print(name)
-    //                sceneView.session.add(anchor: rock.anchor)
-    //            }
             }
         }
         
@@ -414,12 +393,6 @@ extension MultipeerSession: MCSessionDelegate {
                     receiveWorldMap(data: arData)
                 case let data as Data:
                     handleDataString(String(decoding: data, as: UTF8.self))
-//                case let newRoom as Room:
-//                    if (!isUpdatingWorldMap) {
-//                        self.isUpdatingWorldMap = true
-//                        self.room = newRoom
-//                        self.isUpdatingWorldMap = false
-//                    }
                 default:
                     print("unknown type received")
                 }
@@ -448,21 +421,20 @@ extension MultipeerSession: MCNearbyServiceBrowserDelegate {
     public func browser(_ browser: MCNearbyServiceBrowser, foundPeer peerID: MCPeerID, withDiscoveryInfo info: [String: String]?) {
         // check for discoveryInfo
         
-        browser.invitePeer(peerID, to: self.session, withContext: nil, timeout: 10)
-//        if let info = info {
-//            // if exist the same room and connected peers, and not connected yet
-//            if self.room.name == info["room"]! && (self.connectedPeers.firstIndex(where: { $0 == peerID }) == nil) {
-//                browser.invitePeer(peerID,to:self.session,withContext:"approved".data(using:.utf8),timeout:10)
-//            }
-//        }
-//        
-//        DispatchQueue.main.async {
-//            print(self.nearbyPeers.firstIndex(where: {$0.peerID == peerID}) == nil)
-//            if self.nearbyPeers.firstIndex(where: { $0.peerID == peerID }) == nil {
-//                self.nearbyPeers.append(Player(peerID: peerID, profile: "", status: .disconnected, point: 0))
-//            }
-//            print(self.nearbyPeers.map({($0.peerID, $0.peerID.displayName)}))
-//        }
+       if let info = info {
+           // if exist the same room and connected peers, and not connected yet
+           if self.room.name == info["room"]! && (self.connectedPeers.firstIndex(where: { $0 == peerID }) == nil) {
+               browser.invitePeer(peerID,to:self.session,withContext:"approved".data(using:.utf8),timeout:10)
+           }
+       }
+       
+       DispatchQueue.main.async {
+           print(self.nearbyPeers.firstIndex(where: {$0.peerID == peerID}) == nil)
+           if self.nearbyPeers.firstIndex(where: { $0.peerID == peerID }) == nil {
+               self.nearbyPeers.append(Player(peerID: peerID, profile: "", status: .disconnected, point: 0))
+           }
+           print(self.nearbyPeers.map({($0.peerID, $0.peerID.displayName)}))
+       }
     }
     
     /// - Tag: Lost Peer
@@ -494,25 +466,22 @@ extension MultipeerSession: MCNearbyServiceAdvertiserDelegate {
     /// - Tag: AcceptInvite
     func advertiser(_ advertiser: MCNearbyServiceAdvertiser, didReceiveInvitationFromPeer peerID: MCPeerID, withContext context: Data?, invitationHandler: @escaping (Bool, MCSession?) -> Void) {
         //        Open the modal dialog and use the callback
-        
-        invitationHandler(true, self.session)
-//        guard let context = context else { return }
-//        
-//        if let plainData = context as? Data, let string = String(data: plainData, encoding: .utf8) {
-//            handleDataString(string)
-//        } else {
-//            let object = try? NSKeyedUnarchiver.unarchivedObject(ofClasses: [Room.self, Player.self, Team.self, Rock.self, MCPeerID.self, NSString.self, ARAnchor.self, SCNNode.self, NSArray.self], from: context)
-//            
-//            switch object {
-//            case let string as NSString:
-//                handleInvitationString(text: string, invitationHandler: invitationHandler)
-//            case let player as Player:
-//                handleInvitationPlayer(peer: peerID, player: player, invitationHandler: invitationHandler)
-//            default:
-//                print("Undetected data type!")
-//            }
-//        }
-//        
+       guard let context = context else { return }
+       
+       if let plainData = context as? Data, let string = String(data: plainData, encoding: .utf8) {
+           handleDataString(string)
+       } else {
+           let object = try? NSKeyedUnarchiver.unarchivedObject(ofClasses: [Room.self, Player.self, Team.self, Rock.self, MCPeerID.self, NSString.self, ARAnchor.self, SCNNode.self, NSArray.self], from: context)
+           
+           switch object {
+           case let string as NSString:
+               handleInvitationString(text: string, invitationHandler: invitationHandler)
+           case let player as Player:
+               handleInvitationPlayer(peer: peerID, player: player, invitationHandler: invitationHandler)
+           default:
+               print("Undetected data type!")
+           }
+       }  
     }
     
     func handleInvitationString(text: NSString,invitationHandler: @escaping (Bool, MCSession?) -> Void){
