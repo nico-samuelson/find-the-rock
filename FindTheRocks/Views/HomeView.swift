@@ -22,6 +22,8 @@ struct HomeView: View {
     @State private var inviterName:String?
     @State private var inviterProfile:String = "lancelot-avatar"
     @State private var invitationHandler: ((Bool) -> Void)?
+    @State private var topOffset:CGFloat = 0
+    @State private var botOffset:CGFloat = 0
     
     let avatarImageNames = ["lancelot-avatar", "tigreal-avatar"]
     
@@ -32,12 +34,12 @@ struct HomeView: View {
                     VStack(alignment:.center,spacing:0){
                         VStack{
                             Text("Find")
-                                .font(.custom("Roboto", size:40))
+                                .font(.custom("TitanOne", size:40))
                                 .foregroundStyle(.white)
                                 .padding(.top,40)
                                 .rotationEffect(.degrees(-3))
                             Text("ThE ROCK")
-                                .font(.custom("Roboto",size:40))
+                                .font(.custom("TitanOne",size:40))
                                 .foregroundStyle(.white)
                                 .bold()
                                 .rotationEffect(.degrees(-3))
@@ -48,11 +50,12 @@ struct HomeView: View {
                                 .fill(Color.primaryGradient)
                                 .shadow(color:.init(.black.opacity(0.25)),radius: 20,x:0,y:4)
                         }
+                        .offset(x:0,y: topOffset - (gp.size.height/30*5))
                         Spacer()
                         // 3d Asset
-                    LegacySceneView(scene: Self.loadScene(named: "art.scnassets/models/rock-home.scn"))
-                        .frame(width: gp.size.width)
-                    Spacer()
+                        LegacySceneView(scene: Self.loadScene(named: "art.scnassets/models/rock-home.scn"))
+                            .frame(width: gp.size.width)
+                        Spacer()
                         
                         /// Bottom Action BAR
                         VStack(){
@@ -79,7 +82,7 @@ struct HomeView: View {
                             
                             HStack(alignment:.center,spacing:0){
                                 TextField("", text: $name)
-                                    .font(.custom("Roboto", size: 27, relativeTo: .title))
+                                    .font(.custom("Staatliches-Regular", size: 36, relativeTo: .title))
                                     .foregroundColor(isFocused ? Color.init(red:142/255.0,green:111/255.0,blue:255/255.0) : .white)
                                     .padding(.leading,30)
                                     .frame(maxWidth:225,maxHeight:60)
@@ -123,7 +126,7 @@ struct HomeView: View {
                                 .frame(height:12)
                             NavigationLink(destination: RoomView(multiPeerSession: $multiPeerSession, myself: Player(peerID: multiPeerSession.getPeerId(), profile:"lancelot-avatar", status: .connected, point: 0)),label:{
                                 Text("CREATE ROOM")
-                                    .font(.custom("Roboto",size:28,relativeTo: .title))
+                                    .font(.custom("Staatliches-Regular",size:36,relativeTo: .title))
                                     .foregroundStyle(.white)
                                     .bold()
                                     .padding(20)
@@ -134,17 +137,28 @@ struct HomeView: View {
                                     }
                             })
                             Spacer()
-                        }.frame(width:gp.size.width,height:gp.size.height/30*9)
+                        }
+                        .frame(width:gp.size.width,height:gp.size.height/30*9)
                             .background(){
                                 CustomRandomShape()
                                     .fill(Color.primaryGradient)
                                     .shadow(color:.init(.black.opacity(0.33)),radius: 20,x:0,y:4)
                             }
+                            .offset(x:0,y:(gp.size.height/30*7) - botOffset)
+                            
                     }
                     .background(Color.clear)  // Add a clear background to detect taps outside
                     .contentShape(Rectangle())  // Define the tap area as the whole view
                     .onTapGesture {
                         hideKeyboard()
+                    }
+                    .onAppear(){
+                        DispatchQueue.main.asyncAfter(deadline:.now() + 0.5){
+                            withAnimation(.spring(response: 0.6, dampingFraction: 0.8, blendDuration: 0.4)){
+                                topOffset = gp.size.height/30*5
+                                botOffset = gp.size.height/30*7
+                            }
+                        }
                     }
                 }
                 
@@ -158,7 +172,7 @@ struct HomeView: View {
                                 Spacer()
                                     .frame(height:12)
                                 Text("INVITATION")
-                                    .font(.title2)
+                                    .font(.custom("TitanOne",size:30))
                                     .foregroundStyle(.white)
                                     .bold()
                                 Spacer()
@@ -177,7 +191,7 @@ struct HomeView: View {
                                     Spacer()
                                         .frame(width:12)
                                     Text(inviterName!)
-                                        .font(.custom("Roboto",size:26))
+                                        .font(.custom("TitanOne",size:26))
                                         .foregroundStyle(.white)
                                         .bold()
                                     Spacer()
@@ -186,7 +200,7 @@ struct HomeView: View {
                                 HStack{
                                     Spacer()
                                     Text("Decline")
-                                        .font(.custom("Roboto",size:18,relativeTo: .title))
+                                        .font(.custom("Staatliches-Regular",size:18,relativeTo: .title))
                                         .foregroundStyle(Color.init(red: 142/255.0,green:111/255.0,blue:255/255.0))
                                         .bold()
                                         .frame(width:(gp.size.width/2) - 40,height:40)
@@ -203,7 +217,7 @@ struct HomeView: View {
                                         }
                                     NavigationLink(destination: WaitingView(multiPeerSession: $multiPeerSession,isInvited: $isInvited, invitationHandler: $invitationHandler),label:{
                                         Text("Accept \(time)")
-                                            .font(.custom("Roboto",size:18,relativeTo: .title))
+                                            .font(.custom("Staatliches-Regular",size:18,relativeTo: .title))
                                             .foregroundStyle(.white)
                                             .bold()
                                             .frame(width:(gp.size.width/2) - 40,height:40)
@@ -340,11 +354,11 @@ struct LegacySceneView: UIViewRepresentable {
         
         view.scene = scene
         view.backgroundColor = UIColor.clear
-//        view.pointOfView = cameraNode
-//        view.allowsCameraControl = true
-//        view.autoenablesDefaultLighting = true
+        //        view.pointOfView = cameraNode
+        //        view.allowsCameraControl = true
+        //        view.autoenablesDefaultLighting = true
         view.isUserInteractionEnabled = false
-//        view.isMultipleTouchEnabled = false
+        //        view.isMultipleTouchEnabled = false
         
         //        let panGesture = UIPanGestureRecognizer(target: context.coordinator, action: #selector(Coordinator.handlePan(_:)))
         //        view.addGestureRecognizer(panGesture)
@@ -356,7 +370,7 @@ struct LegacySceneView: UIViewRepresentable {
         // ... existing code ...
     }
     
-    // 
+    //
     //
     //    class Coordinator: NSObject {
     //            var parent: LegacySceneView

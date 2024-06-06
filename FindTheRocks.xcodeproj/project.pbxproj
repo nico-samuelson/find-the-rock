@@ -43,6 +43,7 @@
 		A4DAC4D12C0866340062CE38 /* PlayerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4DAC4D02C0866340062CE38 /* PlayerModel.swift */; };
 		A4DAC4D32C08663F0062CE38 /* RockModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4DAC4D22C08663F0062CE38 /* RockModel.swift */; };
 		A4DAC4D82C0DB2C70062CE38 /* WaitingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4DAC4D72C0DB2C70062CE38 /* WaitingView.swift */; };
+		A4FF50202C1148E50057C4EF /* SplashScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4FF501F2C1148E50057C4EF /* SplashScreenView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -103,6 +104,7 @@
 		A4DAC4D02C0866340062CE38 /* PlayerModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerModel.swift; sourceTree = "<group>"; };
 		A4DAC4D22C08663F0062CE38 /* RockModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RockModel.swift; sourceTree = "<group>"; };
 		A4DAC4D72C0DB2C70062CE38 /* WaitingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaitingView.swift; sourceTree = "<group>"; };
+		A4FF501F2C1148E50057C4EF /* SplashScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashScreenView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -225,6 +227,7 @@
 				A43A7A112C07246700C46FAA /* RoomSettingSheetView.swift */,
 				92DBDBDA2C0DE38A002C28B0 /* InGameView.swift */,
 				A4DAC4D72C0DB2C70062CE38 /* WaitingView.swift */,
+				A4FF501F2C1148E50057C4EF /* SplashScreenView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -407,6 +410,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				924A44F22C0D9EA20002D8E1 /* PlantView.swift in Sources */,
+				A4FF50202C1148E50057C4EF /* SplashScreenView.swift in Sources */,
 				A43A7A142C072B0C00C46FAA /* ButtonPillComponent.swift in Sources */,
 				A4DAC4CF2C0866260062CE38 /* TeamModel.swift in Sources */,
 				046BB4992C105D3600B91BC7 /* CustomAnchorModel.swift in Sources */,
