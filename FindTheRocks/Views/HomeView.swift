@@ -177,7 +177,7 @@ struct HomeView: View {
                         hideKeyboard()
                     }
                     .onAppear(){
-                        DispatchQueue.main.asyncAfter(deadline:.now()){
+                        DispatchQueue.main.asyncAfter(deadline:.now() + 0.1){
                             withAnimation(.spring(response: 0.6, dampingFraction: 0.8, blendDuration: 0.4)){
                                 topOffset = gp.size.height/30*5
                                 botOffset = gp.size.height/30*7

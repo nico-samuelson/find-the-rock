@@ -175,7 +175,7 @@ class ARController: UIViewController {
                                 self.multipeerSession.handleAnchorChange(rock.anchor, "remove", !self.multipeerSession.isPlantingFakeRock, self.multipeerSession.peerID)
                             }
                             else {
-                                self.multipeerSession.handleAnchorChange(rock.anchor, "pick", !self.multipeerSession.isPlantingFakeRock, self.multipeerSession.peerID)
+                                self.multipeerSession.handleAnchorChange(rock.anchor, "pick", rock.isFake, self.multipeerSession.peerID)
                             }
                         }
                         else {
