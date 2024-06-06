@@ -30,7 +30,7 @@ struct SplashScreenView: View {
                 Spacer()
             }
             .frame(minWidth: gp.size.width,minHeight: gp.size.height)
-            .background(Color.primaryGradient)
+            .background(Color.secondaryGradient)
             .edgesIgnoringSafeArea(.all)
             .onAppear(){
                 DispatchQueue.main.asyncAfter(deadline:.now() + 0.8){
