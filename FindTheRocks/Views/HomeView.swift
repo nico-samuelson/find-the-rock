@@ -24,6 +24,7 @@ struct HomeView: View {
     @State private var invitationHandler: ((Bool) -> Void)?
     @State private var topOffset:CGFloat = 0
     @State private var botOffset:CGFloat = 0
+    @State private var navigateRoom = false
     
     let avatarImageNames = ["lancelot-avatar", "tigreal-avatar"]
     
@@ -124,18 +125,41 @@ struct HomeView: View {
                             
                             Spacer()
                                 .frame(height:12)
-                            NavigationLink(destination: RoomView(multiPeerSession: $multiPeerSession, myself: Player(peerID: multiPeerSession.getPeerId(), profile:"lancelot-avatar", status: .connected, point: 0)),label:{
-                                Text("CREATE ROOM")
-                                    .font(.custom("Staatliches-Regular",size:36,relativeTo: .title))
-                                    .foregroundStyle(.white)
-                                    .bold()
+//                            NavigationLink(destination: RoomView(multiPeerSession: $multiPeerSession, myself: Player(peerID: multiPeerSession.getPeerId(), profile:"lancelot-avatar", status: .connected, point: 0)),label:{
+//                                Text("CREATE ROOM")
+//                                    .font(.custom("Staatliches-Regular",size:36,relativeTo: .title))
+//                                    .foregroundStyle(.white)
+//                                    .bold()
+//                                    .padding(20)
+//                                    .padding(.horizontal,24)
+//                                    .background(){
+//                                        SkewedRoundedRectangle(topLeftYOffset: 5,bottomRightXOffset: 5,bottomLeftXOffset: 5,cornerRadius: 20)
+//                                            .fill(Color.tersierGradient)
+//                                    }
+//                            })
+                            Button(action: {
+                                // Your custom logic here
+                                // e.g., update some state, print a message, etc.
+                                multiPeerSession.createRoom()
+                                multiPeerSession.room.teams[0].players.append(Player(peerID: multiPeerSession.getPeerId(), profile:"lancelot-avatar", status: .connected, point: 0))
+                                
+                                // After your logic, set navigateToHome to true to trigger navigation
+                                navigateRoom = true
+                            }) {
+                                SkewedRoundedRectangle(topLeftYOffset: 5,bottomRightXOffset: 5,bottomLeftXOffset: 5,cornerRadius: 20)
                                     .padding(20)
-                                    .padding(.horizontal,24)
-                                    .background(){
-                                        SkewedRoundedRectangle(topLeftYOffset: 5,bottomRightXOffset: 5,bottomLeftXOffset: 5,cornerRadius: 20)
-                                            .fill(Color.tersierGradient)
-                                    }
-                            })
+                                    .padding(.horizontal, 24)
+                                    .foregroundStyle(Color.tersierGradient)
+                                    .overlay(
+                                        Text("CREATE ROOM")
+                                            .foregroundStyle(.white)
+                                            .fontWeight(.bold)
+                                            .font(.custom("Staatliches-Regular",size: 36))
+                                    )
+                            }
+                            .navigationDestination(isPresented: $navigateRoom){
+                                RoomView(multiPeerSession: $multiPeerSession, myself: Player(peerID: multiPeerSession.getPeerId(), profile:"lancelot-avatar", status: .connected, point: 0))
+                            }
                             Spacer()
                         }
                         .frame(width:gp.size.width,height:gp.size.height/30*9)

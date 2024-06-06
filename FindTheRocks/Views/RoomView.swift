@@ -332,7 +332,6 @@ struct RoomView: View {
                         HomeView(multiPeerSession: $multiPeerSession)
                     }
                     
-                    
                     NavigationLink(destination: InGameView(multiPeerSession: $multiPeerSession),label:{
                         SkewedRoundedRectangle(topRightYOffset: -5, bottomRightXOffset: 3, bottomRightYOffset: 3, bottomLeftXOffset: 6, cornerRadius: 20)
                             .frame(maxHeight: 75)
@@ -354,10 +353,6 @@ struct RoomView: View {
             .fullScreenCover(isPresented: $isSettingSheet, content: {
                 RoomSettingSheetView(multiPeerSession: $multiPeerSession, tempHideTime: multiPeerSession.room.hideTime, tempSeekTime: multiPeerSession.room.seekTime, tempFakeRock: multiPeerSession.room.fakeRock, tempRealRock: multiPeerSession.room.realRock)
             })
-            .onAppear{
-                multiPeerSession.createRoom()
-                multiPeerSession.room.teams[0].players.append(myself)
-            }
         }
 //        .onChange(of: multiPeerSession.connectedPeers) { peers in
 //            print("connected berubah")
