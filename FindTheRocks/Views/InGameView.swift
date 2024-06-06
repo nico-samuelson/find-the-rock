@@ -26,15 +26,19 @@ enum PlantButton {
 struct InGameView: View {
     @Binding var multiPeerSession: MultipeerSession
     @State var selectedButton: PlantButton = PlantButton.real
-    @State var plantTimeRemainig: Int = 15
-    @State var seekTimeRemainig: Int = 30
+    @State var plantTimeRemaining: Int = 10
+    @State var seekTimeRemaining: Int = 10
+    @State var countDownRemaining: Int = 3
     @State var isPlantTimerActive: Bool = false
     @State var isSeekTimerActive: Bool = false
+    @State var isCountDownActive: Bool = false
+    @State var isOver: Bool = false
     @State var redPoints: Int = 0
     @State var bluePoints: Int = 0
     
     let plantTimer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     let seekTimer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    let startCountDown = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     
     func getPoint() {
         redPoints = multiPeerSession.room.teams[0].players.reduce(0) { $0 + $1.point }
@@ -58,20 +62,25 @@ struct InGameView: View {
                     VStack(alignment: .leading) {
                         HStack {
                             VStack {
-                                Text("\(format(seconds: plantTimeRemainig > 0 ? plantTimeRemainig : seekTimeRemainig))")
+                                Text("\(format(seconds: plantTimeRemaining > 0 ? plantTimeRemaining : seekTimeRemaining))")
                                     .font(.custom("TitanOne", size: 30))
                                     .foregroundColor(Color.white)
                                     .onReceive(plantTimer) { _ in
-                                        if plantTimeRemainig > 0 && isPlantTimerActive {
-                                            plantTimeRemainig -= 1
+                                        if plantTimeRemaining > 0 && isPlantTimerActive {
+                                            plantTimeRemaining -= 1
                                         }
-                                        else if seekTimeRemainig > 0 && isSeekTimerActive {
-                                            seekTimeRemainig -= 1
+                                        else if seekTimeRemaining > 0 && isSeekTimerActive {
+                                            seekTimeRemaining -= 1
                                         }
-                                        else if plantTimeRemainig == 0 {
+                                        else if plantTimeRemaining == 0 && multiPeerSession.isPlanting {
                                             isPlantTimerActive = false
-                                            isSeekTimerActive = true
+                                            isCountDownActive = true
+//                                            isSeekTimerActive = true
                                             multiPeerSession.isPlanting = false
+                                        }
+                                        else if seekTimeRemaining <= 0 {
+                                            isOver = true
+                                            print("game is over")
                                         }
                                     }
                             }
@@ -81,13 +90,13 @@ struct InGameView: View {
                                 .overlay(
                                     Text(!multiPeerSession.isPlanting ? "FIND THE ROCK!" : multiPeerSession.getTeam(multiPeerSession.peerID) == 0 ? "RED TEAM PLANTING" : "BLUE TEAM PLANTING")
                                         .font(.custom("TitanOne", size: 20))
-                                        .foregroundStyle(!multiPeerSession.isPlanting ? Color(hex: "8E6FFF") : Color.white)
+                                        .foregroundStyle(!multiPeerSession.isPlanting ? Color(hex: "CB9FF9") : Color.white)
                                         .fontWeight(.bold)
                                 )
                                 .padding(.horizontal, 10)
                                 .padding(.vertical, 10)
                         }
-    
+                        
                         VStack(spacing: 0) {
                             // MARK: Score
                             if !multiPeerSession.isPlanting {
@@ -110,16 +119,16 @@ struct InGameView: View {
                                     .cornerRadius(15, corners: [.topRight])
                                 }
                             }
-                           
+                            
                             // MARK: AR View
                             ARControllerRepresentable(multipeerSession: $multiPeerSession)
-//                                .background(Color.white)
-                                .cornerRadius(15, corners: multiPeerSession.isPlanting ? [.topLeft, .topRight, .bottomLeft, .bottomRight] : [.bottomLeft, .bottomRight])
+                            //                                .background(Color.white)
+                                .cornerRadius(15, corners: multiPeerSession.isPlanting && !isCountDownActive ? [.topLeft, .topRight, .bottomLeft, .bottomRight] : [.bottomLeft, .bottomRight])
                                 .padding(.bottom, 20)
                         }
                         
                         // MARK: Rock selector
-                        if multiPeerSession.isPlanting {
+                        if multiPeerSession.isPlanting && !isCountDownActive {
                             HStack {
                                 // Button Real Rock
                                 VStack(spacing: 0) {
@@ -192,36 +201,50 @@ struct InGameView: View {
                     }
                     
                     // Modal Countdown
-//                    if plantTimeRemaining <= 0 && multiPeerSession.isPlanting {
-//                        VStack{
-//                            Spacer()
-//                            HStack{
-//                                Spacer()
-//                                VStack(alignment:.center){
-//                                }
-//                                .frame(width:gp.size.width - 40, height: gp.size.height*0.23)
-//                                .background(){
-//                                    SkewedRoundedRectangle(topLeftXOffset: 5,topRightYOffset: 5,bottomRightYOffset: 5,cornerRadius: 20)
-//                                        .fill(Color.primaryGradient)
-//                                }
-//                                Spacer()
-//                            }
-//                            Spacer()
+                    if isCountDownActive {
+                        VStack{
+                            Spacer()
+                            HStack{
+                                Spacer()
+                                VStack(alignment:.center){
+                                    Text("\(countDownRemaining)")
+                                        .font(.custom("TitanOne", size: 50))
+                                        .foregroundColor(Color.white)
+                                        .onReceive(startCountDown) { _ in
+                                            if countDownRemaining <= 0 {
+                                                isSeekTimerActive = true
+                                                isCountDownActive = false
+                                            } else {
+                                                countDownRemaining -= 1
+                                            }
+                                        }
+                                }
+                                .frame(width:gp.size.width - 150, height: gp.size.height*0.23)
+                                .background(){
+                                    SkewedRoundedRectangle(topLeftXOffset: 5,topRightYOffset: 5,bottomRightYOffset: 5,cornerRadius: 20)
+                                        .fill(Color.primaryGradient)
+                                }
+                                Spacer()
+                            }
+                            Spacer()
+                        }
+                        .frame(width:gp.size.width,height:gp.size.height)
+//                        .background(){
+//                            Color.white.opacity(0.5)
+//                                .blur(radius:10)
 //                        }
-//                        .frame(width:gp.size.width,height:gp.size.height)
-//                            .background(){
-//                                Color.white.opacity(0.5)
-//                                    .blur(radius:10)
-//                        }
-//                    }
+                    }
                 }
             }
             .navigationBarBackButtonHidden()
+            .navigationDestination(isPresented: $isOver) {
+                ResultView(multiPeerSession: $multiPeerSession)
+            }
         }
         .background(Color.primaryGradient)
         .onAppear {
-//            seekTimeRemainig = multiPeerSession.room.seekTime * 60
-//            plantTimeRemainig = multiPeerSession.room.hideTime * 60
+            //            seekTimeRemaining = multiPeerSession.room.seekTime * 60
+            //            plantTimeRemaining = multiPeerSession.room.hideTime * 60
         }
     }
 }
@@ -233,7 +256,7 @@ struct ARControllerRepresentable: UIViewControllerRepresentable {
         // Return an instance of your ARController
         return ARController(multipeerSession: multipeerSession)
     }
-
+    
     func updateUIViewController(_ uiViewController: ARController, context: Context) {
         // Update the view controller if needed
     }

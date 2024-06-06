@@ -18,17 +18,17 @@ struct ResultView: View {
                     
                     Text("THE WINNER:")
                         .fontWeight(.bold)
-                        .font(.system(size: 44))
+                        .font(.custom("TitanOne", size: 40))
                         .foregroundStyle(.white)
                         .padding(.top, 10)
                         .padding(.bottom, 0)
                     
                     //MARK: Trophy
                     LegacySceneView(scene: Self.loadScene(named: "art.scnassets/models/champion.scn"))
-                        .frame(width: gp.size.width)
-//                        .background(.white)
-                        .padding(10)
-//                        .offset(y: -10)
+                        .padding(20)
+                    //                        .background(.white)
+//                        .padding(20)
+                    //                        .offset(y: -10)
                     SkewedRoundedRectangle(topLeftYOffset: -2, topRightXOffset: 5, topRightYOffset: 1, bottomLeftXOffset: -2, cornerRadius: 15)
                         .frame(height: 60)
                         .padding(.horizontal, 90)
@@ -37,7 +37,7 @@ struct ResultView: View {
                             Text(winner)
                                 .foregroundStyle(.white)
                                 .fontWeight(.bold)
-                                .font(.system(size: 32))
+                                .font(.custom("Staatliches-Regular", size: 32))
                         )
                         .padding(.bottom, 30)
                     
@@ -51,7 +51,7 @@ struct ResultView: View {
                                     Text("\(multiPeerSession.room.teams[0].players.map{$0.point}.reduce(0, +))")
                                         .foregroundStyle(.white)
                                         .fontWeight(.bold)
-                                        .font(.system(size: 24))
+                                        .font(.custom("Staatliches-Regular", size: 24))
                                         .rotationEffect(.degrees(-2))
                                         .offset(x: -2, y: -2)
                                 )
@@ -69,7 +69,7 @@ struct ResultView: View {
                                             }
                                         
                                         Text(player.peerID.displayName.uppercased())
-                                            .font(.system(size: 14))
+                                            .font(.custom("Staatliches-Regular", size: 14))
                                             .fontWeight(.medium)
                                             .lineLimit(0)
                                             .truncationMode(.tail)
@@ -78,19 +78,22 @@ struct ResultView: View {
                                         Spacer()
                                         
                                         SkewedRoundedRectangle(topRightYOffset: 0.5, bottomRightYOffset: -0.5, bottomLeftXOffset: 0.5, cornerRadius: 10)
-                                        .foregroundStyle(Color.redGradient)
-                                        .overlay(
-                                            Text("\(player.point) pts")
-                                                .fontWeight(.bold)
-                                                .font(.system(size: 14))
-                                        )
-                                        .padding(0)
-                                        .frame(maxWidth: 50, maxHeight: 25)
+                                            .foregroundStyle(Color.redGradient)
+                                            .overlay(
+                                                Text("\(player.point) pts")
+                                                    .fontWeight(.bold)
+                                                    .font(.custom("Staatliches-Regular", size: 14))
+                                            )
+                                            .padding(0)
+                                            .frame(maxWidth: 50, maxHeight: 25)
                                     }
+                                    .padding(0)
+//                                    .padding(.leading, -10)
                                     .listRowBackground(Color.clear)
                                     .listRowInsets(.none)
                                     .listRowSeparator(.hidden)
                                 }
+                                .padding(.top, 5)
                             }
                         }
                         .padding(.horizontal, -10)
@@ -104,6 +107,7 @@ struct ResultView: View {
                             SkewedRoundedRectangle(topRightYOffset: -5, bottomRightXOffset: -5, topLeftCornerRadius: 20, topRightCornerRadius: 20, bottomRightCornerRadius: 20)
                                 .foregroundStyle(.white.opacity(0.2))
                         )
+//                        .padding(.leading, -10)
                         
                         // MARK: Blue team score
                         VStack(spacing: 0) {
@@ -114,7 +118,7 @@ struct ResultView: View {
                                     Text("\(multiPeerSession.room.teams[1].players.map{$0.point}.reduce(0, +))")
                                         .foregroundStyle(.white)
                                         .fontWeight(.bold)
-                                        .font(.system(size: 24))
+                                        .font(.custom("Staatliches-Regular", size: 24))
                                         .rotationEffect(.degrees(-2))
                                         .offset(x: 2, y: -2)
                                 )
@@ -132,7 +136,7 @@ struct ResultView: View {
                                             }
                                         
                                         Text(player.peerID.displayName.uppercased())
-                                            .font(.system(size: 14))
+                                            .font(.custom("Staatliches-Regular", size: 14))
                                             .fontWeight(.medium)
                                             .lineLimit(0)
                                             .truncationMode(.tail)
@@ -141,14 +145,14 @@ struct ResultView: View {
                                         Spacer()
                                         
                                         SkewedRoundedRectangle(topRightYOffset: 0.5, bottomRightYOffset: -0.5, bottomLeftXOffset: 0.5, cornerRadius: 10)
-                                        .foregroundStyle(Color.blueGradient)
-                                        .overlay(
-                                            Text("\(player.point) pts")
-                                                .fontWeight(.bold)
-                                                .font(.system(size: 14))
-                                        )
-                                        .padding(0)
-                                        .frame(maxWidth: 50, maxHeight: 25)
+                                            .foregroundStyle(Color.blueGradient)
+                                            .overlay(
+                                                Text("\(player.point) pts")
+                                                    .fontWeight(.bold)
+                                                    .font(.custom("Staatliches-Regular", size: 14))
+                                            )
+                                            .padding(0)
+                                            .frame(maxWidth: 50, maxHeight: 25)
                                     }
                                     .padding(0)
                                     .listRowBackground(Color.clear)
@@ -181,7 +185,7 @@ struct ResultView: View {
                                 Text("MAIN MENU")
                                     .foregroundStyle(Color.primaryPurple)
                                     .fontWeight(.bold)
-                                    .font(.system(size: 32))
+                                    .font(.custom("Staatliches-Regular", size: 32))
                             )
                     })
                     .padding(.top, 30)
@@ -195,7 +199,7 @@ struct ResultView: View {
                                 Text("PLAY AGAIN")
                                     .foregroundStyle(Color.white)
                                     .fontWeight(.bold)
-                                    .font(.system(size: 32))
+                                    .font(.custom("Staatliches-Regular", size: 32))
                             )
                             .padding(.top, 15)
                             .padding(.bottom, 25)

@@ -20,7 +20,7 @@ class MultipeerSession: NSObject {
     private var serviceAdvertiser: MCNearbyServiceAdvertiser!
     private var serviceBrowser: MCNearbyServiceBrowser!
     private var nearbyPeers: [Player] = []
-    var isMaster: Bool = true
+    var isMaster: Bool = false
     private var isJoined:Bool = false
     var showInviteModal: ((String,MCPeerID, @escaping (Bool)->Void) -> Void)?
     var showDestroyModal: ((String)->Void)?

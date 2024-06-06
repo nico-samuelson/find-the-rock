@@ -59,7 +59,7 @@ struct HomeView: View {
                         Spacer()
                         
                         /// Bottom Action BAR
-                        VStack(){
+                        VStack(spacing: 0){
                             Image(avatarImageNames[avatarIndex])
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
@@ -123,20 +123,20 @@ struct HomeView: View {
                                 }
                             }
                             
-                            Spacer()
-                                .frame(height:12)
-//                            NavigationLink(destination: RoomView(multiPeerSession: $multiPeerSession, myself: Player(peerID: multiPeerSession.getPeerId(), profile:"lancelot-avatar", status: .connected, point: 0)),label:{
-//                                Text("CREATE ROOM")
-//                                    .font(.custom("Staatliches-Regular",size:36,relativeTo: .title))
-//                                    .foregroundStyle(.white)
-//                                    .bold()
-//                                    .padding(20)
-//                                    .padding(.horizontal,24)
-//                                    .background(){
-//                                        SkewedRoundedRectangle(topLeftYOffset: 5,bottomRightXOffset: 5,bottomLeftXOffset: 5,cornerRadius: 20)
-//                                            .fill(Color.tersierGradient)
-//                                    }
-//                            })
+//                            Spacer()
+//                                .frame(height:12)
+                            //                            NavigationLink(destination: RoomView(multiPeerSession: $multiPeerSession, myself: Player(peerID: multiPeerSession.getPeerId(), profile:"lancelot-avatar", status: .connected, point: 0)),label:{
+                            //                                Text("CREATE ROOM")
+                            //                                    .font(.custom("Staatliches-Regular",size:36,relativeTo: .title))
+                            //                                    .foregroundStyle(.white)
+                            //                                    .bold()
+                            //                                    .padding(20)
+                            //                                    .padding(.horizontal,24)
+                            //                                    .background(){
+                            //                                        SkewedRoundedRectangle(topLeftYOffset: 5,bottomRightXOffset: 5,bottomLeftXOffset: 5,cornerRadius: 20)
+                            //                                            .fill(Color.tersierGradient)
+                            //                                    }
+                            //                            })
                             Button(action: {
                                 // Your custom logic here
                                 // e.g., update some state, print a message, etc.
@@ -160,16 +160,19 @@ struct HomeView: View {
                             .navigationDestination(isPresented: $navigateRoom){
                                 RoomView(multiPeerSession: $multiPeerSession, myself: Player(peerID: multiPeerSession.getPeerId(), profile:"lancelot-avatar", status: .connected, point: 0))
                             }
+                            .offset(y: -10)
+//                            .padding(.bottom, 10)
                             Spacer()
+                                .frame(height: 20)
                         }
                         .frame(width:gp.size.width,height:gp.size.height/30*9)
-                            .background(){
-                                CustomRandomShape()
-                                    .fill(Color.primaryGradient)
-                                    .shadow(color:.init(.black.opacity(0.33)),radius: 20,x:0,y:4)
-                            }
-                            .offset(x:0,y:(gp.size.height/30*7) - botOffset)
-                            
+                        .background(){
+                            CustomRandomShape()
+                                .fill(Color.primaryGradient)
+                                .shadow(color:.init(.black.opacity(0.33)),radius: 20,x:0,y:4)
+                        }
+                        .offset(x:0,y:(gp.size.height/30*7) - botOffset)
+                        
                     }
                     .background(Color.clear)  // Add a clear background to detect taps outside
                     .contentShape(Rectangle())  // Define the tap area as the whole view
