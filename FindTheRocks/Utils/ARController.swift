@@ -77,10 +77,6 @@ class ARController: UIViewController {
         let configuration = ARWorldTrackingConfiguration()
         configuration.planeDetection = [.horizontal, .vertical]
         multipeerSession.sceneView.session.run(configuration)
-        
-    
-        
-        // Set a delegate to track the number of plane anchors for providing UI feedback.
         multipeerSession.sceneView.session.delegate = multipeerSession
         
 //        multipeerSession.sceneView.debugOptions = [ARSCNDebugOptions.showFeaturePoints]
@@ -88,26 +84,6 @@ class ARController: UIViewController {
         // have long periods of interaction without touching the screen or buttons.
         UIApplication.shared.isIdleTimerDisabled = true
     }
-    
-//    func renderer(_ renderer: SCNSceneRenderer, didUpdate node: SCNNode, for anchor: ARAnchor) {
-//        if let objectAtAnchor = self.virtualObjectLoader.loadedObjects.first(where: { $0.anchor == anchor }) {
-//            objectAtAnchor.simdPosition = anchor.transform.translation
-//            objectAtAnchor.anchor = anchor
-//        }
-//    }
-    
-//    @objc func shareSession() {
-//        print("masuk gan")
-//        multipeerSession.sceneView.session.getCurrentWorldMap { worldMap, error in
-//            guard let map = worldMap
-//            else { print("Error: \(error!.localizedDescription)"); return }
-//            guard let data = try? NSKeyedArchiver.archivedData(withRootObject: map, requiringSecureCoding: true)
-//            else { fatalError("can't encode map") }
-//            self.multipeerSession.sendToAllPeers(data) { success in
-//
-//            }
-//        }
-//    }
     
     // MARK: - AR session management
     private func updateSessionInfoLabel(for frame: ARFrame, trackingState: ARCamera.TrackingState) {
@@ -149,77 +125,31 @@ class ARController: UIViewController {
         }
     }
     
-//    @IBAction func resetTracking(_ sender: UIButton?) {
-//        let configuration = ARWorldTrackingConfiguration()
-//        configuration.planeDetection = [.horizontal, .vertical]
-//        sceneView.session.run(configuration, options: [.resetTracking])
-//    }
-
-//    func findClosestNode(to point: simd_float3) -> SCNNode? {
-//        var closestNode: SCNNode?
-//        var minimumDistance: Float = .greatestFiniteMagnitude
-//
-//        for rock in team {
-//            let nodePosition = node.simdWorldPosition
-//            let distance = simd_distance(nodePosition, point)
-//
-//            if distance < minimumDistance {
-//                minimumDistance = distance
-//                closestNode = node
-//            }
-//        }
-//
-//        return closestNode
-//    }
-    
     @objc func handleSceneTap(_ sender: UITapGestureRecognizer) {
-        
-//        print("Tap Detected")
-        // Hit test to find a place for a virtual object.
-        guard let hitTestResult = multipeerSession.sceneView
-            .hitTest(sender.location(in: multipeerSession.sceneView), types: [.existingPlaneUsingGeometry, .estimatedHorizontalPlane])
-            .first
-        else { return }
-        // Place an anchor for a virtual character. The model appears in renderer(_:didAdd:for:).
-//        print("tap"
-        let anchor = ARAnchor(name: "rockARAnchor", transform: hitTestResult.worldTransform)
-        let newAnchor = CustomAnchor(anchor: anchor, action: "add", isReal: !self.multipeerSession.isPlantingFakeRock)
-//        multipeerSession.sceneView.session.add(anchor: anchor)
-        
-        guard let data = try? NSKeyedArchiver.archivedData(withRootObject: newAnchor, requiringSecureCoding: true)
-        else { print("babi"); return }
-        
-        print("taptap")
-        print(anchor.transform)
-        
-        if self.multipeerSession.isMaster {
-            self.multipeerSession.handleAnchorChange(anchor, "add", !self.multipeerSession.isPlantingFakeRock, self.multipeerSession.peerID)
+        if multipeerSession.isPlanting {
+            // Hit test to find a place for a virtual object.
+            guard let hitTestResult = multipeerSession.sceneView
+                .hitTest(sender.location(in: multipeerSession.sceneView), types: [.existingPlaneUsingGeometry, .estimatedHorizontalPlane])
+                .first
+            else { return }
+            
+            // Place an anchor for a virtual character. The model appears in renderer(_:didAdd:for:).
+            let anchor = ARAnchor(name: "rockARAnchor", transform: hitTestResult.worldTransform)
+            let newAnchor = CustomAnchor(anchor: anchor, action: "add", isReal: !self.multipeerSession.isPlantingFakeRock)
+            
+            guard let data = try? NSKeyedArchiver.archivedData(withRootObject: newAnchor, requiringSecureCoding: true)
+            else { print("babi"); return }
+            
+            print("taptap")
+            print(anchor.transform)
+            
+            if self.multipeerSession.isMaster {
+                self.multipeerSession.handleAnchorChange(anchor, "add", !self.multipeerSession.isPlantingFakeRock, self.multipeerSession.peerID)
+            }
+            else {
+                self.multipeerSession.sendToAllPeers(data)
+            }
         }
-        else {
-            self.multipeerSession.sendToAllPeers(data)
-        }
-        
-        
-        
-//        self.sendAnchor(anchor: anchor, mode: "add", timer: <#T##Timer?#>)
-//        print(multipeerSession.sceneView.session.currentFrame?.anchors[0])
-//        ARWorldTrackingConfiguration.
-//         Send the anchor info to peers, so they can place the same content.
-        
-//        print("taptap")
-        
-        // send anchor data to all peers
-//        var tries = 0
-//        var timer: Timer?
-//        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-//            timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
-//                self.sendAnchor(anchor, timer: timer)
-//                tries += 1
-//                if (tries >= 5) {
-//                    timer?.invalidate()
-//                }
-//            }
-//        }
     }
     
     @objc func handleLongPress(_ gesture: UITapGestureRecognizer) {
@@ -229,92 +159,33 @@ class ARController: UIViewController {
             let hitTestOptions: [SCNHitTestOption: Any] = [.firstFoundOnly: true]
             let hitTestResults = multipeerSession.sceneView.hitTest(touchLocation, options: hitTestOptions)
             
-//            print(hitTestResults)
-            print("root node names: ", multipeerSession.sceneView.scene.rootNode.childNodes.map { $0.childNodes.map { $0.name } })
-            
-//            print("hit test results: ", hitTestResults)
-//            hitTestResults.first.
-//            print("hit test result: ", hitTestResults.map { $0.node.childNodes.map {$0.childNodes.map {$0.name}}})
-            print("hit test result: ", hitTestResults.map { $0.node.parent?.name })
+            // get clicked node
             if let longPressedNode = hitTestResults.map { $0.node }.first {
-                
-//                print(longPressedNode.worldTransform)
-//                print(longPressedNode.simdWorldTransform)
-                
-//                print(long)
                 longPressedNode.parent?.parent?.removeFromParentNode()
-//                print("\(longPressedNode) berhasil ditekan")
                 
                 for rock in multipeerSession.room.getAllPlantedRocks() {
-//                    print("pressed node name: ", longPressedNode.childNodes.map {$0.name})
-//                    print(rock.anchor.identifier)
                     if rock.anchor.identifier == UUID(uuidString: longPressedNode.parent?.name ?? "") {
                         print("anchor found")
                         guard let anchor = try? NSKeyedArchiver.archivedData(withRootObject: CustomAnchor(anchor: rock.anchor, action: "remove", isReal: rock.isFake), requiringSecureCoding: true)
                         else { return }
                         
                         if self.multipeerSession.isMaster {
-                            self.multipeerSession.handleAnchorChange(rock.anchor, "remove", !self.multipeerSession.isPlantingFakeRock, self.multipeerSession.peerID)
+                            if self.multipeerSession.isPlanting {
+                                self.multipeerSession.handleAnchorChange(rock.anchor, "remove", !self.multipeerSession.isPlantingFakeRock, self.multipeerSession.peerID)
+                            }
+                            else {
+                                self.multipeerSession.handleAnchorChange(rock.anchor, "pick", !self.multipeerSession.isPlantingFakeRock, self.multipeerSession.peerID)
+                            }
                         }
                         else {
                             self.multipeerSession.sendToAllPeers(anchor)
                         }
-//                        self.multipeerSession.sendToAllPeers(anchor)
                     }
-//                    if rock.anchor.transform == longPressedNode.simdWorldTransform {
-//
-//                    }
                 }
             } else  {
                 print("tidak ditemukan object yang tertekan")
             }
             print("root node names: ", multipeerSession.sceneView.scene.rootNode.childNodes.map { $0.childNodes.map { $0.name } })
-        }
-    }
-    
-    func sendAnchor(_ anchor: ARAnchor, mode: String) {
-        DispatchQueue.global().async {
-            // only send data when there's no world update
-            if (!self.multipeerSession.isUpdatingWorldMap) {
-                self.multipeerSession.isUpdatingWorldMap = true
-                
-                print("anchor to be send: ", anchor.transform)
-                
-                // send room data
-//                self.multipeerSession.sendToAllPeers(data: )
-                
-                guard let anchor = try? NSKeyedArchiver.archivedData(withRootObject: (anchor, mode), requiringSecureCoding: true)
-                else { return }
-                
-                self.multipeerSession.sendToAllPeers(anchor)
-                
-                        
-//                guard let room = try? NSKeyedArchiver.archivedData(withRootObject: self.multipeerSession.room, requiringSecureCoding: true)
-//                else { fatalError("can't encode room") }
-                
-//                self.multipeerSession.sendARData(room) { success in
-//                    print("success sending room: ", success)
-//                    // invalidate timer when room is failed to sent
-//                    if (!success) { timer?.invalidate() }
-//                    
-//                    // send AR world map data
-//                    else {
-//                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-//                            self.multipeerSession.sceneView.session.getCurrentWorldMap { worldMap, error in
-//                                guard let map = worldMap
-//                                else { print("Error: \(error!)"); return }
-//                                guard let data = try? NSKeyedArchiver.archivedData(withRootObject: map, requiringSecureCoding: true)
-//                                else { fatalError("can't encode map") }
-//                                self.multipeerSession.sendARData(data) { success in
-//                                    print("success sending world map: ", success)
-//                                    if (success) { timer?.invalidate() }
-//                                }
-//                                self.multipeerSession.isUpdatingWorldMap = false
-//                            }
-//                        }
-//                    }
-//                }
-            }
         }
     }
 

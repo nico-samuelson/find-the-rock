@@ -26,8 +26,8 @@ class MultipeerSession: NSObject {
     var showDestroyModal: ((String)->Void)?
     var confirmingRes: (()->Bool)?
     var room: Room! = Room()
-    var isUpdatingWorldMap: Bool = false
     var isPlantingFakeRock: Bool = false
+    var isPlanting: Bool = true
     
     // MARK: Scene View
     var cameraTransform: SCNMatrix4? = SCNMatrix4()
@@ -339,6 +339,12 @@ extension MultipeerSession: MCSessionDelegate {
                 room.teams[team].fakePlanted.removeAll(where: {$0.anchor.identifier == newAnchor.identifier})
                 sceneView.session.remove(anchor: newAnchor)
             }
+        }
+        else if (mode == "pick") {
+            guard isReal, let player = room.teams[team].players.first(where: {$0.peerID == sender}) else { return }
+            player.point += 1
+            room.teams[team].realPlanted.removeAll(where: {$0.anchor.identifier == newAnchor.identifier})
+            sceneView.session.remove(anchor: newAnchor)
         }
         
         sceneView.session.getCurrentWorldMap { worldMap, error in

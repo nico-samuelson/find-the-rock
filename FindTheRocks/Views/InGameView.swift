@@ -11,9 +11,9 @@ import SceneKit
 import ARKit
 import MultipeerConnectivity
 
-enum Mode {
-    case plant, inGame
-}
+//enum Mode {
+//    case plant, inGame
+//}
 
 enum Label {
     case redTeam, blueTeam, fingTheRock
@@ -25,9 +25,9 @@ enum PlantButton {
 
 struct InGameView: View {
     @State var selectedButton: PlantButton = PlantButton.real
-    @State var timeRemaining: Int = 180
+    @State var timeRemaining: Int = 60
     @State var isTimerActive: Bool = false
-    @State var mode: Mode = Mode.plant
+//    @State var mode: Mode = Mode.plant
     @State var redPoints: Int = 0
     @State var bluePoints: Int = 0
     
@@ -43,7 +43,7 @@ struct InGameView: View {
     
     func changeModeToInGame() {
         withAnimation(.easeInOut(duration: 0.5)) {
-            mode = .inGame
+            multiPeerSession.isPlanting = false
         }
     }
     
@@ -66,6 +66,7 @@ struct InGameView: View {
                                             timeRemaining -= 1
                                         } else {
                                             isTimerActive = false
+                                            multiPeerSession.isPlanting = false
                                         }
                                         
                                     }
@@ -83,10 +84,10 @@ struct InGameView: View {
                                 .padding(.vertical, 10)
                         }
                         VStack(spacing: 0) {
-                            // Score
+                            // MARK: Score
                             HStack(spacing: 0) {
                                 VStack {
-                                    Text(mode == Mode.plant ? "\(multiPeerSession.room.teams[0].players.reduce(0) { $0 + $1.point })" : "")
+                                    Text(!multiPeerSession.isPlanting ? "\(multiPeerSession.room.teams[0].players.reduce(0) { $0 + $1.point })" : "")
                                         .font(.custom("TitanOne", size: 40))
                                         .foregroundColor(Color.white)
                                 }
@@ -94,7 +95,7 @@ struct InGameView: View {
                                 .background(Color.redGradient)
                                 .cornerRadius(15, corners: [.topLeft])
                                 VStack {
-                                    Text(mode == Mode.plant ? "\(multiPeerSession.room.teams[1].players.reduce(0) { $0 + $1.point })" : "")
+                                    Text(!multiPeerSession.isPlanting ? "\(multiPeerSession.room.teams[1].players.reduce(0) { $0 + $1.point })" : "")
                                         .font(.custom("TitanOne", size: 40))
                                         .foregroundColor(Color.white)
                                 }
@@ -108,7 +109,7 @@ struct InGameView: View {
                                 .padding(.bottom, 20)
                         }
                         
-                        if mode == Mode.plant {
+                        if multiPeerSession.isPlanting {
                             HStack {
                                 // Button Real Rock
                                 VStack {
@@ -129,10 +130,10 @@ struct InGameView: View {
                                         .bold()
                                 }
                                 .frame(height: 100)
-                                .background(selectedButton == PlantButton.real ? Color.tersierGradient.opacity(1) : Color.whiteGradient.opacity(0.2))
+                                .background(!multiPeerSession.isPlantingFakeRock ? Color.tersierGradient.opacity(1) : Color.whiteGradient.opacity(0.2))
                                 .cornerRadius(15)
                                 .onTapGesture {
-                                    selectedButton = PlantButton.real
+                                    multiPeerSession.isPlantingFakeRock = false
                                 }
                                 
                                 // Button Fake Rock
@@ -154,11 +155,10 @@ struct InGameView: View {
                                         .bold()
                                 }
                                 .frame(height: 100)
-                                .background(selectedButton == PlantButton.fake ? Color.tersierGradient.opacity(1) : Color.whiteGradient.opacity(0.2))
+                                .background(multiPeerSession.isPlantingFakeRock ? Color.tersierGradient.opacity(1) : Color.whiteGradient.opacity(0.2))
                                 .cornerRadius(15)
                                 .onTapGesture {
-                                    selectedButton = PlantButton.fake
-                                    mode = Mode.inGame
+                                    multiPeerSession.isPlantingFakeRock = true
                                 }
                             }
                             .padding(.top, 10)
@@ -169,7 +169,7 @@ struct InGameView: View {
                         //                    }
                     }
                     .transition(.move(edge: .bottom))
-                    .animation(.default, value: mode)
+                    .animation(.default, value: multiPeerSession.isPlanting)
                     .padding(.horizontal,20)
                     .padding(.vertical,0)
                     .onAppear {
@@ -177,28 +177,28 @@ struct InGameView: View {
                     }
                     
                     // Modal Countdown
-                    if timeRemaining <= 0 && mode == Mode.plant {
-                        VStack{
-                            Spacer()
-                            HStack{
-                                Spacer()
-                                VStack(alignment:.center){
-                                }
-                                .frame(width:gp.size.width - 40, height: gp.size.height*0.23)
-                                .background(){
-                                    SkewedRoundedRectangle(topLeftXOffset: 5,topRightYOffset: 5,bottomRightYOffset: 5,cornerRadius: 20)
-                                        .fill(Color.primaryGradient)
-                                }
-                                Spacer()
-                            }
-                            Spacer()
-                        }
-                        .frame(width:gp.size.width,height:gp.size.height)
-                            .background(){
-                                Color.white.opacity(0.5)
-                                    .blur(radius:10)
-                        }
-                    }
+//                    if timeRemaining <= 0 && multiPeerSession.isPlanting {
+//                        VStack{
+//                            Spacer()
+//                            HStack{
+//                                Spacer()
+//                                VStack(alignment:.center){
+//                                }
+//                                .frame(width:gp.size.width - 40, height: gp.size.height*0.23)
+//                                .background(){
+//                                    SkewedRoundedRectangle(topLeftXOffset: 5,topRightYOffset: 5,bottomRightYOffset: 5,cornerRadius: 20)
+//                                        .fill(Color.primaryGradient)
+//                                }
+//                                Spacer()
+//                            }
+//                            Spacer()
+//                        }
+//                        .frame(width:gp.size.width,height:gp.size.height)
+//                            .background(){
+//                                Color.white.opacity(0.5)
+//                                    .blur(radius:10)
+//                        }
+//                    }
                 }
             }
         }
