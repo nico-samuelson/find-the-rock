@@ -265,52 +265,6 @@ class MultipeerSession: NSObject {
         
         return newAnchor
     }
-    
-    func setWorldMap(map: ARWorldMap) {
-        let configuration = ARWorldTrackingConfiguration()
-        configuration.planeDetection = [.horizontal, .vertical]
-        configuration.initialWorldMap = map
-        configuration.worldAlignment = .gravityAndHeading
-        
-        self.sceneView.session.run(configuration, options: [.resetTracking, .removeExistingAnchors])
-        
-        //        print("map rock name: ", sceneView.session.currentFrame?.anchors.map { $0.name})
-        //        print("map rock transform: ", sceneView.session.currentFrame?.anchors.map {$0.transform})
-        //        print("received from map rock identifier: ", map.anchors.map {$0.identifier})
-        //        print("initial world rock transform: ", configuration.initialWorldMap?.anchors.map {$0.transform})
-        //        print("rock identifier: ", self.room.teams[1].realPlanted[0].anchor.identifier)
-        //        print("rock transform: ", self.room.teams[1].realPlanted[0].anchor.transform)
-        
-        let allRocks = self.room.teams[0].fakePlanted + self.room.teams[0].realPlanted + self.room.teams[1].fakePlanted + self.room.teams[1].realPlanted
-        
-        //        scene
-        
-        //        if let anchors = configuration.initialWorldMap?.anchors {
-        for rock in allRocks {
-            //                print("rock transform: ", rock.anchor.transform)
-            //                print("Map rock transform: ", map.anchors.first(where: {$0.identifier == rock.anchor.identifier})?.transform)
-            //                print("AR frame rock transform: ", sceneView.session.currentFrame?.anchors.first(where: {$0.identifier == rock.anchor.identifier})?.transform)
-            if let name = rock.anchor.name, name.hasPrefix("rock"), let newAnchor = alignNewAnchor(anchor: rock.anchor) {
-                sceneView.session.add(anchor: newAnchor)
-                
-                //                    sceneView.session.currentFrame?.anchors.removeAll(where: { $0.identifier == anchor.identifier })
-                //                    configuration.initialWorldMap?.anchors.removeAll(where: { $0.identifier == anchor.identifier })
-            }
-        }
-        //        }
-    }
-    
-    func receiveCollaborationData(_ collaborationData: ARSession.CollaborationData) {
-        print("received collaboration data")
-        //        collaborationData.
-        self.sceneView.session.update(with: collaborationData)
-        
-        //        guard let anchors = sceneView.session.currentFrame?.anchors else { return }
-        //        for anchor in anchors {
-        //
-        //        }
-    }
-    //    func receive
 }
 
 // MARK: Received Data Handler
@@ -373,43 +327,68 @@ extension MultipeerSession: MCSessionDelegate {
         }
     }
     
-    func handleAnchorChange(_ anchor: ARAnchor, _ mode: String, _ isReal: Bool, _ sender: MCPeerID) {
+    // room master will merge all the anchors sent by the players
+    func handleAnchorChange(_ newAnchor: ARAnchor, _ mode: String, _ isReal: Bool, _ sender: MCPeerID) {
         let team = self.getTeam(sender)
         
-        guard let addedAnchor = alignNewAnchor(anchor: anchor) else {
-            print("can't align new anchor")
-            return
+//        guard let addedAnchor = alignNewAnchor(anchor: anchor) else {
+//            print("can't align new anchor")
+//            return
+//        }
+        
+        guard isMaster else { return }
+        if (mode == "add") {
+            if (isReal && room.teams[team].realPlanted.count + 1 <= room.realRock) {
+                room.teams[team].realPlanted.append(Rock(isFake: isReal, anchor: newAnchor))
+                sceneView.session.add(anchor: newAnchor)
+            }
+            else if (!isReal && room.teams[team].fakePlanted.count + 1 <= room.fakeRock){
+                room.teams[team].fakePlanted.append(Rock(isFake: isReal, anchor: newAnchor))
+                sceneView.session.add(anchor: newAnchor)
+            }
         }
-        if isMaster {
-            if (mode == "add") {
-                if (isReal && room.teams[team].realPlanted.count + 1 <= room.realRock) {
-                    room.teams[team].realPlanted.append(Rock(isFake: isReal, anchor: anchor))
-                    sceneView.session.add(anchor: addedAnchor)
-                }
-                else if (!isReal && room.teams[team].fakePlanted.count + 1 <= room.fakeRock){
-                    room.teams[team].fakePlanted.append(Rock(isFake: isReal, anchor: anchor))
-                    sceneView.session.add(anchor: addedAnchor)
-                }
+        else if (mode == "remove") {
+            if isReal && room.teams[team].realPlanted.count > 0 {
+                room.teams[team].realPlanted.removeAll(where: {$0.anchor.identifier == newAnchor.identifier})
+                sceneView.session.remove(anchor: newAnchor)
             }
-            else if (mode == "remove") {
-                if isReal && room.teams[team].realPlanted.count > 0 {
-                    room.teams[team].realPlanted.removeAll(where: {$0.anchor.identifier == anchor.identifier})
-                    sceneView.session.remove(anchor: anchor)
-                }
-                else if !isReal && room.teams[team].fakePlanted.count > 0 {
-                    room.teams[team].fakePlanted.removeAll(where: {$0.anchor.identifier == anchor.identifier})
-                    sceneView.session.remove(anchor: anchor)
-                }
+            else if !isReal && room.teams[team].fakePlanted.count > 0 {
+                room.teams[team].fakePlanted.removeAll(where: {$0.anchor.identifier == newAnchor.identifier})
+                sceneView.session.remove(anchor: newAnchor)
             }
-            
-            guard let room = try? NSKeyedArchiver.archivedData(withRootObject: room, requiringSecureCoding: true) else {
-                print("can't encode room data")
-                return
-            }
-            self.sendToAllPeers(room)
         }
-        else {
-            
+        
+        sceneView.session.getCurrentWorldMap { worldMap, error in
+            guard let map = worldMap
+            else { print("Error: \(error!)"); return }
+            guard let data = try? NSKeyedArchiver.archivedData(withRootObject: ARData(room: self.room, map: map), requiringSecureCoding: true)
+            else { fatalError("can't encode map") }
+            self.sendToAllPeers(data)
+        }
+    }
+    
+    // players will receive the world map from master
+    func receiveWorldMap(data: ARData) {
+        print("receive new world map and room data")
+        let configuration = ARWorldTrackingConfiguration()
+        configuration.planeDetection = [.horizontal, .vertical]
+        configuration.initialWorldMap = data.map
+        configuration.initialWorldMap?.anchors.removeAll()
+        configuration.worldAlignment = .gravityAndHeading
+        
+        self.room = data.room
+        self.sceneView.session.run(configuration, options: [.resetTracking, .removeExistingAnchors])
+        
+        let allRocks = self.room.teams[0].fakePlanted + self.room.teams[0].realPlanted + self.room.teams[1].fakePlanted + self.room.teams[1].realPlanted
+        
+        print(allRocks.count)
+        
+        for rock in allRocks {
+            sceneView.session.add(anchor: rock.anchor)
+//            if let name = rock.anchor.name, name.hasPrefix("rock"), let newAnchor = alignNewAnchor(anchor: rock.anchor) {
+//                print(name)
+//                sceneView.session.add(anchor: rock.anchor)
+//            }
         }
     }
     
@@ -418,7 +397,7 @@ extension MultipeerSession: MCSessionDelegate {
             if let plainData = data as? Data, let string = String(data: plainData, encoding: .utf8) {
                 handleDataString(string)
             } else {
-                let object = try? NSKeyedUnarchiver.unarchivedObject(ofClasses: [Room.self, Player.self, Team.self, Rock.self, CustomAnchor.self, ARWorldMap.self, ARSession.CollaborationData.self, MCPeerID.self, NSString.self, ARAnchor.self, SCNNode.self, NSArray.self], from: data)
+                let object = try? NSKeyedUnarchiver.unarchivedObject(ofClasses: [Room.self, Player.self, Team.self, Rock.self, CustomAnchor.self, ARData.self, ARWorldMap.self, ARSession.CollaborationData.self, MCPeerID.self, NSString.self, ARAnchor.self, SCNNode.self, NSArray.self], from: data)
                 
                 switch object {
                 case let string as String:
@@ -428,36 +407,20 @@ extension MultipeerSession: MCSessionDelegate {
                 case let newAnchor as CustomAnchor:
                     print(newAnchor.action)
                     handleAnchorChange(newAnchor.anchor, newAnchor.action, newAnchor.isReal, peerID)
+                case let arData as ARData:
+                    receiveWorldMap(data: arData)
                 case let data as Data:
                     handleDataString(String(decoding: data, as: UTF8.self))
-                    //                    case let anchor as ARAnchor:
-                    //                addNewObject(anchor: anchor)
-                case let newRoom as Room:
-                    if (!isUpdatingWorldMap) {
-                        self.isUpdatingWorldMap = true
-                        self.room = newRoom
-                        self.isUpdatingWorldMap = false
-                    }
-                    
-                case let map as ARWorldMap:
-                    //                print("able to receive map: ", !self.isUpdatingWorldMap)
-                    if (!isUpdatingWorldMap) {
-                        self.isUpdatingWorldMap = true
-                        setWorldMap(map: map)
-                        self.isUpdatingWorldMap = false
-                    }
-                    //            case let collaborationData as ARSession.CollaborationData:
-                    //                self.isUpdatingWorldMap = true
-                    //                receiveCollaborationData(collaborationData)
-                    //                self.isUpdatingWorldMap = false
+//                case let newRoom as Room:
+//                    if (!isUpdatingWorldMap) {
+//                        self.isUpdatingWorldMap = true
+//                        self.room = newRoom
+//                        self.isUpdatingWorldMap = false
+//                    }
                 default:
                     print("unknown type received")
                 }
             }
-            //            catch {
-            //                print(error.localizedDescription)
-            //            }
-            
         }
     }
     

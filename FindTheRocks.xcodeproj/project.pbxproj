@@ -10,6 +10,7 @@
 		046BB4952C104C8900B91BC7 /* TitanOne-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 046BB4942C104C8900B91BC7 /* TitanOne-Regular.ttf */; };
 		046BB4972C104C9D00B91BC7 /* Staatliches-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 046BB4962C104C9D00B91BC7 /* Staatliches-Regular.ttf */; };
 		046BB4992C105D3600B91BC7 /* CustomAnchorModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 046BB4982C105D3600B91BC7 /* CustomAnchorModel.swift */; };
+		04DBC9762C1147CD00B8DF52 /* ARDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04DBC9752C1147CD00B8DF52 /* ARDataModel.swift */; };
 		04E64FEB2C0E08D2008CF4E7 /* MultipeerSceneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04E64FEA2C0E08D2008CF4E7 /* MultipeerSceneView.swift */; };
 		04F5B2BB2C0B0C50008DACC3 /* ResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04F5B2BA2C0B0C50008DACC3 /* ResultView.swift */; };
 		04F5BCD92C05CD0000AC5205 /* FindTheRocksApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04F5BCD82C05CD0000AC5205 /* FindTheRocksApp.swift */; };
@@ -65,6 +66,7 @@
 		046BB4942C104C8900B91BC7 /* TitanOne-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "TitanOne-Regular.ttf"; path = "../../../../../Downloads/TitanOne-Regular.ttf"; sourceTree = "<group>"; };
 		046BB4962C104C9D00B91BC7 /* Staatliches-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Staatliches-Regular.ttf"; path = "../../../../../Downloads/Staatliches-Regular.ttf"; sourceTree = "<group>"; };
 		046BB4982C105D3600B91BC7 /* CustomAnchorModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomAnchorModel.swift; sourceTree = "<group>"; };
+		04DBC9752C1147CD00B8DF52 /* ARDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARDataModel.swift; sourceTree = "<group>"; };
 		04E64FEA2C0E08D2008CF4E7 /* MultipeerSceneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultipeerSceneView.swift; sourceTree = "<group>"; };
 		04F5B2BA2C0B0C50008DACC3 /* ResultView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResultView.swift; sourceTree = "<group>"; };
 		04F5BCD52C05CD0000AC5205 /* FindTheRocks.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FindTheRocks.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -265,6 +267,7 @@
 				A4DAC4D02C0866340062CE38 /* PlayerModel.swift */,
 				A4DAC4D22C08663F0062CE38 /* RockModel.swift */,
 				046BB4982C105D3600B91BC7 /* CustomAnchorModel.swift */,
+				04DBC9752C1147CD00B8DF52 /* ARDataModel.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -416,6 +419,7 @@
 				92DBDBDB2C0DE38A002C28B0 /* InGameView.swift in Sources */,
 				A43A7A122C07246700C46FAA /* RoomSettingSheetView.swift in Sources */,
 				A4DAC4D32C08663F0062CE38 /* RockModel.swift in Sources */,
+				04DBC9762C1147CD00B8DF52 /* ARDataModel.swift in Sources */,
 				04F5BCDD2C05CD0000AC5205 /* Item.swift in Sources */,
 				A43A7A182C0737B900C46FAA /* ActionStepperComponent.swift in Sources */,
 				A4DAC4CD2C08660F0062CE38 /* RoomModel.swift in Sources */,

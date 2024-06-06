@@ -21,6 +21,11 @@ extension MultipeerSession: ARSCNViewDelegate, ARSessionDelegate {
         self.cameraPosition = SCNVector3(cameraTransform.m41, cameraTransform.m42, cameraTransform.m43)
         
         if let name = anchor.name, name.hasPrefix("rock") {
+//            print(node.)
+//            print(node.position)
+            print(anchor.transform)
+//            print(node.simdWorldTransform)
+//            print(node.simdTransform)
 //            print("new anchor added")
             // load rock model
             let pandaNode = loadRockModel()

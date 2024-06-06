@@ -46,7 +46,7 @@ class ARController: UIViewController {
         let configuration = ARWorldTrackingConfiguration()
 //        configuration.isCollaborationEnabled = true
         configuration.environmentTexturing = .automatic
-//        configuration.worldAlignment = .gravityAndHeading
+        configuration.worldAlignment = .gravityAndHeading
         multipeerSession.sceneView.session.run(configuration)
     }
     

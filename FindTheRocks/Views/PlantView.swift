@@ -99,7 +99,7 @@ struct PlantView: View {
             }
             .background(Color.primaryGradient)
             .onAppear {
-                self.myTeam = multiPeerSession.getMyTeam()
+                myTeam = multiPeerSession.getTeam(multiPeerSession.peerID)
             }
         }
     }
