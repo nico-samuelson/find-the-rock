@@ -10,7 +10,9 @@ import SwiftData
 
 @main
 struct FindTheRocksApp: App {
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @State var multipeerSession: MultipeerSession = MultipeerSession(displayName: UserDefaults.standard.string(forKey:"display_name") ?? UIDevice.current.systemName)
+    @State var audio = AudioObservable()
     
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
@@ -28,6 +30,7 @@ struct FindTheRocksApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView(multipeerSession: $multipeerSession)
+                .environment(audio)
         }
         .modelContainer(sharedModelContainer)
     }
