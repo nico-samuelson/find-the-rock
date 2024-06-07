@@ -245,8 +245,8 @@ struct InGameView: View {
         .onAppear {
             self.multiPeerSession.isPlanting = true
             self.multiPeerSession.isGameStarted = true
-            //            seekTimeRemaining = multiPeerSession.room.seekTime * 60
-            //            plantTimeRemaining = multiPeerSession.room.hideTime * 60
+            seekTimeRemaining = multiPeerSession.room.seekTime * 60
+            plantTimeRemaining = multiPeerSession.room.hideTime * 60
         }
     }
 }
