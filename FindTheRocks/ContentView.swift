@@ -10,7 +10,6 @@ import SwiftData
 import MultipeerConnectivity
 
 struct ContentView: View {
-    @Environment(AudioObservable.self) var audio
     @Binding var multipeerSession: MultipeerSession
     @State var room: Room = Room()
     @State var showSplashScreen = true
@@ -26,7 +25,6 @@ struct ContentView: View {
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.2){
                 withAnimation(.easeOut(duration:0.3)){
                     showSplashScreen = false
-                    audio.playBGMusic()
                 }
             }
         }

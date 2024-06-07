@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct ResultView: View {
+    @Environment(AudioObservable.self) var audio
     @Binding var multiPeerSession: MultipeerSession
     @State var winner: String = ""
     
@@ -187,6 +188,9 @@ struct ResultView: View {
                                     .fontWeight(.bold)
                                     .font(.custom("Staatliches-Regular", size: 32))
                             )
+//                            .onTapGesture {
+//                                audio.playClick()
+//                            }
                     })
                     .padding(.top, 30)
                     
@@ -208,7 +212,11 @@ struct ResultView: View {
                                 )
                                 .padding(.top, 15)
                                 .padding(.bottom, 25)
+//                                .onTapGesture {
+//                                    audio.playClick()
+//                                }
                         })
+                    .padding([.top, .bottom], 5)
                 }
             }
             .navigationBarBackButtonHidden()

@@ -24,10 +24,11 @@ enum PlantButton {
 }
 
 struct InGameView: View {
+    @Environment(AudioObservable.self) var audio
     @Binding var multiPeerSession: MultipeerSession
     @State var selectedButton: PlantButton = PlantButton.real
-    @State var plantTimeRemaining: Int = 120
-    @State var seekTimeRemaining: Int = 120
+    @State var plantTimeRemaining: Int = 5
+    @State var seekTimeRemaining: Int = 5
     @State var countDownRemaining: Int = 3
     @State var isPlantTimerActive: Bool = false
     @State var isSeekTimerActive: Bool = false
@@ -133,7 +134,10 @@ struct InGameView: View {
                                 // Button Real Rock
                                 VStack(spacing: 0) {
                                     VStack {
-                                        Image(systemName: "circle.fill")
+                                        Image("rock-1")
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fit)
+                                            .frame(width: 50, height: 50)
                                     }
                                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                                     .background(Color.white.opacity(0.2))
@@ -157,13 +161,17 @@ struct InGameView: View {
                                 .background(!multiPeerSession.isPlantingFakeRock ? Color.tersierGradient.opacity(1) : Color.whiteGradient.opacity(0.2))
                                 .cornerRadius(15)
                                 .onTapGesture {
+                                    audio.playClick()
                                     multiPeerSession.isPlantingFakeRock = false
                                 }
                                 
                                 // Button Fake Rock
                                 VStack(spacing: 0) {
                                     VStack {
-                                        Image(systemName: "circle.fill")
+                                        Image("rock-2")
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fit)
+                                            .frame(width: 50, height: 50)
                                     }
                                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                                     .background(Color.white.opacity(0.2))
@@ -186,6 +194,7 @@ struct InGameView: View {
                                 .background(multiPeerSession.isPlantingFakeRock ? Color.tersierGradient.opacity(1) : Color.whiteGradient.opacity(0.2))
                                 .cornerRadius(15)
                                 .onTapGesture {
+                                    audio.playClick()
                                     multiPeerSession.isPlantingFakeRock = true
                                 }
                             }

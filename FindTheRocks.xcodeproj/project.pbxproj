@@ -253,9 +253,9 @@
 				04F5B2BA2C0B0C50008DACC3 /* ResultView.swift */,
 				924A44F12C0D9EA20002D8E1 /* PlantView.swift */,
 				A43A7A112C07246700C46FAA /* RoomSettingSheetView.swift */,
-				92DBDBDA2C0DE38A002C28B0 /* InGameView.swift */,
 				A4DAC4D72C0DB2C70062CE38 /* WaitingView.swift */,
 				A4FF501F2C1148E50057C4EF /* SplashScreenView.swift */,
+				92DBDBDA2C0DE38A002C28B0 /* InGameView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";

@@ -9,6 +9,7 @@ import SwiftUI
 import MultipeerConnectivity
 
 struct RoomView: View {
+    @Environment(AudioObservable.self) var audio
     @Binding var multiPeerSession: MultipeerSession
     @State var myself: Player
     @State private var navigateToHome = false
@@ -53,6 +54,7 @@ struct RoomView: View {
                         Spacer()
                         LegacySceneView(scene: Self.loadScene(named: "art.scnassets/models/gear.scn"))
                             .onTapGesture {
+                                audio.playClick()
                                 isSettingSheet = true
                             }
                             .frame(width: 50, height: 50)
@@ -119,6 +121,7 @@ struct RoomView: View {
                                                     .foregroundStyle(Color.primaryGradient)
                                             )
                                             .onTapGesture{
+                                                audio.playClick()
                                                 kickPlayer(player: player)
                                             }
                                         }
@@ -136,6 +139,7 @@ struct RoomView: View {
                                                 .foregroundStyle(Color.white)
                                         )
                                         .onTapGesture{
+                                            audio.playClick()
                                             assignToTeam(player: player, to: 1)
                                         }
                                         
@@ -189,6 +193,7 @@ struct RoomView: View {
                                                 .foregroundStyle(Color.white)
                                         )
                                         .onTapGesture{
+                                            audio.playClick()
                                             assignToTeam(player: player, to: 0)
                                         }
                                         
@@ -207,6 +212,7 @@ struct RoomView: View {
                                                     .foregroundStyle(Color.primaryGradient)
                                             )
                                             .onTapGesture{
+                                                audio.playClick()
                                                 kickPlayer(player: player)
                                             }
                                         }
@@ -279,6 +285,7 @@ struct RoomView: View {
                                 Spacer()
                                 
                                 Button{
+                                    audio.playClick()
                                     assignToTeam(player: peer)
                                 } label: {
                                     SkewedRoundedRectangle(topRightYOffset: 0.5, bottomRightXOffset: 2, bottomRightYOffset: -1, bottomLeftXOffset: 3, topLeftCornerRadius: 10, topRightCornerRadius: 10, bottomLeftCornerRadius: 10, bottomRightCornerRadius: 10)
@@ -315,6 +322,7 @@ struct RoomView: View {
                     
                     // MARK: BACK DESTROY ROOM
                     Button(action: {
+                        audio.playClick()
                         // Your custom logic here
                         // e.g., update some state, print a message, etc.
                         print("Logic Executed, destroying room!")
@@ -340,6 +348,7 @@ struct RoomView: View {
                     }
                     
                     Button {
+                        audio.playClick()
                         self.multiPeerSession.sendToAllPeers("start".data(using: .utf8)!)
                         self.multiPeerSession.isGameStarted = true
                         self.startGame = true

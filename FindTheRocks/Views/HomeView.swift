@@ -10,6 +10,7 @@ import SceneKit
 import MultipeerConnectivity
 
 struct HomeView: View {
+    @Environment(AudioObservable.self) var audio
     @State private var name: String = ""
     @Binding var multiPeerSession: MultipeerSession
     @State private var keyboardHeight:CGFloat = 0
@@ -57,6 +58,9 @@ struct HomeView: View {
                         // 3d Asset
                         LegacySceneView(scene: Self.loadScene(named: "art.scnassets/models/rock-home.scn"))
                             .frame(width: gp.size.width)
+                            .onAppear {
+                                audio.playBGMusic()
+                            }
                         Spacer()
                         
                         /// Bottom Action BAR
@@ -75,6 +79,7 @@ struct HomeView: View {
                                 .offset(avatarOffset)
                                 .opacity(avatarOpacity)
                                 .onTapGesture(){
+                                    audio.playClick()
                                     avatarIndex = (avatarIndex + 1) % avatarImageNames.count
                                     UserDefaults.standard.setValue(avatarIndex,forKey:"avatar")
                                 }
@@ -120,6 +125,7 @@ struct HomeView: View {
                             .keyboardHeight($keyboardHeight,hide:hideKeyboard)
                             .offset(y: -keyboardHeight * 0.6)
                             .onTapGesture {
+                                audio.playClick()
                                 withAnimation(.easeOut(duration: 0.25)) {
                                     isFocused = true
                                 }
@@ -128,6 +134,7 @@ struct HomeView: View {
                             Button(action: {
                                 // Your custom logic here
                                 // e.g., update some state, print a message, etc.
+                                audio.playClick()
                                 multiPeerSession.createRoom()
                                 multiPeerSession.room.teams[0].players.append(Player(peerID: multiPeerSession.getPeerId(), profile:"lancelot-avatar", status: .connected, point: 0))
                                 
@@ -224,6 +231,7 @@ struct HomeView: View {
                                                 .fill(Color.white)
                                         }
                                         .onTapGesture{
+                                            audio.playClick()
                                             withAnimation{
                                                 isInvited = false
                                                 invitationHandler?(false)
@@ -233,6 +241,7 @@ struct HomeView: View {
                                     
                                     
                                     Button(action: {
+                                        audio.playClick()
                                         invitationHandler?(true)
                                         invitationHandler = nil
                                         // Adding a slight delay before navigating
