@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		043013772C12DF3D004B259F /* Staatliches-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 043013762C12DF3D004B259F /* Staatliches-Regular.ttf */; };
+		043013792C12DF58004B259F /* TitanOne-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 043013782C12DF58004B259F /* TitanOne-Regular.ttf */; };
 		046BB4992C105D3600B91BC7 /* CustomAnchorModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 046BB4982C105D3600B91BC7 /* CustomAnchorModel.swift */; };
 		04DBC9762C1147CD00B8DF52 /* ARDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04DBC9752C1147CD00B8DF52 /* ARDataModel.swift */; };
 		04E64FEB2C0E08D2008CF4E7 /* MultipeerSceneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04E64FEA2C0E08D2008CF4E7 /* MultipeerSceneView.swift */; };
@@ -27,8 +29,6 @@
 		924A44F22C0D9EA20002D8E1 /* PlantView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 924A44F12C0D9EA20002D8E1 /* PlantView.swift */; };
 		92DBDBDB2C0DE38A002C28B0 /* InGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92DBDBDA2C0DE38A002C28B0 /* InGameView.swift */; };
 		92E0B1142C118F0B0009E2BB /* ModalCountDownComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E0B1132C118F0B0009E2BB /* ModalCountDownComponent.swift */; };
-		92E0B1182C11BD500009E2BB /* Staatliches-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 92E0B1172C11BD500009E2BB /* Staatliches-Regular.ttf */; };
-		92E0B1192C11D8BB0009E2BB /* TitanOne-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 92E0B1152C11BD4A0009E2BB /* TitanOne-Regular.ttf */; };
 		A43A7A032C05DA0A00C46FAA /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A43A7A022C05DA0A00C46FAA /* HomeView.swift */; };
 		A43A7A062C05E27E00C46FAA /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = A43A7A042C05E27E00C46FAA /* Color.swift */; };
 		A43A7A092C05E54000C46FAA /* SkewedRoundedRectangle.swift in Sources */ = {isa = PBXBuildFile; fileRef = A43A7A082C05E54000C46FAA /* SkewedRoundedRectangle.swift */; };
@@ -65,6 +65,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		043013762C12DF3D004B259F /* Staatliches-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Staatliches-Regular.ttf"; path = "../../../../../Downloads/Staatliches-Regular.ttf"; sourceTree = "<group>"; };
+		043013782C12DF58004B259F /* TitanOne-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "TitanOne-Regular.ttf"; path = "../../../../../Downloads/TitanOne-Regular.ttf"; sourceTree = "<group>"; };
 		046BB4982C105D3600B91BC7 /* CustomAnchorModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomAnchorModel.swift; sourceTree = "<group>"; };
 		04DBC9752C1147CD00B8DF52 /* ARDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARDataModel.swift; sourceTree = "<group>"; };
 		04E64FEA2C0E08D2008CF4E7 /* MultipeerSceneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultipeerSceneView.swift; sourceTree = "<group>"; };
@@ -89,8 +91,6 @@
 		924A44F12C0D9EA20002D8E1 /* PlantView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlantView.swift; sourceTree = "<group>"; };
 		92DBDBDA2C0DE38A002C28B0 /* InGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InGameView.swift; sourceTree = "<group>"; };
 		92E0B1132C118F0B0009E2BB /* ModalCountDownComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModalCountDownComponent.swift; sourceTree = "<group>"; };
-		92E0B1152C11BD4A0009E2BB /* TitanOne-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "TitanOne-Regular.ttf"; path = "../../../../../Downloads/Staatliches,Titan_One/Titan_One/TitanOne-Regular.ttf"; sourceTree = "<group>"; };
-		92E0B1172C11BD500009E2BB /* Staatliches-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Staatliches-Regular.ttf"; path = "../../../../../Downloads/Staatliches,Titan_One/Staatliches/Staatliches-Regular.ttf"; sourceTree = "<group>"; };
 		A43A7A022C05DA0A00C46FAA /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		A43A7A042C05E27E00C46FAA /* Color.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 		A43A7A082C05E54000C46FAA /* SkewedRoundedRectangle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkewedRoundedRectangle.swift; sourceTree = "<group>"; };
@@ -100,7 +100,6 @@
 		A43A7A132C072B0C00C46FAA /* ButtonPillComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonPillComponent.swift; sourceTree = "<group>"; };
 		A43A7A152C07374300C46FAA /* CustomStepperComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomStepperComponent.swift; sourceTree = "<group>"; };
 		A43A7A172C0737B900C46FAA /* ActionStepperComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionStepperComponent.swift; sourceTree = "<group>"; };
-		A43DD22C2C11B4B7002E6E48 /* TitanOne-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "TitanOne-Regular.ttf"; sourceTree = "<group>"; };
 		A4DAC4C92C085A670062CE38 /* RoomView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoomView.swift; sourceTree = "<group>"; };
 		A4DAC4CC2C08660F0062CE38 /* RoomModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomModel.swift; sourceTree = "<group>"; };
 		A4DAC4CE2C0866260062CE38 /* TeamModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamModel.swift; sourceTree = "<group>"; };
@@ -259,10 +258,9 @@
 		A43A7A0E2C07164800C46FAA /* Fonts */ = {
 			isa = PBXGroup;
 			children = (
-				A43DD22C2C11B4B7002E6E48 /* TitanOne-Regular.ttf */,
+				043013762C12DF3D004B259F /* Staatliches-Regular.ttf */,
+				043013782C12DF58004B259F /* TitanOne-Regular.ttf */,
 				A43A7A0F2C071C8900C46FAA /* Roboto-Black.ttf */,
-				92E0B1152C11BD4A0009E2BB /* TitanOne-Regular.ttf */,
-				92E0B1172C11BD500009E2BB /* Staatliches-Regular.ttf */,
 			);
 			path = Fonts;
 			sourceTree = "<group>";
@@ -385,9 +383,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				924A44CA2C086B390002D8E1 /* art.scnassets in Resources */,
-				92E0B1192C11D8BB0009E2BB /* TitanOne-Regular.ttf in Resources */,
+				043013792C12DF58004B259F /* TitanOne-Regular.ttf in Resources */,
 				04F5BCE22C05CD0200AC5205 /* Preview Assets.xcassets in Resources */,
-				92E0B1182C11BD500009E2BB /* Staatliches-Regular.ttf in Resources */,
+				043013772C12DF3D004B259F /* Staatliches-Regular.ttf in Resources */,
 				04F5BCDF2C05CD0200AC5205 /* Assets.xcassets in Resources */,
 				A43A7A102C071C8900C46FAA /* Roboto-Black.ttf in Resources */,
 			);
@@ -606,7 +604,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"FindTheRocks/Preview Content\"";
-				DEVELOPMENT_TEAM = KDM6FL3S9W;
+				DEVELOPMENT_TEAM = S9J78CS67W;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = FindTheRocks/Info.plist;
@@ -639,7 +637,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"FindTheRocks/Preview Content\"";
-				DEVELOPMENT_TEAM = KDM6FL3S9W;
+				DEVELOPMENT_TEAM = S9J78CS67W;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = FindTheRocks/Info.plist;

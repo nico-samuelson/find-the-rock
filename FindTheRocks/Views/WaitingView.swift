@@ -224,8 +224,13 @@ struct WaitingView: View {
                 message = text
                 isDestroyed = true
             }
+            multiPeerSession.isPlanting = false
+            multiPeerSession.isGameStarted = false
         }
         .background(Color.primaryGradient)
         .navigationBarBackButtonHidden()
+        .navigationDestination(isPresented: $multiPeerSession.isGameStarted) {
+            InGameView(multiPeerSession: $multiPeerSession)
+        }
     }
 }
