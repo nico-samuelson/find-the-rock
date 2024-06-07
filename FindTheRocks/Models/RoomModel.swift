@@ -67,4 +67,8 @@ class Room: NSObject, NSCoding, NSSecureCoding {
     func getAllPlantedRocks() -> [Rock] {
         return teams[0].fakePlanted + teams[0].realPlanted + teams[1].fakePlanted + teams[1].realPlanted
     }
+    
+    func getTeamRocks(team: Int) -> [Rock] {
+        return teams[team].fakePlanted + teams[team].realPlanted
+    }
 }

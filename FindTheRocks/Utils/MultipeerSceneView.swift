@@ -118,15 +118,56 @@ extension MultipeerSession: ARSCNViewDelegate, ARSessionDelegate {
 //        }
 //    }
     
-    // MARK: Update Model Visibility
+    // MARK: Update Rock Visibility
     func updateRock() {
-        guard let cameraPosition = self.cameraPosition else { return }
-        let allRocksPlanted = room.getAllPlantedRocks()
-        
-        for rock in allRocksPlanted {
-            let distance = SCNVector3Distance(vectorStart: cameraPosition, vectorEnd: SCNVector3(x: rock.anchor.transform.columns.3.x, y: rock.anchor.transform.columns.3.y, z: rock.anchor.transform.columns.3.z))
-//            rock.node.isHidden = distance > 2
+        if (!self.isPlanting) {
+            guard let cameraPosition = self.cameraPosition else { return }
+            
+            let myTeam = self.getTeam(self.peerID)
+            let visibleTeamRock = isPlanting ? myTeam : (myTeam == 1 ? 0 : 1)
+            let visibleRocks = self.room.getTeamRocks(team: visibleTeamRock)
+            let hiddenRocks = self.room.getTeamRocks(team: visibleTeamRock == 0 ? 1 : 0)
+            
+            for rock in visibleRocks {
+                let anchorScreenPosition = getAnchorPositionInScreen(anchor: rock.anchor)
+            
+                let hitTestOptions: [SCNHitTestOption: Any] = [.firstFoundOnly: true, .ignoreHiddenNodes: false]
+                let hitTestResult = self.sceneView.hitTest(anchorScreenPosition, options: hitTestOptions)
+                
+                let distance = SCNVector3Distance(vectorStart: cameraPosition, vectorEnd: SCNVector3(x: rock.anchor.transform.columns.3.x, y: rock.anchor.transform.columns.3.y, z: rock.anchor.transform.columns.3.z))
+                
+                guard let longPressedNode = hitTestResult.map({ $0.node }).first
+                else { return }
+                
+                if distance > 1.5 {
+                    longPressedNode.parent?.parent?.isHidden = true
+                }
+                else {
+                    longPressedNode.parent?.parent?.isHidden = false
+                }
+            }
+            
+            for rock in hiddenRocks {
+                let anchorScreenPosition = getAnchorPositionInScreen(anchor: rock.anchor)
+                
+                let hitTestOptions: [SCNHitTestOption: Any] = [.firstFoundOnly: true]
+                let hitTestResult = self.sceneView.hitTest(anchorScreenPosition, options: hitTestOptions)
+                
+                if let longPressedNode = hitTestResult.map({ $0.node }).first {
+                    longPressedNode.parent?.parent?.isHidden = true
+                }
+            }
         }
+    }
+    
+    func getAnchorPositionInScreen(anchor: ARAnchor) -> CGPoint {
+        let anchorTransform = anchor.transform
+        let anchorPosition = SCNVector3(anchorTransform.columns.3.x, anchorTransform.columns.3.y, anchorTransform.columns.3.z)
+        
+        let projectedPoint = sceneView.projectPoint(anchorPosition)
+        let anchorScreenPosition = CGPoint(x: CGFloat(projectedPoint.x), y: CGFloat(projectedPoint.y))
+        
+        return anchorScreenPosition
     }
     
     // MARK: - AR session management
