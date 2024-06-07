@@ -28,6 +28,7 @@ class MultipeerSession: NSObject {
     var room: Room! = Room()
     var isPlantingFakeRock: Bool = false
     var isPlanting: Bool = true
+    var isGameStarted: Bool = false
     
     // MARK: Scene View
     var cameraTransform: SCNMatrix4? = SCNMatrix4()
@@ -312,6 +313,10 @@ extension MultipeerSession: MCSessionDelegate {
             print("quitting from room")
             self.showDestroyModal?("destroy")
             self.quitRoom()
+        }
+        
+        if string == "start" {
+            self.isGameStarted = true
         }
     }
     

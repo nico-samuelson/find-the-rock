@@ -190,7 +190,7 @@ struct ResultView: View {
                     })
                     .padding(.top, 30)
                     
-                    NavigationLink(destination: RoomView(multiPeerSession: $multiPeerSession, myself:Player(peerID: multiPeerSession.getPeerId(), profile:"lancelot-avatar", status: .connected, point: 0)),label:{
+                    NavigationLink(destination: multiPeerSession.isMaster ? RoomView(multiPeerSession: $multiPeerSession, myself:Player(peerID: multiPeerSession.getPeerId(), profile:"lancelot-avatar", status: .connected, point: 0) : WaitingView(multiPeerSession: <#T##MultipeerSession#>, isInvited: <#T##Bool#>, invitationHandler: <#T##((Bool) -> Void)?#>, isDestroyed: <#T##arg#>, message: <#T##String#>, navigateToHome: <#T##arg#>)),label:{
                         SkewedRoundedRectangle(topRightYOffset: -5, bottomRightXOffset: 3, bottomRightYOffset: 3, bottomLeftXOffset: 6, cornerRadius: 20)
                             .frame(maxHeight: 75)
                             .padding(.horizontal, 50)

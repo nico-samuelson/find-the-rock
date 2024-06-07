@@ -13,6 +13,7 @@ struct RoomView: View {
     @State var myself: Player
     @State private var navigateToHome = false
     @State private var isSettingSheet = false
+    @State var startGame = false
     
     func assignToTeam(player: Player, to: Int = -1) {
         print("player: ", player)
@@ -338,7 +339,11 @@ struct RoomView: View {
                         HomeView(multiPeerSession: $multiPeerSession)
                     }
                     
-                    NavigationLink(destination: InGameView(multiPeerSession: $multiPeerSession),label:{
+                    Button {
+                        self.multiPeerSession.sendToAllPeers("start".data(using: .utf8)!)
+                        self.multiPeerSession.isGameStarted = true
+                        self.startGame = true
+                    } label: {
                         SkewedRoundedRectangle(topRightYOffset: -5, bottomRightXOffset: 3, bottomRightYOffset: 3, bottomLeftXOffset: 6, cornerRadius: 20)
                             .frame(maxHeight: 75)
                             .padding(.horizontal, 50)
@@ -351,7 +356,10 @@ struct RoomView: View {
                             )
                             .padding(.top, 15)
                             .padding(.bottom, 25)
-                    })
+                    }
+                    .navigationDestination(isPresented: $startGame){
+                        InGameView(multiPeerSession: $multiPeerSession)
+                    }
                 }
                 .background(Color.primaryGradient)
             }
@@ -359,6 +367,11 @@ struct RoomView: View {
             .fullScreenCover(isPresented: $isSettingSheet, content: {
                 RoomSettingSheetView(multiPeerSession: $multiPeerSession, tempHideTime: multiPeerSession.room.hideTime, tempSeekTime: multiPeerSession.room.seekTime, tempFakeRock: multiPeerSession.room.fakeRock, tempRealRock: multiPeerSession.room.realRock)
             })
+            
+        }
+        .onAppear {
+            self.multiPeerSession.isGameStarted = false
+            self.startGame = false
         }
         //        .onChange(of: multiPeerSession.connectedPeers) { peers in
         //            print("connected berubah")

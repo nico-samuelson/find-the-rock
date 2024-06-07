@@ -26,8 +26,8 @@ enum PlantButton {
 struct InGameView: View {
     @Binding var multiPeerSession: MultipeerSession
     @State var selectedButton: PlantButton = PlantButton.real
-    @State var plantTimeRemaining: Int = 10
-    @State var seekTimeRemaining: Int = 10
+    @State var plantTimeRemaining: Int = 30
+    @State var seekTimeRemaining: Int = 30
     @State var countDownRemaining: Int = 3
     @State var isPlantTimerActive: Bool = false
     @State var isSeekTimerActive: Bool = false
@@ -243,6 +243,8 @@ struct InGameView: View {
         }
         .background(Color.primaryGradient)
         .onAppear {
+            self.multiPeerSession.isPlanting = true
+            self.multiPeerSession.isGameStarted = true
             //            seekTimeRemaining = multiPeerSession.room.seekTime * 60
             //            plantTimeRemaining = multiPeerSession.room.hideTime * 60
         }
