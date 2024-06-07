@@ -323,7 +323,7 @@ extension MultipeerSession: MCSessionDelegate {
     // room master will merge all the anchors sent by the players
     func handleAnchorChange(_ newAnchor: ARAnchor, _ mode: String, _ isReal: Bool, _ sender: MCPeerID) {
         let team = self.getTeam(sender)
-        
+        // TODO: change send world map only for adding and removing
         guard isMaster else { return }
         if (mode == "add") {
             if (isReal && room.teams[team].realPlanted.count + 1 <= room.realRock) {
@@ -345,19 +345,22 @@ extension MultipeerSession: MCSessionDelegate {
                 sceneView.session.remove(anchor: newAnchor)
             }
         }
+        
+        // TODO: make the pick sending the anchor to picked
         else if (mode == "pick") {
             guard isReal, let player = room.teams[team].players.first(where: {$0.peerID == sender}) else { return }
             player.point += 1
             room.teams[team].realPlanted.removeAll(where: {$0.anchor.identifier == newAnchor.identifier})
             sceneView.session.remove(anchor: newAnchor)
         }
-        
-        sceneView.session.getCurrentWorldMap { worldMap, error in
-            guard let map = worldMap
-            else { print("Error: \(error!)"); return }
-            guard let data = try? NSKeyedArchiver.archivedData(withRootObject: ARData(room: self.room, map: map), requiringSecureCoding: true)
-            else { fatalError("can't encode map") }
-            self.sendToAllPeers(data)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1){
+            self.sceneView.session.getCurrentWorldMap { worldMap, error in
+                guard let map = worldMap
+                else { print("Error: \(error!)"); return }
+                guard let data = try? NSKeyedArchiver.archivedData(withRootObject: ARData(room: self.room, map: map), requiringSecureCoding: true)
+                else { fatalError("can't encode map") }
+                self.sendToAllPeers(data)
+            }
         }
     }
     
@@ -368,21 +371,24 @@ extension MultipeerSession: MCSessionDelegate {
             let configuration = ARWorldTrackingConfiguration()
             configuration.planeDetection = [.horizontal, .vertical]
             configuration.initialWorldMap = data.map
-            configuration.initialWorldMap?.anchors.removeAll()
-            configuration.worldAlignment = .gravityAndHeading
+//            configuration.initialWorldMap?.anchors.removeAll()
+//            configuration.worldAlignment = .gravityAndHeading
             
             self.room = data.room
             self.sceneView.session.run(configuration, options: [.resetTracking, .removeExistingAnchors])
             
             let allRocks = room.getAllPlantedRocks()
             
-            print(allRocks.count)
-            
-            for rock in allRocks {
-                // change the orientation of the rock subsequent to the reciever anchor
-                
-                sceneView.session.add(anchor: rock.anchor)
-            }
+            print("conf",configuration.initialWorldMap?.anchors.map({$0.identifier}))
+            print("session",self.sceneView.session.currentFrame?.anchors.map({$0.identifier}))
+            print("session name",self.sceneView.session.currentFrame?.anchors.map({$0.name}))
+//            print(allRocks.count)
+//            
+//            for rock in allRocks {
+//                // change the orientation of the rock subsequent to the reciever anchor
+//                
+//                sceneView.session.add(anchor: rock.anchor)
+//            }
         }
         
     }

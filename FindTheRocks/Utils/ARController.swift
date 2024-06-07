@@ -16,6 +16,7 @@ class ARController: UIViewController {
     var multipeerSession: MultipeerSession
     var detectionRadius: CGFloat = 0.5 // Default radius in meters
     var mapProvider: MCPeerID? = MCPeerID(displayName: UIDevice().name)
+    var counter = 1
     
     init(multipeerSession: MultipeerSession) {
         self.multipeerSession = multipeerSession
@@ -137,15 +138,15 @@ class ARController: UIViewController {
             else { return }
             
             // Place an anchor for a virtual character. The model appears in renderer(_:didAdd:for:).
-            let anchor = multipeerSession.isPlantingFakeRock ? ARAnchor(name: "fakerockARAnchor", transform: hitTestResult.worldTransform) : ARAnchor(name: "rockARAnchor", transform: hitTestResult.worldTransform)
-            
+            let anchor = multipeerSession.isPlantingFakeRock ? ARAnchor(name: "fakerockARAnchor-\(counter)", transform: hitTestResult.worldTransform) : ARAnchor(name: "rockARAnchor-\(counter)", transform: hitTestResult.worldTransform)
+            counter += 1
             let newAnchor = CustomAnchor(anchor: anchor, action: "add", isReal: !self.multipeerSession.isPlantingFakeRock)
             
             guard let data = try? NSKeyedArchiver.archivedData(withRootObject: newAnchor, requiringSecureCoding: true)
             else { print("babi"); return }
             
             print("taptap")
-            print(anchor.transform)
+            print("anchir: ",anchor.identifier)
             
             if self.multipeerSession.isMaster {
                 self.multipeerSession.handleAnchorChange(anchor, "add", !self.multipeerSession.isPlantingFakeRock, self.multipeerSession.peerID)
