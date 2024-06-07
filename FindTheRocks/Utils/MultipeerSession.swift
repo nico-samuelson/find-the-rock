@@ -206,7 +206,6 @@ class MultipeerSession: NSObject {
     }
     
     func disconnect() {
-        //        if data == "disconnected" {
         serviceBrowser.stopBrowsingForPeers()
         serviceAdvertiser.stopAdvertisingPeer()
         
@@ -214,7 +213,6 @@ class MultipeerSession: NSObject {
             self.serviceBrowser.startBrowsingForPeers()
             self.serviceBrowser.stopBrowsingForPeers()
         }
-        //        }
     }
     
     
@@ -247,8 +245,6 @@ class MultipeerSession: NSObject {
         newTransform = matrix_float4x4(newRotation)
         newTransform.columns.3 = newTranslation
         
-        //        print(anchor.name)
-        
         // Create a new anchor with the transformed position and orientation
         let newAnchor = ARAnchor(name: anchor.name!, transform: anchor.transform)
         
@@ -258,7 +254,6 @@ class MultipeerSession: NSObject {
 
 // MARK: Received Data Handler
 extension MultipeerSession: MCSessionDelegate {
-    
     func session(_ session: MCSession, peer peerID: MCPeerID, didChange state: MCSessionState) {
         switch state {
         case .notConnected:
@@ -327,17 +322,22 @@ extension MultipeerSession: MCSessionDelegate {
         guard isMaster else { return }
         if (mode == "add") {
             if (isReal && room.teams[team].realPlanted.count + 1 <= room.realRock) {
-                room.teams[team].realPlanted.append(Rock(isFake: isReal, anchor: newAnchor))
+                room.teams[team].realPlanted.append(Rock(isFake: !isReal, anchor: newAnchor))
                 sceneView.session.add(anchor: newAnchor)
             }
             else if (!isReal && room.teams[team].fakePlanted.count + 1 <= room.fakeRock){
-                room.teams[team].fakePlanted.append(Rock(isFake: isReal, anchor: newAnchor))
+                room.teams[team].fakePlanted.append(Rock(isFake: !isReal, anchor: newAnchor))
                 sceneView.session.add(anchor: newAnchor)
             }
         }
         else if (mode == "remove") {
+            print("remove node")
+            print(isReal)
+            print(room.teams[team].realPlanted)
             if isReal && room.teams[team].realPlanted.count > 0 {
+                print(room.teams[team].realPlanted.count)
                 room.teams[team].realPlanted.removeAll(where: {$0.anchor.identifier == newAnchor.identifier})
+                print(room.teams[team].realPlanted.count)
                 sceneView.session.remove(anchor: newAnchor)
             }
             else if !isReal && room.teams[team].fakePlanted.count > 0 {

@@ -127,9 +127,6 @@ class ARController: UIViewController {
     
     @objc func handleSceneTap(_ sender: UITapGestureRecognizer) {
         if multipeerSession.isPlanting {
-            
-//            sender.location(in: UIView?)
-//            sender.location(in: /*<#T##UIView?#>*/)
             // Hit test to find a place for a virtual object.
             guard let hitTestResult = multipeerSession.sceneView
                 .hitTest(sender.location(in: multipeerSession.sceneView), types: [.existingPlaneUsingGeometry, .estimatedHorizontalPlane])
@@ -139,13 +136,15 @@ class ARController: UIViewController {
             // Place an anchor for a virtual character. The model appears in renderer(_:didAdd:for:).
             let anchor = multipeerSession.isPlantingFakeRock ? ARAnchor(name: "fakerockARAnchor", transform: hitTestResult.worldTransform) : ARAnchor(name: "rockARAnchor", transform: hitTestResult.worldTransform)
             
+            print("is rock real: ", !self.multipeerSession.isPlantingFakeRock)
+            
             let newAnchor = CustomAnchor(anchor: anchor, action: "add", isReal: !self.multipeerSession.isPlantingFakeRock)
             
             guard let data = try? NSKeyedArchiver.archivedData(withRootObject: newAnchor, requiringSecureCoding: true)
             else { print("babi"); return }
             
-            print("taptap")
-            print(anchor.transform)
+//            print("taptap")
+//            print(anchor.transform)
             
             if self.multipeerSession.isMaster {
                 self.multipeerSession.handleAnchorChange(anchor, "add", !self.multipeerSession.isPlantingFakeRock, self.multipeerSession.peerID)
@@ -170,16 +169,18 @@ class ARController: UIViewController {
                 
                 for rock in multipeerSession.room.getAllPlantedRocks() {
                     if rock.anchor.identifier == UUID(uuidString: longPressedNode.parent?.name ?? "") {
+                        print(self.multipeerSession.isPlantingFakeRock)
+                        print(rock.isFake)
                         print("anchor found")
-                        guard let anchor = try? NSKeyedArchiver.archivedData(withRootObject: CustomAnchor(anchor: rock.anchor, action: "remove", isReal: rock.isFake), requiringSecureCoding: true)
+                        guard let anchor = try? NSKeyedArchiver.archivedData(withRootObject: CustomAnchor(anchor: rock.anchor, action: "remove", isReal: !rock.isFake), requiringSecureCoding: true)
                         else { return }
                         
                         if self.multipeerSession.isMaster {
                             if self.multipeerSession.isPlanting {
-                                self.multipeerSession.handleAnchorChange(rock.anchor, "remove", !self.multipeerSession.isPlantingFakeRock, self.multipeerSession.peerID)
+                                self.multipeerSession.handleAnchorChange(rock.anchor, "remove", !rock.isFake, self.multipeerSession.peerID)
                             }
                             else {
-                                self.multipeerSession.handleAnchorChange(rock.anchor, "pick", rock.isFake, self.multipeerSession.peerID)
+                                self.multipeerSession.handleAnchorChange(rock.anchor, "pick", !rock.isFake, self.multipeerSession.peerID)
                             }
                         }
                         else {
