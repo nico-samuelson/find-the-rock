@@ -29,8 +29,16 @@ extension MultipeerSession: ARSCNViewDelegate, ARSessionDelegate {
             node.addChildNode(pandaNode)
             sceneView.scene.rootNode.addChildNode(node)
             
+            let allRocks = self.room.getAllPlantedRocks()
+            
+            for rock in allRocks {
+                if (rock.anchor.name == anchor.name) {
+                    rock.anchor = anchor
+                }
+            }
+            
             // create new rock model
-            let rock = Rock(isFake: self.isPlantingFakeRock, anchor: anchor)
+//            let rock = Rock(isFake: self.isPlantingFakeRock, anchor: anchor)
         }
     }
     
