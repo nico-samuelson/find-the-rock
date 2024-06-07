@@ -127,6 +127,9 @@ class ARController: UIViewController {
     
     @objc func handleSceneTap(_ sender: UITapGestureRecognizer) {
         if multipeerSession.isPlanting {
+            
+//            sender.location(in: UIView?)
+//            sender.location(in: /*<#T##UIView?#>*/)
             // Hit test to find a place for a virtual object.
             guard let hitTestResult = multipeerSession.sceneView
                 .hitTest(sender.location(in: multipeerSession.sceneView), types: [.existingPlaneUsingGeometry, .estimatedHorizontalPlane])
@@ -160,6 +163,7 @@ class ARController: UIViewController {
             let hitTestOptions: [SCNHitTestOption: Any] = [.firstFoundOnly: true]
             let hitTestResults = multipeerSession.sceneView.hitTest(touchLocation, options: hitTestOptions)
             
+//            hitTestRes
             // get clicked node
             if let longPressedNode = hitTestResults.map { $0.node }.first {
                 longPressedNode.parent?.parent?.removeFromParentNode()
