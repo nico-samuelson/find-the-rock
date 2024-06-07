@@ -214,42 +214,6 @@ class MultipeerSession: NSObject {
             self.serviceBrowser.stopBrowsingForPeers()
         }
     }
-    
-    
-    func alignNewAnchor(anchor: ARAnchor) -> ARAnchor? {
-        guard let currentFrame = sceneView.session.currentFrame else {
-            print("Couldn't get current frame")
-            return nil
-        }
-        
-        // Get current device transform (position and orientation)
-        let currentTransform = currentFrame.camera.transform
-        
-        // Extract the translation and rotation components of the current transform
-        let currentTranslation = currentTransform.columns.3
-        let currentRotation = simd_quatf(currentTransform)
-        
-        // Extract the translation and rotation components of the received anchor's transform
-        let anchorTranslation = anchor.transform.columns.3
-        let anchorRotation = simd_quatf(anchor.transform)
-        
-        // Calculate the new position: your current position + the relative position of the anchor
-        let newTranslation = currentTranslation + anchorTranslation
-        
-        // Combine the rotations: your current rotation * anchor's rotation
-        let newRotation = currentRotation * anchorRotation
-        
-        // Construct the new transform with the combined translation and rotation
-        var newTransform = matrix_identity_float4x4
-        newTransform.columns.3 = newTranslation
-        newTransform = matrix_float4x4(newRotation)
-        newTransform.columns.3 = newTranslation
-        
-        // Create a new anchor with the transformed position and orientation
-        let newAnchor = ARAnchor(name: anchor.name!, transform: anchor.transform)
-        
-        return newAnchor
-    }
 }
 
 // MARK: Received Data Handler
@@ -319,54 +283,61 @@ extension MultipeerSession: MCSessionDelegate {
     func handleAnchorChange(_ newAnchor: ARAnchor, _ mode: String, _ isReal: Bool, _ sender: MCPeerID) {
         let team = self.getTeam(sender)
         // TODO: change send world map only for adding and removing
-        guard isMaster else { return }
-        if (mode == "add") {
-            if (isReal && room.teams[team].realPlanted.count + 1 <= room.realRock) {
-                room.teams[team].realPlanted.append(Rock(isFake: !isReal, anchor: newAnchor))
-                sceneView.session.add(anchor: newAnchor)
-            }
-            else if (!isReal && room.teams[team].fakePlanted.count + 1 <= room.fakeRock){
-                room.teams[team].fakePlanted.append(Rock(isFake: !isReal, anchor: newAnchor))
-                sceneView.session.add(anchor: newAnchor)
-            }
-        }
-        else if (mode == "remove") {
-            print("remove node")
-            print(isReal)
-            print(room.teams[team].realPlanted)
-            if isReal && room.teams[team].realPlanted.count > 0 {
-                print(room.teams[team].realPlanted.count)
-                room.teams[team].realPlanted.removeAll(where: {$0.anchor.identifier == newAnchor.identifier})
-                print(room.teams[team].realPlanted.count)
-                sceneView.session.remove(anchor: newAnchor)
-            }
-            else if !isReal && room.teams[team].fakePlanted.count > 0 {
-                room.teams[team].fakePlanted.removeAll(where: {$0.anchor.identifier == newAnchor.identifier})
-                sceneView.session.remove(anchor: newAnchor)
-            }
-        }
-        
-        // TODO: make the pick sending the anchor to picked
-        else if (mode == "pick") {
+//        guard isMaster else { return }
+        if mode == "pick" {
             guard isReal, let player = room.teams[team].players.first(where: {$0.peerID == sender}) else { return }
             player.point += 1
-            room.teams[team].realPlanted.removeAll(where: {$0.anchor.identifier == newAnchor.identifier})
+            room.teams[team].realPlanted.removeAll(where: {$0.anchor.name == newAnchor.name})
             sceneView.session.remove(anchor: newAnchor)
-        }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1){
-            self.sceneView.session.getCurrentWorldMap { worldMap, error in
-                guard let map = worldMap
-                else { print("Error: \(error!)"); return }
-                guard let data = try? NSKeyedArchiver.archivedData(withRootObject: ARData(room: self.room, map: map), requiringSecureCoding: true)
-                else { fatalError("can't encode map") }
-                self.sendToAllPeers(data)
+            guard let data = try? NSKeyedArchiver.archivedData(withRootObject: CustomAnchor(anchor:newAnchor,action: "pick", isReal: isReal),requiringSecureCoding: true) else { fatalError("can't encode anchor") }
+                    self.sendToAllPeers(data)
+            
+            // send the removed anchor to the others peer
+            
+        } else {
+            if mode == "add" {
+                if (isReal && room.teams[team].realPlanted.count + 1 <= room.realRock) {
+                    room.teams[team].realPlanted.append(Rock(isFake: !isReal, anchor: newAnchor))
+                    sceneView.session.add(anchor: newAnchor)
+                }
+                else if (!isReal && room.teams[team].fakePlanted.count + 1 <= room.fakeRock){
+                    room.teams[team].fakePlanted.append(Rock(isFake: !isReal, anchor: newAnchor))
+                    sceneView.session.add(anchor: newAnchor)
+                }
+            }
+            else if mode == "remove" {
+                print("remove node")
+                print(isReal)
+                print(room.teams[team].realPlanted)
+                if isReal && room.teams[team].realPlanted.count > 0 {
+                    print(room.teams[team].realPlanted.count)
+                    room.teams[team].realPlanted.removeAll(where: {$0.anchor.identifier == newAnchor.identifier})
+                    print(room.teams[team].realPlanted.count)
+                    sceneView.session.remove(anchor: newAnchor)
+                }
+                else if !isReal && room.teams[team].fakePlanted.count > 0 {
+                    room.teams[team].fakePlanted.removeAll(where: {$0.anchor.identifier == newAnchor.identifier})
+                    sceneView.session.remove(anchor: newAnchor)
+                }
+            }
+            
+            // TODO: make the pick sending the anchor to picked
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1){
+                self.sceneView.session.getCurrentWorldMap { worldMap, error in
+                    guard let map = worldMap
+                    else { print("Error: \(error!)"); return }
+                    guard let data = try? NSKeyedArchiver.archivedData(withRootObject: ARData(room: self.room, map: map), requiringSecureCoding: true)
+                    else { fatalError("can't encode map") }
+                    self.sendToAllPeers(data)
+                }
             }
         }
     }
     
     // players will receive the world map from master
     func receiveWorldMap(data: ARData) {
-        if (!isMaster) {
+//        if (!isMaster) {
             print("receive new world map and room data")
             let configuration = ARWorldTrackingConfiguration()
             configuration.planeDetection = [.horizontal, .vertical]
@@ -376,54 +347,14 @@ extension MultipeerSession: MCSessionDelegate {
             
             self.room = data.room
             self.sceneView.session.run(configuration, options: [.resetTracking, .removeExistingAnchors])
-            
-            let allRocks = room.getAllPlantedRocks()
-            
-            print("conf",configuration.initialWorldMap?.anchors.map({$0.identifier}))
-            print("session",self.sceneView.session.currentFrame?.anchors.map({$0.identifier}))
-            print("session name",self.sceneView.session.currentFrame?.anchors.map({$0.name}))
-//            print(allRocks.count)
-//            
-//            for rock in allRocks {
-//                // change the orientation of the rock subsequent to the reciever anchor
-//                
-//                sceneView.session.add(anchor: rock.anchor)
-//            }
-        }
-        
     }
     
-    func changeOrientation(_ anchor: ARAnchor) -> ARAnchor{
-        guard let currentFrame = sceneView.session.currentFrame else {
-            print("Couldn't get current frame")
-            return anchor
-        }
-        let currentTransform = currentFrame.camera.transform
-        
-        // Extract the translation and rotation components of the current transform
-        let currentTranslation = currentTransform.columns.3
-        let currentRotation = simd_quatf(currentTransform)
-        
-        // Extract the translation and rotation components of the received anchor's transform
-        let anchorTranslation = anchor.transform.columns.3
-        let anchorRotation = simd_quatf(anchor.transform)
-        
-        // Calculate the new position: your current position + the relative position of the anchor
-        let newTranslation = currentTranslation + anchorTranslation
-        
-        // Combine the rotations: your current rotation * anchor's rotation
-        let newRotation = currentRotation * anchorRotation
-        
-        // Construct the new transform with the combined translation and rotation
-        var newTransform = matrix_identity_float4x4
-        newTransform.columns.3 = newTranslation
-        newTransform = matrix_float4x4(newRotation)
-        newTransform.columns.3 = newTranslation
-        
-        // Create a new anchor with the transformed position and orientation
-        let newAnchor = ARAnchor(name: anchor.name!, transform: newTransform)
-        
-        return newAnchor
+    func receivePick(_ customAnchor: CustomAnchor,_ peerID: MCPeerID){
+        let team = self.getTeam(peerID)
+        guard customAnchor.isReal, let player = room.teams[team].players.first(where: {$0.peerID == peerID}) else { return }
+        player.point += 1
+        room.teams[team].realPlanted.removeAll(where: {$0.anchor.name == customAnchor.anchor.name})
+        sceneView.session.remove(anchor: customAnchor.anchor)
     }
     
     func session(_ session: MCSession, didReceive data: Data, fromPeer peerID: MCPeerID) {
@@ -439,8 +370,12 @@ extension MultipeerSession: MCSessionDelegate {
                 case let room as Room:
                     handleDataRoom(room)
                 case let newAnchor as CustomAnchor:
-                    print(newAnchor.action)
-                    handleAnchorChange(newAnchor.anchor, newAnchor.action, newAnchor.isReal, peerID)
+                    if newAnchor.action != "pick" {
+                        handleAnchorChange(newAnchor.anchor, newAnchor.action, newAnchor.isReal, peerID)
+                    }else{
+                        // action to delete locally and not changing the world map globally
+                       receivePick(newAnchor, peerID)
+                    }
                 case let arData as ARData:
                     receiveWorldMap(data: arData)
                 case let data as Data:

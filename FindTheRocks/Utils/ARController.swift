@@ -34,11 +34,11 @@ class ARController: UIViewController {
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleSceneTap))
         let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress))
-
+        
         self.view.addGestureRecognizer(tapGesture)
         self.view.addGestureRecognizer(longPressGesture)
         setup()
-    
+        
         multipeerSession.sceneView.session.delegate = multipeerSession
         multipeerSession.sceneView.delegate = multipeerSession
     }
@@ -47,7 +47,7 @@ class ARController: UIViewController {
         super.viewWillAppear(animated)
         
         let configuration = ARWorldTrackingConfiguration()
-//        configuration.isCollaborationEnabled = true
+        //        configuration.isCollaborationEnabled = true
         configuration.environmentTexturing = .automatic
         configuration.worldAlignment = .gravityAndHeading
         multipeerSession.sceneView.session.run(configuration)
@@ -80,7 +80,7 @@ class ARController: UIViewController {
         multipeerSession.sceneView.session.run(configuration)
         multipeerSession.sceneView.session.delegate = multipeerSession
         
-//        multipeerSession.sceneView.debugOptions = [ARSCNDebugOptions.showFeaturePoints]
+        //        multipeerSession.sceneView.debugOptions = [ARSCNDebugOptions.showFeaturePoints]
         // Prevent the screen from being dimmed after a while as users will likely
         // have long periods of interaction without touching the screen or buttons.
         UIApplication.shared.isIdleTimerDisabled = true
@@ -145,23 +145,23 @@ class ARController: UIViewController {
             print("taptap")
             print("anchir: ",anchor.identifier)
             
-            if self.multipeerSession.isMaster {
-                self.multipeerSession.handleAnchorChange(anchor, "add", !self.multipeerSession.isPlantingFakeRock, self.multipeerSession.peerID)
-            }
-            else {
-                self.multipeerSession.sendToAllPeers(data)
-            }
+            //            if self.multipeerSession.isMaster {
+            self.multipeerSession.handleAnchorChange(anchor, "add", !self.multipeerSession.isPlantingFakeRock, self.multipeerSession.peerID)
+            //            }
+            //            else {
+            //                self.multipeerSession.sendToAllPeers(data)
+            //            }
         }
     }
     
     @objc func handleLongPress(_ gesture: UITapGestureRecognizer) {
-        if gesture.state == .ended { 
+        if gesture.state == .ended {
             let touchLocation = gesture.location(in: multipeerSession.sceneView)
             
             let hitTestOptions: [SCNHitTestOption: Any] = [.firstFoundOnly: true]
             let hitTestResults = multipeerSession.sceneView.hitTest(touchLocation, options: hitTestOptions)
             
-//            hitTestRes
+            //            hitTestRes
             // get clicked node
             if let longPressedNode = hitTestResults.map { $0.node }.first {
                 longPressedNode.parent?.parent?.removeFromParentNode()
@@ -174,17 +174,14 @@ class ARController: UIViewController {
                         guard let anchor = try? NSKeyedArchiver.archivedData(withRootObject: CustomAnchor(anchor: rock.anchor, action: "remove", isReal: !rock.isFake), requiringSecureCoding: true)
                         else { return }
                         
-                        if self.multipeerSession.isMaster {
-                            if self.multipeerSession.isPlanting {
-                                self.multipeerSession.handleAnchorChange(rock.anchor, "remove", !rock.isFake, self.multipeerSession.peerID)
-                            }
-                            else {
-                                self.multipeerSession.handleAnchorChange(rock.anchor, "pick", !rock.isFake, self.multipeerSession.peerID)
-                            }
+                        if self.multipeerSession.isPlanting {
+                            self.multipeerSession.handleAnchorChange(rock.anchor, "remove", !rock.isFake, self.multipeerSession.peerID)
                         }
                         else {
-                            self.multipeerSession.sendToAllPeers(anchor)
+                            self.multipeerSession.handleAnchorChange(rock.anchor, "pick", !rock.isFake, self.multipeerSession.peerID)
                         }
+                        
+                        
                     }
                 }
             } else  {
@@ -193,7 +190,7 @@ class ARController: UIViewController {
             print("root node names: ", multipeerSession.sceneView.scene.rootNode.childNodes.map { $0.childNodes.map { $0.name } })
         }
     }
-
+    
     // Helper function to calculate the distance between two points
     func distanceBetweenPoints(pointA: SCNVector3, pointB: SCNVector3) -> CGFloat {
         let vector = SCNVector3Make(pointA.x - pointB.x, pointA.y - pointB.y, pointA.z - pointB.z)
