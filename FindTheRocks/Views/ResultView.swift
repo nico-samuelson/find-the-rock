@@ -27,7 +27,7 @@ struct ResultView: View {
                     LegacySceneView(scene: Self.loadScene(named: "art.scnassets/models/champion.scn"))
                         .padding(20)
                     //                        .background(.white)
-//                        .padding(20)
+                    //                        .padding(20)
                     //                        .offset(y: -10)
                     SkewedRoundedRectangle(topLeftYOffset: -2, topRightXOffset: 5, topRightYOffset: 1, bottomLeftXOffset: -2, cornerRadius: 15)
                         .frame(height: 60)
@@ -88,7 +88,7 @@ struct ResultView: View {
                                             .frame(maxWidth: 50, maxHeight: 25)
                                     }
                                     .padding(0)
-//                                    .padding(.leading, -10)
+                                    //                                    .padding(.leading, -10)
                                     .listRowBackground(Color.clear)
                                     .listRowInsets(.none)
                                     .listRowSeparator(.hidden)
@@ -107,7 +107,7 @@ struct ResultView: View {
                             SkewedRoundedRectangle(topRightYOffset: -5, bottomRightXOffset: -5, topLeftCornerRadius: 20, topRightCornerRadius: 20, bottomRightCornerRadius: 20)
                                 .foregroundStyle(.white.opacity(0.2))
                         )
-//                        .padding(.leading, -10)
+                        //                        .padding(.leading, -10)
                         
                         // MARK: Blue team score
                         VStack(spacing: 0) {
@@ -190,20 +190,25 @@ struct ResultView: View {
                     })
                     .padding(.top, 30)
                     
-                    NavigationLink(destination: multiPeerSession.isMaster ? RoomView(multiPeerSession: $multiPeerSession, myself:Player(peerID: multiPeerSession.getPeerId(), profile:"lancelot-avatar", status: .connected, point: 0) : WaitingView(multiPeerSession: <#T##MultipeerSession#>, isInvited: <#T##Bool#>, invitationHandler: <#T##((Bool) -> Void)?#>, isDestroyed: <#T##arg#>, message: <#T##String#>, navigateToHome: <#T##arg#>)),label:{
-                        SkewedRoundedRectangle(topRightYOffset: -5, bottomRightXOffset: 3, bottomRightYOffset: 3, bottomLeftXOffset: 6, cornerRadius: 20)
-                            .frame(maxHeight: 75)
-                            .padding(.horizontal, 50)
-                            .foregroundStyle(Color.tersierGradient)
-                            .overlay(
-                                Text("PLAY AGAIN")
-                                    .foregroundStyle(Color.white)
-                                    .fontWeight(.bold)
-                                    .font(.custom("Staatliches-Regular", size: 32))
-                            )
-                            .padding(.top, 15)
-                            .padding(.bottom, 25)
-                    })
+                    NavigationLink(
+                        destination: multiPeerSession.isMaster ?
+                        AnyView(RoomView(multiPeerSession: $multiPeerSession, myself:Player(peerID: multiPeerSession.getPeerId(), profile:"lancelot-avatar", status: .connected, point: 0))) :
+                            AnyView(WaitingView(multiPeerSession: $multiPeerSession))
+                        ,
+                        label:{
+                            SkewedRoundedRectangle(topRightYOffset: -5, bottomRightXOffset: 3, bottomRightYOffset: 3, bottomLeftXOffset: 6, cornerRadius: 20)
+                                .frame(maxHeight: 75)
+                                .padding(.horizontal, 50)
+                                .foregroundStyle(Color.tersierGradient)
+                                .overlay(
+                                    Text("PLAY AGAIN")
+                                        .foregroundStyle(Color.white)
+                                        .fontWeight(.bold)
+                                        .font(.custom("Staatliches-Regular", size: 32))
+                                )
+                                .padding(.top, 15)
+                                .padding(.bottom, 25)
+                        })
                 }
             }
             .navigationBarBackButtonHidden()

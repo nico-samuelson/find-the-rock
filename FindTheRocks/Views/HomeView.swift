@@ -16,7 +16,7 @@ struct HomeView: View {
     @State private var isFocused:Bool = false
     @State private var avatarOffset: CGSize = .zero
     @State private var avatarOpacity: Double = 1.0
-    @State private var avatarIndex: Int = 0
+    @State private var avatarIndex: Int = UserDefaults.standard.integer(forKey: "avatar") ?? 0
     @State private var isInvited:Bool = false
     @State private var time:Int  = 15
     @State private var inviterName:String?
@@ -25,6 +25,7 @@ struct HomeView: View {
     @State private var topOffset:CGFloat = 0
     @State private var botOffset:CGFloat = 0
     @State private var navigateRoom = false
+    @State private var navigateWait = false
     
     let avatarImageNames = ["male-avatar", "female-avatar"]
     
@@ -75,6 +76,7 @@ struct HomeView: View {
                                 .opacity(avatarOpacity)
                                 .onTapGesture(){
                                     avatarIndex = (avatarIndex + 1) % avatarImageNames.count
+                                    UserDefaults.standard.setValue(avatarIndex,forKey:"avatar")
                                 }
                             
                             Spacer()
@@ -123,20 +125,6 @@ struct HomeView: View {
                                 }
                             }
                             
-//                            Spacer()
-//                                .frame(height:12)
-                            //                            NavigationLink(destination: RoomView(multiPeerSession: $multiPeerSession, myself: Player(peerID: multiPeerSession.getPeerId(), profile:"lancelot-avatar", status: .connected, point: 0)),label:{
-                            //                                Text("CREATE ROOM")
-                            //                                    .font(.custom("Staatliches-Regular",size:36,relativeTo: .title))
-                            //                                    .foregroundStyle(.white)
-                            //                                    .bold()
-                            //                                    .padding(20)
-                            //                                    .padding(.horizontal,24)
-                            //                                    .background(){
-                            //                                        SkewedRoundedRectangle(topLeftYOffset: 5,bottomRightXOffset: 5,bottomLeftXOffset: 5,cornerRadius: 20)
-                            //                                            .fill(Color.tersierGradient)
-                            //                                    }
-                            //                            })
                             Button(action: {
                                 // Your custom logic here
                                 // e.g., update some state, print a message, etc.
@@ -161,7 +149,7 @@ struct HomeView: View {
                                 RoomView(multiPeerSession: $multiPeerSession, myself: Player(peerID: multiPeerSession.getPeerId(), profile:"lancelot-avatar", status: .connected, point: 0))
                             }
                             .offset(y: -10)
-//                            .padding(.bottom, 10)
+                            //                            .padding(.bottom, 10)
                             Spacer()
                                 .frame(height: 20)
                         }
@@ -242,17 +230,28 @@ struct HomeView: View {
                                                 self.invitationHandler = nil
                                             }
                                         }
-                                    NavigationLink(destination: WaitingView(multiPeerSession: $multiPeerSession,isInvited: $isInvited, invitationHandler: $invitationHandler),label:{
-                                        Text("Accept \(time)")
-                                            .font(.custom("Staatliches-Regular",size:18,relativeTo: .title))
-                                            .foregroundStyle(.white)
-                                            .bold()
+                                    
+                                    
+                                    Button(action: {
+                                        invitationHandler?(true)
+                                        invitationHandler = nil
+                                        // Adding a slight delay before navigating
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                            navigateWait = true
+                                            print("harusnya pindah")
+                                        }
+                                        isInvited = false
+                                    }) {
+                                        SkewedRoundedRectangle(topLeftYOffset: 2,bottomRightXOffset: 2,bottomLeftXOffset: 2,cornerRadius: 10)
+                                            .fill(Color.tersierGradient)
                                             .frame(width:(gp.size.width/2) - 40,height:40)
-                                            .background(){
-                                                SkewedRoundedRectangle(topLeftYOffset: 2,bottomRightXOffset: 2,bottomLeftXOffset: 2,cornerRadius: 10)
-                                                    .fill(Color.tersierGradient)
-                                            }
-                                    })
+                                            .overlay(
+                                                Text("Accept \(time)")
+                                                    .foregroundStyle(.white)
+                                                    .fontWeight(.bold)
+                                                    .font(.custom("Staatliches-Regular",size: 18))
+                                            )
+                                    }
                                     Spacer()
                                 }
                                 Spacer()
@@ -272,6 +271,9 @@ struct HomeView: View {
                                 .blur(radius:10)
                         }
                 }
+            }
+            .navigationDestination(isPresented: $navigateWait){
+                WaitingView(multiPeerSession: $multiPeerSession)
             }
             .background(Color.secondaryGradient)
             .ignoresSafeArea()
@@ -314,6 +316,7 @@ struct HomeView: View {
             print("Text")
             if name != multiPeerSession.getDisplayName() {
                 let displayName = name.isEmpty ? "Default" : name
+                UserDefaults.standard.setValue(displayName,forKey: "display_name")
                 multiPeerSession.updateDisplayName(displayName)
             }
         } else {
@@ -381,15 +384,7 @@ struct LegacySceneView: UIViewRepresentable {
         
         view.scene = scene
         view.backgroundColor = UIColor.clear
-        //        view.pointOfView = cameraNode
-        //        view.allowsCameraControl = true
-        //        view.autoenablesDefaultLighting = true
         view.isUserInteractionEnabled = false
-        //        view.isMultipleTouchEnabled = false
-        
-        //        let panGesture = UIPanGestureRecognizer(target: context.coordinator, action: #selector(Coordinator.handlePan(_:)))
-        //        view.addGestureRecognizer(panGesture)
-        //
         return view
     }
     
@@ -397,28 +392,4 @@ struct LegacySceneView: UIViewRepresentable {
         // ... existing code ...
     }
     
-    //
-    //
-    //    class Coordinator: NSObject {
-    //            var parent: LegacySceneView
-    //
-    //            init(_ parent: LegacySceneView) {
-    //                self.parent = parent
-    //            }
-    //
-    //            @objc func handlePan(_ gesture: UIPanGestureRecognizer) {
-    //                let translation = gesture.translation(in: gesture.view!)
-    //                let x = Float(translation.x)
-    //
-    //                if let modelNode = parent.scene.rootNode.childNode(withName: "rock", recursively: true) {
-    //                    var newAngleY = (x * Float(Double.pi)) / 180.0
-    //                    newAngleY += parent.currentAngleY
-    //                    modelNode.eulerAngles.y = newAngleY
-    //
-    //                    if gesture.state == .ended {
-    //                        parent.currentAngleY = newAngleY
-    //                    }
-    //                }
-    //            }
-    //        }
 }

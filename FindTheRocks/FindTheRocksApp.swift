@@ -10,7 +10,7 @@ import SwiftData
 
 @main
 struct FindTheRocksApp: App {
-    @State var multipeerSession: MultipeerSession = MultipeerSession(displayName: UIDevice().systemName)
+    @State var multipeerSession: MultipeerSession = MultipeerSession(displayName: UserDefaults.standard.string(forKey:"display_name") ?? UIDevice.current.systemName)
     
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([

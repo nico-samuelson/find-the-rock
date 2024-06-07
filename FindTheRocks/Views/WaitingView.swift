@@ -10,8 +10,6 @@ import MultipeerConnectivity
 
 struct WaitingView: View {
     @Binding var multiPeerSession:MultipeerSession
-    @Binding var isInvited: Bool
-    @Binding var invitationHandler: ((Bool) -> Void)?
     @State var isDestroyed = false
     @State var message:String = "destroy"
     @State var navigateToHome = false
@@ -215,11 +213,6 @@ struct WaitingView: View {
             }
         }
         .onAppear(){
-            withAnimation {
-                isInvited = false
-                invitationHandler?(true)
-                invitationHandler = nil
-            }
             multiPeerSession.showDestroyModal = {text in
                 message = text
                 isDestroyed = true
