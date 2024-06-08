@@ -9,6 +9,7 @@ import SwiftUI
 
 struct RoomSettingSheetView: View {
     @Environment(\.dismiss) var dismiss
+    @Environment(AudioObservable.self) var audio
     @Binding var multiPeerSession: MultipeerSession
     @State var tempHideTime: Int
     @State var tempSeekTime: Int
@@ -98,7 +99,7 @@ struct RoomSettingSheetView: View {
                     }
                     Spacer()
                     VStack(alignment:.center,spacing:16){
-                        Text("Reset")
+                        Text("Cancel")
                             .font(.custom("Staatliches-Regular",size:36,relativeTo: .title))
                             .foregroundStyle(Color.init(red: 142/255.0,green:111/255.0,blue:255/255.0))
                             .bold()
@@ -108,6 +109,7 @@ struct RoomSettingSheetView: View {
                                     .fill(Color.white)
                             }
                             .onTapGesture {
+                                audio.playClick()
                                 multiPeerSession.room.hideTime = tempHideTime
                                 multiPeerSession.room.seekTime = tempSeekTime
                                 multiPeerSession.room.fakeRock = tempFakeRock
@@ -124,6 +126,7 @@ struct RoomSettingSheetView: View {
                                     .fill(Color.tersierGradient)
                             }
                             .onTapGesture {
+                                audio.playClick()
                                 multiPeerSession.syncRoom()
                                 dismiss()
                             }
