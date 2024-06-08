@@ -10,6 +10,7 @@ import SwiftUI
 struct ResultView: View {
     @Binding var multiPeerSession: MultipeerSession
     @State var winner: String = ""
+    @State var playAgainPressed: Bool = false
     
     var body: some View {
         NavigationStack {
@@ -190,25 +191,37 @@ struct ResultView: View {
                     })
                     .padding(.top, 30)
                     
-                    NavigationLink(
-                        destination: multiPeerSession.isMaster ?
+                    Button {
+                        // reset all point and rocks
+                        for i in 0...1 {
+                            multiPeerSession.room.teams[i].fakePlanted.removeAll()
+                            multiPeerSession.room.teams[i].realPlanted.removeAll()
+                            
+                            for player in multiPeerSession.room.teams[i].players {
+                                player.point = 0
+                            }
+                            
+                            self.multiPeerSession.syncRoom()
+                        }
+                    } label: {
+                        SkewedRoundedRectangle(topRightYOffset: -5, bottomRightXOffset: 3, bottomRightYOffset: 3, bottomLeftXOffset: 6, cornerRadius: 20)
+                            .frame(maxHeight: 75)
+                            .padding(.horizontal, 50)
+                            .foregroundStyle(Color.tersierGradient)
+                            .overlay(
+                                Text("PLAY AGAIN")
+                                    .foregroundStyle(Color.white)
+                                    .fontWeight(.bold)
+                                    .font(.custom("Staatliches-Regular", size: 32))
+                            )
+                            .padding(.top, 15)
+                            .padding(.bottom, 25)
+                    }
+                    .navigationDestination(isPresented: $playAgainPressed) {
+                        multiPeerSession.isMaster ?
                         AnyView(RoomView(multiPeerSession: $multiPeerSession, myself:Player(peerID: multiPeerSession.getPeerId(), profile:"lancelot-avatar", status: .connected, point: 0, isPlanter: true))) :
-                            AnyView(WaitingView(multiPeerSession: $multiPeerSession))
-                        ,
-                        label:{
-                            SkewedRoundedRectangle(topRightYOffset: -5, bottomRightXOffset: 3, bottomRightYOffset: 3, bottomLeftXOffset: 6, cornerRadius: 20)
-                                .frame(maxHeight: 75)
-                                .padding(.horizontal, 50)
-                                .foregroundStyle(Color.tersierGradient)
-                                .overlay(
-                                    Text("PLAY AGAIN")
-                                        .foregroundStyle(Color.white)
-                                        .fontWeight(.bold)
-                                        .font(.custom("Staatliches-Regular", size: 32))
-                                )
-                                .padding(.top, 15)
-                                .padding(.bottom, 25)
-                        })
+                        AnyView(WaitingView(multiPeerSession: $multiPeerSession))
+                    }
                 }
             }
             .navigationBarBackButtonHidden()
@@ -223,6 +236,8 @@ struct ResultView: View {
             else {
                 winner = redTeamScore > blueTeamScore ? "RED TEAM" : "BLUE TEAM"
             }
+            
+            playAgainPressed = false
         })
         
     }

@@ -69,6 +69,7 @@ extension MultipeerSession: ARSCNViewDelegate, ARSessionDelegate {
         
         let myTeam = self.getTeam(self.peerID)
         let visibleTeamRock = isPlanting ? myTeam : (myTeam == 1 ? 0 : 1)
+//        print("visible team rock: ", visibleTeamRock)
         let visibleRocks = self.room.getTeamRocks(team: visibleTeamRock)
         let hiddenRocks = self.room.getTeamRocks(team: visibleTeamRock == 0 ? 1 : 0)
         
@@ -90,6 +91,8 @@ extension MultipeerSession: ARSCNViewDelegate, ARSessionDelegate {
                 else {
                     longPressedNode.parent?.parent?.isHidden = false
                 }
+                
+//                print("rock hidden: ", longPressedNode.parent?.parent?.isHidden)
             }
         }
         
