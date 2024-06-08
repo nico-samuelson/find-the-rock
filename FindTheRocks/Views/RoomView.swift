@@ -25,7 +25,7 @@ struct RoomView: View {
         
         // assign player to team after invite
         if to == -1 {
-            multiPeerSession.invitePeer(peerID: player.peerID, data: try! NSKeyedArchiver.archivedData(withRootObject: Player(peerID: multiPeerSession.getPeerId(), profile: "lancelot-avatar", status: .connected, point:0, isPlanter: false), requiringSecureCoding: true))
+            multiPeerSession.invitePeer(peerID: player.peerID, data: try! NSKeyedArchiver.archivedData(withRootObject: myself, requiringSecureCoding: true))
         }
         
         // move player to another team
@@ -99,9 +99,11 @@ struct RoomView: View {
                                             .foregroundStyle(Color.lightRed)
                                             .frame(width: 25, height: 25)
                                             .overlay {
-                                                Circle()
-                                                    .foregroundStyle(.white)
-                                                    .padding(2)
+                                                Image(player.profile)
+                                                    .resizable()
+                                                    .clipShape(
+                                                        Circle()
+                                                    ).padding(2)
                                             }
                                         
                                         Text(player.peerID.displayName.uppercased())
@@ -236,9 +238,11 @@ struct RoomView: View {
                                             .foregroundStyle(Color.lightBlue)
                                             .frame(width: 25, height: 25)
                                             .overlay {
-                                                Circle()
-                                                    .foregroundStyle(.white)
-                                                    .padding(2)
+                                                Image(player.profile)
+                                                    .resizable()
+                                                    .clipShape(
+                                                        Circle()
+                                                    ).padding(2)
                                             }
                                     }
                                     .padding(0)
@@ -277,9 +281,14 @@ struct RoomView: View {
                                     .foregroundStyle(.white.opacity(0.5))
                                     .frame(width: 40, height: 40)
                                     .overlay {
-                                        Circle()
-                                            .foregroundStyle(.white)
-                                            .padding(4)
+//                                        Circle()
+//                                            .foregroundStyle(.white)
+//                                            .padding(4)
+                                        Image(peer.profile)
+                                            .resizable()
+                                            .clipShape(
+                                                Circle()
+                                            ).padding(4)
                                     }
                                 
                                 Text(peer.peerID.displayName.uppercased())

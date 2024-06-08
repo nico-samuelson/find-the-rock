@@ -29,6 +29,7 @@ class MultipeerSession: NSObject {
     var isPlanting: Bool = true
     var isGameStarted: Bool = false
     var plantTurn: Int = 0
+    let avatars = ["male-avatar","female-avatar"]
     
     // MARK: Scene View
     var cameraTransform: SCNMatrix4? = SCNMatrix4()
@@ -116,7 +117,7 @@ class MultipeerSession: NSObject {
     }
     
     private func startAdvertisingAndBrowsing() {
-        serviceAdvertiser = MCNearbyServiceAdvertiser(peer: myPeerID, discoveryInfo: nil, serviceType: MultipeerSession.serviceType)
+        serviceAdvertiser = MCNearbyServiceAdvertiser(peer: myPeerID, discoveryInfo: ["profile":avatars[UserDefaults.standard.integer(forKey: "avatar") ?? 0]], serviceType: MultipeerSession.serviceType)
         serviceAdvertiser.delegate = self
         serviceAdvertiser.startAdvertisingPeer()
         
@@ -157,7 +158,16 @@ class MultipeerSession: NSObject {
         self.isJoined = true
         
         // new advertiser and run
-        serviceAdvertiser = MCNearbyServiceAdvertiser(peer:self.myPeerID,discoveryInfo: ["room":self.room.name],serviceType: serviceBrowser.serviceType)
+        serviceAdvertiser = MCNearbyServiceAdvertiser(peer:self.myPeerID,discoveryInfo: ["room":self.room.name,"profile":avatars[UserDefaults.standard.integer(forKey: "avatar") ?? 0]],serviceType: serviceBrowser.serviceType)
+        serviceAdvertiser.delegate = self
+        serviceAdvertiser.startAdvertisingPeer()
+    }
+    
+    func changeAvatar(_ index:Int){
+        serviceAdvertiser.stopAdvertisingPeer()
+        serviceAdvertiser.delegate = nil
+        
+        serviceAdvertiser = MCNearbyServiceAdvertiser(peer:self.myPeerID,discoveryInfo: ["profile":avatars[index]],serviceType: serviceBrowser.serviceType)
         serviceAdvertiser.delegate = self
         serviceAdvertiser.startAdvertisingPeer()
     }
@@ -248,8 +258,10 @@ extension MultipeerSession: MCSessionDelegate {
         case .connected:
             // if room master than share the state room to every connected player
             print("Connected with \(peerID.displayName)")
+            var profile = "male-avatar"
             if let index = self.nearbyPeers.firstIndex(where: {$0.peerID == peerID}) {
                 self.nearbyPeers[index].status = .connected
+                profile = self.nearbyPeers[index].profile
             }
             if isMaster {
                 // Assign the connected players into a room
@@ -257,7 +269,7 @@ extension MultipeerSession: MCSessionDelegate {
                 let team2Count = self.room.teams[1].players.count
                 let target = team1Count <= team2Count ? 0 : 1
                 
-                self.room.teams[target].players.append(Player(peerID:peerID,profile:"tigreal-avatar",status:.connected,point:0, isPlanter: true))
+                self.room.teams[target].players.append(Player(peerID:peerID,profile:profile,status:.connected,point:0, isPlanter: true))
                 self.sendToAllPeers( try! NSKeyedArchiver.archivedData(withRootObject: self.room ,requiringSecureCoding: true))
                 
             }
@@ -442,20 +454,23 @@ extension MultipeerSession: MCNearbyServiceBrowserDelegate {
     public func browser(_ browser: MCNearbyServiceBrowser, foundPeer peerID: MCPeerID, withDiscoveryInfo info: [String: String]?) {
         // check for discoveryInfo
         
-       if let info = info {
-           // if exist the same room and connected peers, and not connected yet
-           if self.room.name == info["room"]! && (self.connectedPeers.firstIndex(where: { $0 == peerID }) == nil) {
-               browser.invitePeer(peerID,to:self.session,withContext:"approved".data(using:.utf8),timeout:10)
-           }
-       }
-       
-       DispatchQueue.main.async {
-           print(self.nearbyPeers.firstIndex(where: {$0.peerID == peerID}) == nil)
-           if self.nearbyPeers.firstIndex(where: { $0.peerID == peerID }) == nil {
-               self.nearbyPeers.append(Player(peerID: peerID, profile: "", status: .disconnected, point: 0, isPlanter: false))
-           }
-           print(self.nearbyPeers.map({($0.peerID, $0.peerID.displayName)}))
-       }
+        if let info = info {
+            // if exist the same room and connected peers, and not connected yet
+            let room = info["room"] ?? "no-room"
+            if self.room.name == room && (self.connectedPeers.firstIndex(where: { $0 == peerID }) == nil) {
+                browser.invitePeer(peerID,to:self.session,withContext:"approved".data(using:.utf8),timeout:10)
+            }
+            
+            let profile = info["profile"] ?? "male-avatar"
+            
+            DispatchQueue.main.async {
+                print(self.nearbyPeers.firstIndex(where: {$0.peerID == peerID}) == nil)
+                if self.nearbyPeers.firstIndex(where: { $0.peerID == peerID }) == nil {
+                    self.nearbyPeers.append(Player(peerID: peerID, profile: profile, status: .disconnected, point: 0, isPlanter: false))
+                }
+                print(self.nearbyPeers.map({($0.peerID, $0.peerID.displayName)}))
+            }
+        }
     }
     
     /// - Tag: Lost Peer

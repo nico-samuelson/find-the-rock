@@ -33,7 +33,6 @@
 		92E0B1292C1321480009E2BB /* click.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 92E0B1272C1321480009E2BB /* click.mp3 */; };
 		92E0B12A2C1321480009E2BB /* winner.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 92E0B1282C1321480009E2BB /* winner.mp3 */; };
 		92E0B1322C1440250009E2BB /* Staatliches-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 92E0B1312C1440250009E2BB /* Staatliches-Regular.ttf */; };
-		92E0B1342C1440350009E2BB /* TitanOne-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 92E0B1332C1440350009E2BB /* TitanOne-Regular.ttf */; };
 		92E0B1362C1442D70009E2BB /* WaitingPlantScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E0B1352C1442D70009E2BB /* WaitingPlantScreenView.swift */; };
 		92E0B13A2C1497E30009E2BB /* drop.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 92E0B1392C1497E30009E2BB /* drop.mp3 */; };
 		92E0B13C2C1499EC0009E2BB /* drop-2.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 92E0B13B2C1499EC0009E2BB /* drop-2.mp3 */; };
@@ -46,6 +45,7 @@
 		A43A7A142C072B0C00C46FAA /* ButtonPillComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A43A7A132C072B0C00C46FAA /* ButtonPillComponent.swift */; };
 		A43A7A162C07374300C46FAA /* CustomStepperComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A43A7A152C07374300C46FAA /* CustomStepperComponent.swift */; };
 		A43A7A182C0737B900C46FAA /* ActionStepperComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A43A7A172C0737B900C46FAA /* ActionStepperComponent.swift */; };
+		A442E7F62C14BCD900D8A6DC /* TitanOne-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A442E7F52C14BCD900D8A6DC /* TitanOne-Regular.ttf */; };
 		A4DAC4CA2C085A670062CE38 /* RoomView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4DAC4C92C085A670062CE38 /* RoomView.swift */; };
 		A4DAC4CD2C08660F0062CE38 /* RoomModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4DAC4CC2C08660F0062CE38 /* RoomModel.swift */; };
 		A4DAC4CF2C0866260062CE38 /* TeamModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4DAC4CE2C0866260062CE38 /* TeamModel.swift */; };
@@ -104,7 +104,6 @@
 		92E0B1282C1321480009E2BB /* winner.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = winner.mp3; sourceTree = "<group>"; };
 		92E0B12B2C1323B40009E2BB /* Staatliches-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Staatliches-Regular.ttf"; path = "/Downloads/Staatliches,Titan_One/Staatliches/Staatliches-Regular.ttf"; sourceTree = "<absolute>"; };
 		92E0B1312C1440250009E2BB /* Staatliches-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Staatliches-Regular.ttf"; sourceTree = "<group>"; };
-		92E0B1332C1440350009E2BB /* TitanOne-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "TitanOne-Regular.ttf"; sourceTree = "<group>"; };
 		92E0B1352C1442D70009E2BB /* WaitingPlantScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaitingPlantScreenView.swift; sourceTree = "<group>"; };
 		92E0B1392C1497E30009E2BB /* drop.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = drop.mp3; sourceTree = "<group>"; };
 		92E0B13B2C1499EC0009E2BB /* drop-2.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "drop-2.mp3"; sourceTree = "<group>"; };
@@ -117,6 +116,7 @@
 		A43A7A132C072B0C00C46FAA /* ButtonPillComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonPillComponent.swift; sourceTree = "<group>"; };
 		A43A7A152C07374300C46FAA /* CustomStepperComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomStepperComponent.swift; sourceTree = "<group>"; };
 		A43A7A172C0737B900C46FAA /* ActionStepperComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionStepperComponent.swift; sourceTree = "<group>"; };
+		A442E7F52C14BCD900D8A6DC /* TitanOne-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "TitanOne-Regular.ttf"; sourceTree = "<group>"; };
 		A4DAC4C92C085A670062CE38 /* RoomView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoomView.swift; sourceTree = "<group>"; };
 		A4DAC4CC2C08660F0062CE38 /* RoomModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomModel.swift; sourceTree = "<group>"; };
 		A4DAC4CE2C0866260062CE38 /* TeamModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamModel.swift; sourceTree = "<group>"; };
@@ -284,8 +284,8 @@
 		A43A7A0E2C07164800C46FAA /* Fonts */ = {
 			isa = PBXGroup;
 			children = (
+				A442E7F52C14BCD900D8A6DC /* TitanOne-Regular.ttf */,
 				92E0B1312C1440250009E2BB /* Staatliches-Regular.ttf */,
-				92E0B1332C1440350009E2BB /* TitanOne-Regular.ttf */,
 				A43A7A0F2C071C8900C46FAA /* Roboto-Black.ttf */,
 			);
 			path = Fonts;
@@ -417,12 +417,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				92E0B13C2C1499EC0009E2BB /* drop-2.mp3 in Resources */,
+				A442E7F62C14BCD900D8A6DC /* TitanOne-Regular.ttf in Resources */,
 				92E0B1292C1321480009E2BB /* click.mp3 in Resources */,
 				92E0B1322C1440250009E2BB /* Staatliches-Regular.ttf in Resources */,
 				924A44CA2C086B390002D8E1 /* art.scnassets in Resources */,
 				92E0B12A2C1321480009E2BB /* winner.mp3 in Resources */,
 				92E0B1262C13213A0009E2BB /* background-music-funk.mp3 in Resources */,
-				92E0B1342C1440350009E2BB /* TitanOne-Regular.ttf in Resources */,
 				92E0B13A2C1497E30009E2BB /* drop.mp3 in Resources */,
 				04F5BCE22C05CD0200AC5205 /* Preview Assets.xcassets in Resources */,
 				04F5BCDF2C05CD0200AC5205 /* Assets.xcassets in Resources */,
@@ -646,7 +646,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"FindTheRocks/Preview Content\"";
-				DEVELOPMENT_TEAM = KDM6FL3S9W;
+				DEVELOPMENT_TEAM = Y834K368F4;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = FindTheRocks/Info.plist;
@@ -679,7 +679,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"FindTheRocks/Preview Content\"";
-				DEVELOPMENT_TEAM = KDM6FL3S9W;
+				DEVELOPMENT_TEAM = Y834K368F4;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = FindTheRocks/Info.plist;

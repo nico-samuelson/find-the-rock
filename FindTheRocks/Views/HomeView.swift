@@ -85,6 +85,7 @@ struct HomeView: View {
                                     audio.playClick()
                                     avatarIndex = (avatarIndex + 1) % avatarImageNames.count
                                     UserDefaults.standard.setValue(avatarIndex,forKey:"avatar")
+                                    multiPeerSession.changeAvatar(avatarIndex)
                                 }
                             
                             Spacer()
@@ -139,7 +140,7 @@ struct HomeView: View {
                                 // Your custom logic here
                                 // e.g., update some state, print a message, etc.
                                 multiPeerSession.createRoom()
-                                multiPeerSession.room.teams[0].players.append(Player(peerID: multiPeerSession.getPeerId(), profile:"lancelot-avatar", status: .connected, point: 0, isPlanter: true))
+                                multiPeerSession.room.teams[0].players.append(Player(peerID: multiPeerSession.getPeerId(), profile:avatarImageNames[avatarIndex], status: .connected, point: 0, isPlanter: true))
                                 
                                 // After your logic, set navigateToHome to true to trigger navigation
                                 navigateRoom = true
@@ -156,7 +157,7 @@ struct HomeView: View {
                                     )
                             }
                             .navigationDestination(isPresented: $navigateRoom){
-                                RoomView(multiPeerSession: $multiPeerSession, myself: Player(peerID: multiPeerSession.getPeerId(), profile:"lancelot-avatar", status: .connected, point: 0, isPlanter: true))
+                                RoomView(multiPeerSession: $multiPeerSession, myself: Player(peerID: multiPeerSession.getPeerId(), profile: avatarImageNames[avatarIndex], status: .connected, point: 0, isPlanter: true))
                             }
                             .offset(y: -10)
                             //                            .padding(.bottom, 10)
