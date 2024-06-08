@@ -129,7 +129,7 @@ struct HomeView: View {
                                 // Your custom logic here
                                 // e.g., update some state, print a message, etc.
                                 multiPeerSession.createRoom()
-                                multiPeerSession.room.teams[0].players.append(Player(peerID: multiPeerSession.getPeerId(), profile:"lancelot-avatar", status: .connected, point: 0))
+                                multiPeerSession.room.teams[0].players.append(Player(peerID: multiPeerSession.getPeerId(), profile:"lancelot-avatar", status: .connected, point: 0, isPlanter: true))
                                 
                                 // After your logic, set navigateToHome to true to trigger navigation
                                 navigateRoom = true
@@ -146,7 +146,7 @@ struct HomeView: View {
                                     )
                             }
                             .navigationDestination(isPresented: $navigateRoom){
-                                RoomView(multiPeerSession: $multiPeerSession, myself: Player(peerID: multiPeerSession.getPeerId(), profile:"lancelot-avatar", status: .connected, point: 0))
+                                RoomView(multiPeerSession: $multiPeerSession, myself: Player(peerID: multiPeerSession.getPeerId(), profile:"lancelot-avatar", status: .connected, point: 0, isPlanter: true))
                             }
                             .offset(y: -10)
                             //                            .padding(.bottom, 10)
@@ -154,7 +154,7 @@ struct HomeView: View {
                                 .frame(height: 20)
                         }
                         .frame(width:gp.size.width,height:gp.size.height/30*9)
-                        .background(){
+                        .background{
                             CustomRandomShape()
                                 .fill(Color.primaryGradient)
                                 .shadow(color:.init(.black.opacity(0.33)),radius: 20,x:0,y:4)

@@ -18,21 +18,19 @@ import MultipeerConnectivity
 enum Label {
     case redTeam, blueTeam, fingTheRock
 }
-
-enum PlantButton {
-    case real, fake
-}
-
 struct InGameView: View {
     @Binding var multiPeerSession: MultipeerSession
-    @State var selectedButton: PlantButton = PlantButton.real
+    @State var myself: Player? = nil
+    
     @State var plantTimeRemaining: Int = 120
     @State var seekTimeRemaining: Int = 120
     @State var countDownRemaining: Int = 3
     @State var isPlantTimerActive: Bool = false
     @State var isSeekTimerActive: Bool = false
+    
     @State var isCountDownActive: Bool = false
     @State var isOver: Bool = false
+    
     @State var redPoints: Int = 0
     @State var bluePoints: Int = 0
     
@@ -121,14 +119,24 @@ struct InGameView: View {
                             }
                             
                             // MARK: AR View
-                            ARControllerRepresentable(multipeerSession: $multiPeerSession)
-                            //                                .background(Color.white)
-                                .cornerRadius(15, corners: multiPeerSession.isPlanting && !isCountDownActive ? [.topLeft, .topRight, .bottomLeft, .bottomRight] : [.bottomLeft, .bottomRight])
-                                .padding(.bottom, 20)
+                            if myself?.isPlanter ?? false || !multiPeerSession.isPlanting {
+                                ARControllerRepresentable(multipeerSession: $multiPeerSession)
+                                    .cornerRadius(15, corners: multiPeerSession.isPlanting && !isCountDownActive ? [.topLeft, .topRight, .bottomLeft, .bottomRight] : [.bottomLeft, .bottomRight])
+                                    .padding(.bottom, 20)
+//                                    .hidden(multipeerSession.)
+                            }
+                            else {
+                                Spacer()
+                                
+                                Text("Hide the rocks with your team!")
+                                    .multilineTextAlignment(.center)
+                                
+                                Spacer()
+                            }
                         }
                         
                         // MARK: Rock selector
-                        if multiPeerSession.isPlanting && !isCountDownActive {
+                        if multiPeerSession.isPlanting && myself?.isPlanter ?? false &&  !isCountDownActive {
                             HStack {
                                 // Button Real Rock
                                 VStack(spacing: 0) {
@@ -198,6 +206,7 @@ struct InGameView: View {
                     .padding(.vertical,0)
                     .onAppear {
                         isPlantTimerActive = true
+                        myself = multiPeerSession.room.teams[multiPeerSession.getTeam(multiPeerSession.peerID)].players.first(where: {$0.peerID == multiPeerSession.peerID})
                     }
                     
                     // Modal Countdown

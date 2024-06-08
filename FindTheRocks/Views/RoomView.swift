@@ -18,9 +18,10 @@ struct RoomView: View {
     func assignToTeam(player: Player, to: Int = -1) {
         print("player: ", player)
         print("to: ", to)
+        
         // assign player to team after invite
         if to == -1 {
-            multiPeerSession.invitePeer(peerID: player.peerID, data: try! NSKeyedArchiver.archivedData(withRootObject: Player(peerID: multiPeerSession.getPeerId(), profile: "lancelot-avatar", status: .connected, point:0 ), requiringSecureCoding: true))
+            multiPeerSession.invitePeer(peerID: player.peerID, data: try! NSKeyedArchiver.archivedData(withRootObject: Player(peerID: multiPeerSession.getPeerId(), profile: "lancelot-avatar", status: .connected, point:0, isPlanter: false), requiringSecureCoding: true))
         }
         
         // move player to another team
@@ -28,8 +29,10 @@ struct RoomView: View {
             let from = to == 0 ? 1 : 0
             multiPeerSession.room.teams[from].players.removeAll(where: { $0.peerID == player.peerID })
             multiPeerSession.room.teams[to].players.append(player)
-            multiPeerSession.syncRoom()
+//            multiPeerSession.syncRoom()
         }
+        
+        multiPeerSession.syncRoom()
     }
     
     func kickPlayer(player: Player) {

@@ -29,6 +29,7 @@ class MultipeerSession: NSObject {
     var isPlantingFakeRock: Bool = false
     var isPlanting: Bool = true
     var isGameStarted: Bool = false
+    var plantTurn: Int = 0
     
     // MARK: Scene View
     var cameraTransform: SCNMatrix4? = SCNMatrix4()
@@ -198,6 +199,14 @@ class MultipeerSession: NSObject {
     }
     
     func syncRoom(){
+        // re-sync team planter
+        for team in self.room.teams where team.players.count > 0 {
+            for player in team.players where player.isPlanter {
+                player.isPlanter = false
+            }
+            team.players[0].isPlanter = true
+        }
+        
         self.sendToAllPeers(try! NSKeyedArchiver.archivedData(withRootObject: self.room, requiringSecureCoding: true))
     }
     
@@ -236,7 +245,7 @@ extension MultipeerSession: MCSessionDelegate {
                 let team2Count = self.room.teams[1].players.count
                 let target = team1Count <= team2Count ? 0 : 1
                 
-                self.room.teams[target].players.append(Player(peerID:peerID,profile:"tigreal-avatar",status:.connected,point:0))
+                self.room.teams[target].players.append(Player(peerID:peerID,profile:"tigreal-avatar",status:.connected,point:0, isPlanter: true))
                 self.sendToAllPeers( try! NSKeyedArchiver.archivedData(withRootObject: self.room ,requiringSecureCoding: true))
                 
             }
@@ -418,7 +427,7 @@ extension MultipeerSession: MCNearbyServiceBrowserDelegate {
        DispatchQueue.main.async {
            print(self.nearbyPeers.firstIndex(where: {$0.peerID == peerID}) == nil)
            if self.nearbyPeers.firstIndex(where: { $0.peerID == peerID }) == nil {
-               self.nearbyPeers.append(Player(peerID: peerID, profile: "", status: .disconnected, point: 0))
+               self.nearbyPeers.append(Player(peerID: peerID, profile: "", status: .disconnected, point: 0, isPlanter: false))
            }
            print(self.nearbyPeers.map({($0.peerID, $0.peerID.displayName)}))
        }
@@ -426,7 +435,7 @@ extension MultipeerSession: MCNearbyServiceBrowserDelegate {
     
     /// - Tag: Lost Peer
     public func browser(_ browser: MCNearbyServiceBrowser, lostPeer peerID: MCPeerID) {
-        // This app doesn't do anything with non-invited peers, so there's nothing to do here.
+        
         DispatchQueue.main.async {
             if let index = self.nearbyPeers.firstIndex(where: {$0.peerID == peerID}) {
                 self.nearbyPeers.remove(at: index)

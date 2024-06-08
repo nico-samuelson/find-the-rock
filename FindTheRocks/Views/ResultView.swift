@@ -192,7 +192,7 @@ struct ResultView: View {
                     
                     NavigationLink(
                         destination: multiPeerSession.isMaster ?
-                        AnyView(RoomView(multiPeerSession: $multiPeerSession, myself:Player(peerID: multiPeerSession.getPeerId(), profile:"lancelot-avatar", status: .connected, point: 0))) :
+                        AnyView(RoomView(multiPeerSession: $multiPeerSession, myself:Player(peerID: multiPeerSession.getPeerId(), profile:"lancelot-avatar", status: .connected, point: 0, isPlanter: true))) :
                             AnyView(WaitingView(multiPeerSession: $multiPeerSession))
                         ,
                         label:{
