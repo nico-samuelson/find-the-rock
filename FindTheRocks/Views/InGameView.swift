@@ -21,13 +21,11 @@ enum Label {
 struct InGameView: View {
     @Binding var multiPeerSession: MultipeerSession
     @State var myself: Player? = nil
-    
     @State var plantTimeRemaining: Int = 120
     @State var seekTimeRemaining: Int = 120
     @State var countDownRemaining: Int = 3
     @State var isPlantTimerActive: Bool = false
     @State var isSeekTimerActive: Bool = false
-    
     @State var isCountDownActive: Bool = false
     @State var isOver: Bool = false
     

@@ -30,6 +30,6 @@ struct ContentView: View {
                 }
             }
         }
-//        PlantView(multiPeerSession: $multipeerSession)
+        PlantView(multiPeerSession: $multipeerSession)
     }
 }
