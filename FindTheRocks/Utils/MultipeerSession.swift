@@ -286,16 +286,24 @@ extension MultipeerSession: MCSessionDelegate {
         if string == "start" {
             self.isGameStarted = true
         }
+        
+        if string == "switch" {
+            self.shareWorldMap()
+        }
     }
     
     // room master will merge all the anchors sent by the players
     func handleAnchorChange(_ newAnchor: ARAnchor, _ mode: String, _ isReal: Bool, _ sender: MCPeerID) {
         let team = self.getTeam(sender)
+        
         // TODO: change send world map only for adding and removing
-//        guard isMaster else { return }
         if mode == "pick" {
-            guard isReal, let player = room.teams[team].players.first(where: {$0.peerID == sender}) else { return }
-            player.point += 1
+            guard let player = room.teams[team].players.first(where: {$0.peerID == sender}) else { return }
+            
+            if isReal {
+                player.point += 1
+            }
+            
             room.teams[team].realPlanted.removeAll(where: {$0.anchor.name == newAnchor.name})
             sceneView.session.remove(anchor: newAnchor)
             guard let data = try? NSKeyedArchiver.archivedData(withRootObject: CustomAnchor(anchor:newAnchor,action: "pick", isReal: isReal),requiringSecureCoding: true) else { fatalError("can't encode anchor") }
@@ -329,17 +337,18 @@ extension MultipeerSession: MCSessionDelegate {
                     sceneView.session.remove(anchor: newAnchor)
                 }
             }
-            
-            // TODO: make the pick sending the anchor to picked
-            
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1){
-                self.sceneView.session.getCurrentWorldMap { worldMap, error in
-                    guard let map = worldMap
-                    else { print("Error: \(error!)"); return }
-                    guard let data = try? NSKeyedArchiver.archivedData(withRootObject: ARData(room: self.room, map: map), requiringSecureCoding: true)
-                    else { fatalError("can't encode map") }
-                    self.sendToAllPeers(data)
-                }
+        }
+    }
+    
+    func shareWorldMap() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5){
+            self.sceneView.session.getCurrentWorldMap { worldMap, error in
+                guard let map = worldMap
+                else { print("Error: \(error!)"); return }
+                guard let data = try? NSKeyedArchiver.archivedData(withRootObject: ARData(room: self.room, map: map), requiringSecureCoding: true)
+                else { fatalError("can't encode map") }
+                print("rock planted: ", self.room.getAllPlantedRocks().count)
+                self.sendToAllPeers(data)
             }
         }
     }
@@ -355,14 +364,22 @@ extension MultipeerSession: MCSessionDelegate {
 //            configuration.worldAlignment = .gravityAndHeading
             
             self.room = data.room
+            print("rock planted: ", self.room.getAllPlantedRocks().count)
             self.sceneView.session.run(configuration, options: [.resetTracking, .removeExistingAnchors])
     }
     
     func receivePick(_ customAnchor: CustomAnchor,_ peerID: MCPeerID){
         let team = self.getTeam(peerID)
-        guard customAnchor.isReal, let player = room.teams[team].players.first(where: {$0.peerID == peerID}) else { return }
-        player.point += 1
-        room.teams[team].realPlanted.removeAll(where: {$0.anchor.name == customAnchor.anchor.name})
+        guard let player = room.teams[team].players.first(where: {$0.peerID == peerID}) else { return }
+        
+        if customAnchor.isReal {
+            player.point += 1
+            room.teams[team].realPlanted.removeAll(where: {$0.anchor.name == customAnchor.anchor.name})
+        }
+        else {
+            room.teams[team].fakePlanted.removeAll(where: {$0.anchor.name == customAnchor.anchor.name})
+        }
+        
         sceneView.session.remove(anchor: customAnchor.anchor)
     }
     
@@ -386,7 +403,9 @@ extension MultipeerSession: MCSessionDelegate {
                        receivePick(newAnchor, peerID)
                     }
                 case let arData as ARData:
-                    receiveWorldMap(data: arData)
+                    if peerID != self.peerID {
+                        receiveWorldMap(data: arData)
+                    }
                 case let data as Data:
                     handleDataString(String(decoding: data, as: UTF8.self))
                 default:

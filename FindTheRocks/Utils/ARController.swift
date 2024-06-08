@@ -165,14 +165,13 @@ class ARController: UIViewController {
         guard let myself = multipeerSession.room.teams[myTeam].players.first(where: {$0.peerID == multipeerSession.peerID})
         else { return }
         
-        if multipeerSession.isPlanting && myTeam == multipeerSession.plantTurn && myself.isPlanter {
+        if (multipeerSession.isPlanting && myTeam == multipeerSession.plantTurn && myself.isPlanter) || !multipeerSession.isPlanting {
             if gesture.state == .ended {
                 let touchLocation = gesture.location(in: multipeerSession.sceneView)
                 
                 let hitTestOptions: [SCNHitTestOption: Any] = [.firstFoundOnly: true]
                 let hitTestResults = multipeerSession.sceneView.hitTest(touchLocation, options: hitTestOptions)
                 
-                //            hitTestRes
                 // get clicked node
                 if let longPressedNode = hitTestResults.map { $0.node }.first {
                     longPressedNode.parent?.parent?.removeFromParentNode()
@@ -191,8 +190,6 @@ class ARController: UIViewController {
                             else {
                                 self.multipeerSession.handleAnchorChange(rock.anchor, "pick", !rock.isFake, self.multipeerSession.peerID)
                             }
-                            
-                            
                         }
                     }
                 } else  {
