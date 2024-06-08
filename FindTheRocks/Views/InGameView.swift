@@ -76,6 +76,7 @@ struct InGameView: View {
                                                         multiPeerSession.shareWorldMap()
                                                     }
                                                     multiPeerSession.plantTurn = 1
+                                                    
                                                     isCountDownActive = true
                                                 }
                                                 
@@ -199,6 +200,7 @@ struct InGameView: View {
                                     
                                     Text("Remaining: \(multiPeerSession.room.realRock - multiPeerSession.room.teams[multiPeerSession.getTeam(multiPeerSession.peerID)].realPlanted.count)")
                                         .font(.custom("Staatliches-Regular", size: 15))
+                                        .foregroundStyle(Color.white)
                                         .padding(.bottom, 5)
                                 }
                                 .frame(height: 140)
@@ -229,6 +231,7 @@ struct InGameView: View {
                                         .bold()
                                     Text("Remaining: \(multiPeerSession.room.fakeRock - multiPeerSession.room.teams[multiPeerSession.getTeam(multiPeerSession.peerID)].fakePlanted.count)")
                                         .font(.custom("Staatliches-Regular", size: 15))
+                                        .foregroundStyle(.white)
                                         .padding(.bottom, 5)
                                 }
                                 .frame(height: 140)
@@ -251,7 +254,7 @@ struct InGameView: View {
                     }
                     
                     // MARK: Waiting Screen
-                    if multiPeerSession.plantTurn != multiPeerSession.getTeam(myself?.peerID) && !isCountDownActive && multiPeerSession.isPlanting {
+                    if multiPeerSession.plantTurn != multiPeerSession.getTeam(myself?.peerID) && multiPeerSession.isPlanting {
                         WaitingPlantScreenView(planterTeam: multiPeerSession.plantTurn, timeRemaining: multiPeerSession.plantTurn == 0 ? $redTeamTimeRemaining : $blueTeamTimeRemaining)
                     }
                     
@@ -323,9 +326,9 @@ struct InGameView: View {
             self.multiPeerSession.isPlanting = true
             self.multiPeerSession.isGameStarted = true
             self.multiPeerSession.plantTurn = 0
-//            self.seekTimeRemaining = multiPeerSession.room.seekTime * 60
-//            self.redTeamTimeRemaining = multiPeerSession.room.hideTime * 60
-//            self.blueTeamTimeRemaining = multiPeerSession.room.hideTime * 60
+            self.seekTimeRemaining = multiPeerSession.room.seekTime * 60
+            self.redTeamTimeRemaining = multiPeerSession.room.hideTime * 60
+            self.blueTeamTimeRemaining = multiPeerSession.room.hideTime * 60
         }
     }
 }

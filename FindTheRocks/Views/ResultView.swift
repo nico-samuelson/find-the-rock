@@ -202,6 +202,19 @@ struct ResultView: View {
                     
                     Button {
                         audio.playClick()
+                        
+                        // reset game states
+                        for i in 0...1 {
+                            multiPeerSession.room.teams[i].fakePlanted.removeAll()
+                            multiPeerSession.room.teams[i].realPlanted.removeAll()
+                             
+                            for player in multiPeerSession.room.teams[i].players {
+                                player.point = 0
+                            }
+                        }
+                        
+                        multiPeerSession.syncRoom()
+                        multiPeerSession.resetWorldMap()
                         navigateToPlayAgain = true
                     } label: {
                         SkewedRoundedRectangle(topRightYOffset: -5, bottomRightXOffset: 3, bottomRightYOffset: 3, bottomLeftXOffset: 6, cornerRadius: 20)
@@ -238,7 +251,8 @@ struct ResultView: View {
                 winner = redTeamScore > blueTeamScore ? "RED TEAM" : "BLUE TEAM"
             }
             
-            playAgainPressed = false
+            navigateToHome = false
+            navigateToPlayAgain = false
         })
         
     }

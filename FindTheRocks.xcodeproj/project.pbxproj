@@ -22,7 +22,6 @@
 		04F5BD072C05CDE200AC5205 /* MultipeerSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04F5BD062C05CDE200AC5205 /* MultipeerSession.swift */; };
 		04F5BD092C05CE5B00AC5205 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04F5BD082C05CE5B00AC5205 /* Utilities.swift */; };
 		04F5BD0B2C05CE8200AC5205 /* ARController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04F5BD0A2C05CE8200AC5205 /* ARController.swift */; };
-		04FA9B392C087202002EC94D /* RoomViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04FA9B372C087202002EC94D /* RoomViewModel.swift */; };
 		924A44CA2C086B390002D8E1 /* art.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = 924A44C92C086B390002D8E1 /* art.scnassets */; };
 		924A44F22C0D9EA20002D8E1 /* PlantView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 924A44F12C0D9EA20002D8E1 /* PlantView.swift */; };
 		92DBDBDB2C0DE38A002C28B0 /* InGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92DBDBDA2C0DE38A002C28B0 /* InGameView.swift */; };
@@ -93,7 +92,6 @@
 		04F5BD062C05CDE200AC5205 /* MultipeerSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultipeerSession.swift; sourceTree = "<group>"; };
 		04F5BD082C05CE5B00AC5205 /* Utilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
 		04F5BD0A2C05CE8200AC5205 /* ARController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARController.swift; sourceTree = "<group>"; };
-		04FA9B372C087202002EC94D /* RoomViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoomViewModel.swift; sourceTree = "<group>"; };
 		924A44C92C086B390002D8E1 /* art.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = art.scnassets; sourceTree = "<group>"; };
 		924A44F12C0D9EA20002D8E1 /* PlantView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlantView.swift; sourceTree = "<group>"; };
 		92DBDBDA2C0DE38A002C28B0 /* InGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InGameView.swift; sourceTree = "<group>"; };
@@ -178,7 +176,6 @@
 			isa = PBXGroup;
 			children = (
 				92E0B1222C1320EB0009E2BB /* Sounds */,
-				04FA9B382C087202002EC94D /* ViewModels */,
 				A4DAC4CB2C0865E40062CE38 /* Models */,
 				A43A7A0E2C07164800C46FAA /* Fonts */,
 				924A44C92C086B390002D8E1 /* art.scnassets */,
@@ -232,14 +229,6 @@
 				92E0B1202C13204A0009E2BB /* AudioObservable.swift */,
 			);
 			path = Utils;
-			sourceTree = "<group>";
-		};
-		04FA9B382C087202002EC94D /* ViewModels */ = {
-			isa = PBXGroup;
-			children = (
-				04FA9B372C087202002EC94D /* RoomViewModel.swift */,
-			);
-			path = ViewModels;
 			sourceTree = "<group>";
 		};
 		92E0B1222C1320EB0009E2BB /* Sounds */ = {
@@ -489,7 +478,6 @@
 				04E64FEB2C0E08D2008CF4E7 /* MultipeerSceneView.swift in Sources */,
 				A4DAC4D12C0866340062CE38 /* PlayerModel.swift in Sources */,
 				04F5BD0B2C05CE8200AC5205 /* ARController.swift in Sources */,
-				04FA9B392C087202002EC94D /* RoomViewModel.swift in Sources */,
 				04F5BCD92C05CD0000AC5205 /* FindTheRocksApp.swift in Sources */,
 				A4DAC4CA2C085A670062CE38 /* RoomView.swift in Sources */,
 				92E0B1362C1442D70009E2BB /* WaitingPlantScreenView.swift in Sources */,

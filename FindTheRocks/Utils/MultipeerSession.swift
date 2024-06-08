@@ -222,6 +222,19 @@ class MultipeerSession: NSObject {
             self.serviceBrowser.stopBrowsingForPeers()
         }
     }
+    
+    func shareWorldMap() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5){
+            self.sceneView.session.getCurrentWorldMap { worldMap, error in
+                guard let map = worldMap
+                else { print("Error: \(error!)"); return }
+                guard let data = try? NSKeyedArchiver.archivedData(withRootObject: ARData(room: self.room, map: map), requiringSecureCoding: true)
+                else { fatalError("can't encode map") }
+                print("rock planted: ", self.room.getAllPlantedRocks().count)
+                self.sendToAllPeers(data)
+            }
+        }
+    }
 }
 
 // MARK: Received Data Handler
@@ -339,19 +352,6 @@ extension MultipeerSession: MCSessionDelegate {
         }
     }
     
-    func shareWorldMap() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5){
-            self.sceneView.session.getCurrentWorldMap { worldMap, error in
-                guard let map = worldMap
-                else { print("Error: \(error!)"); return }
-                guard let data = try? NSKeyedArchiver.archivedData(withRootObject: ARData(room: self.room, map: map), requiringSecureCoding: true)
-                else { fatalError("can't encode map") }
-                print("rock planted: ", self.room.getAllPlantedRocks().count)
-                self.sendToAllPeers(data)
-            }
-        }
-    }
-    
     // players will receive the world map from master
     func receiveWorldMap(data: ARData) {
 //        if (!isMaster) {
@@ -365,6 +365,13 @@ extension MultipeerSession: MCSessionDelegate {
             self.room = data.room
             print("rock planted: ", self.room.getAllPlantedRocks().count)
             self.sceneView.session.run(configuration, options: [.resetTracking, .removeExistingAnchors])
+    }
+    
+    func resetWorldMap() {
+        let configuration = ARWorldTrackingConfiguration()
+        configuration.planeDetection = [.horizontal, .vertical]
+        
+        self.sceneView.session.run(configuration, options: [.resetTracking, .removeExistingAnchors])
     }
     
     func receivePick(_ customAnchor: CustomAnchor,_ peerID: MCPeerID){
@@ -475,8 +482,6 @@ extension MultipeerSession: MCNearbyServiceBrowserDelegate {
 
 // MARK: Advertiser
 extension MultipeerSession: MCNearbyServiceAdvertiserDelegate {
-    
-    
     /// - Tag: AcceptInvite
     func advertiser(_ advertiser: MCNearbyServiceAdvertiser, didReceiveInvitationFromPeer peerID: MCPeerID, withContext context: Data?, invitationHandler: @escaping (Bool, MCSession?) -> Void) {
         //        Open the modal dialog and use the callback

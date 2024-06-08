@@ -126,7 +126,7 @@ extension MultipeerSession: ARSCNViewDelegate, ARSessionDelegate {
         
         referenceNode.name = "Rock SCNNode"
         // adjust scale
-        let scale: Float = 0.1
+        let scale: Float = 0.075
         referenceNode.scale = SCNVector3(x: scale, y: scale, z: scale)
         
         referenceNode.load()
