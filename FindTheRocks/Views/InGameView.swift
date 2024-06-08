@@ -15,10 +15,8 @@ import MultipeerConnectivity
 //    case plant, inGame
 //}
 
-enum Label {
-    case redTeam, blueTeam, fingTheRock
-}
 struct InGameView: View {
+    @Environment(AudioObservable.self) var audio
     @Binding var multiPeerSession: MultipeerSession
     @State var myself: Player? = nil
     
@@ -28,7 +26,7 @@ struct InGameView: View {
     @State var countDownRemaining: Int = 3
     @State var isPlantTimerActive: Bool = false
     @State var isSeekTimerActive: Bool = false
-    @State var isCountDownActive: Bool = false
+    @State var isCountDownActive: Bool = true
     @State var isOver: Bool = false
     
     @State var redPoints: Int = 0
@@ -39,6 +37,8 @@ struct InGameView: View {
     @State var plantTimer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     let seekTimer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     let startCountDown = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    
+    @State var countDownScene = Self.loadScene(named: "art.scnassets/models/123.scn")
     
     func getPoint() {
         redPoints = multiPeerSession.room.teams[0].players.reduce(0) { $0 + $1.point }
@@ -62,7 +62,7 @@ struct InGameView: View {
                     VStack(alignment: .leading) {
                         HStack {
                             VStack {
-                                if multiPeerSession.plantTurn == 0 && multiPeerSession.isPlanting {
+                                if !isCountDownActive && multiPeerSession.plantTurn == 0 && multiPeerSession.isPlanting {
                                     Text("\(format(seconds: redTeamTimeRemaining))")
                                         .font(.custom("TitanOne", size: 30))
                                         .foregroundColor(Color.white)
@@ -116,8 +116,18 @@ struct InGameView: View {
                                             }
                                         }
                                 }
-                                else {
-                                    Text("00:00")
+                                else if multiPeerSession.plantTurn == 0 && multiPeerSession.isPlanting {
+                                    Text(format(seconds: redTeamTimeRemaining))
+                                        .font(.custom("TitanOne", size: 30))
+                                        .foregroundColor(Color.white)
+                                }
+                                else if multiPeerSession.plantTurn == 1 && multiPeerSession.isPlanting {
+                                    Text(format(seconds: blueTeamTimeRemaining))
+                                        .font(.custom("TitanOne", size: 30))
+                                        .foregroundColor(Color.white)
+                                }
+                                else if !multiPeerSession.isPlanting {
+                                    Text(format(seconds: seekTimeRemaining))
                                         .font(.custom("TitanOne", size: 30))
                                         .foregroundColor(Color.white)
                                 }
@@ -160,12 +170,13 @@ struct InGameView: View {
                             
                             // MARK: AR View
                             ARControllerRepresentable(multipeerSession: $multiPeerSession)
-                                .cornerRadius(15, corners: multiPeerSession.isPlanting && !isCountDownActive ? [.allCorners] : [.bottomLeft, .bottomRight])
+                                .cornerRadius(15, corners: multiPeerSession.isPlanting ? [.allCorners] : [.bottomLeft, .bottomRight])
                                 .padding(.bottom, 20)
+                                .animation(.easeInOut(duration: 0.5), value: myself?.isPlanter)
                         }
                         
                         // MARK: Rock selector
-                        if multiPeerSession.isPlanting && myself?.isPlanter ?? false &&  !isCountDownActive {
+                        if multiPeerSession.isPlanting && myself?.isPlanter ?? false && !isCountDownActive {
                             HStack {
                                 // Button Real Rock
                                 VStack(spacing: 0) {
@@ -194,6 +205,7 @@ struct InGameView: View {
                                 .background(!multiPeerSession.isPlantingFakeRock ? Color.tersierGradient.opacity(1) : Color.whiteGradient.opacity(0.2))
                                 .cornerRadius(15)
                                 .onTapGesture {
+                                    audio.playClick()
                                     multiPeerSession.isPlantingFakeRock = false
                                 }
                                 
@@ -223,10 +235,10 @@ struct InGameView: View {
                                 .background(multiPeerSession.isPlantingFakeRock ? Color.tersierGradient.opacity(1) : Color.whiteGradient.opacity(0.2))
                                 .cornerRadius(15)
                                 .onTapGesture {
+                                    audio.playClick()
                                     multiPeerSession.isPlantingFakeRock = true
                                 }
                             }
-                            .padding(.top, 10)
                         }
                     }
                     .transition(.move(edge: .bottom))
@@ -238,16 +250,20 @@ struct InGameView: View {
                         myself = multiPeerSession.room.teams[multiPeerSession.getTeam(multiPeerSession.peerID)].players.first(where: {$0.peerID == multiPeerSession.peerID})
                     }
                     
-                    // Modal Countdown
+                    // MARK: Waiting Screen
+                    if multiPeerSession.plantTurn != multiPeerSession.getTeam(myself?.peerID) && !isCountDownActive && multiPeerSession.isPlanting {
+                        WaitingPlantScreenView(planterTeam: multiPeerSession.plantTurn, timeRemaining: multiPeerSession.plantTurn == 0 ? $redTeamTimeRemaining : $blueTeamTimeRemaining)
+                    }
+                    
+                    // MARK: Modal Countdown
                     if isCountDownActive {
                         VStack{
                             Spacer()
                             HStack{
                                 Spacer()
                                 VStack(alignment:.center){
-                                    Text("\(countDownRemaining)")
-                                        .font(.custom("TitanOne", size: 50))
-                                        .foregroundColor(Color.white)
+                                    LegacySceneView(scene: countDownScene)
+                                        .frame(width: gp.size.width)
                                         .onReceive(startCountDown) { _ in
                                             if countDownRemaining <= 0 {
                                                 isSeekTimerActive = true
@@ -257,23 +273,44 @@ struct InGameView: View {
                                                 countDownRemaining -= 1
                                             }
                                         }
+//                                    Text("\(countDownRemaining)")
+//                                        .font(.custom("TitanOne", size: 50))
+//                                        .foregroundColor(Color.white)
+//                                        .onReceive(startCountDown) { _ in
+//                                            if countDownRemaining <= 0 {
+//                                                isSeekTimerActive = true
+//                                                isCountDownActive = false
+//                                                countDownRemaining = 3
+//                                            } else {
+//                                                countDownRemaining -= 1
+//                                            }
+//                                        }
                                 }
-                                .frame(width:gp.size.width - 150, height: gp.size.height*0.23)
-                                .background(){
-                                    SkewedRoundedRectangle(topLeftXOffset: 5,topRightYOffset: 5,bottomRightYOffset: 5,cornerRadius: 20)
-                                        .fill(Color.primaryGradient)
-                                }
+                                .frame(width:gp.size.width * 2.5, height: gp.size.height)
+//                                .frame(width:gp.size.width - 150, height: gp.size.height*0.23)
+//                                .background(){
+//                                    SkewedRoundedRectangle(topLeftXOffset: 5,topRightYOffset: 5,bottomRightYOffset: 5,cornerRadius: 20)
+//                                        .fill(Color.primaryGradient)
+//                                }
                                 Spacer()
                             }
                             Spacer()
                         }
                         .frame(width:gp.size.width,height:gp.size.height)
+                        .onAppear {
+                            audio.playCountDown()
+                        }
+                        .onDisappear {
+                            countDownScene = InGameView.loadScene(named: "art.scnassets/models/123.scn")
+                        }
 //                        .background(){
 //                            Color.white.opacity(0.5)
 //                                .blur(radius:10)
 //                        }
                     }
                 }
+                
+                
             }
             .navigationBarBackButtonHidden()
             .navigationDestination(isPresented: $isOver) {
@@ -286,9 +323,9 @@ struct InGameView: View {
             self.multiPeerSession.isPlanting = true
             self.multiPeerSession.isGameStarted = true
             self.multiPeerSession.plantTurn = 0
-            self.seekTimeRemaining = multiPeerSession.room.seekTime * 60
-            self.redTeamTimeRemaining = multiPeerSession.room.hideTime * 60
-            self.blueTeamTimeRemaining = multiPeerSession.room.hideTime * 60
+//            self.seekTimeRemaining = multiPeerSession.room.seekTime * 60
+//            self.redTeamTimeRemaining = multiPeerSession.room.hideTime * 60
+//            self.blueTeamTimeRemaining = multiPeerSession.room.hideTime * 60
         }
     }
 }

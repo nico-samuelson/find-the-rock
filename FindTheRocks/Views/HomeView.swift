@@ -10,22 +10,26 @@ import SceneKit
 import MultipeerConnectivity
 
 struct HomeView: View {
+    @Environment(AudioObservable.self) var audio
     @State private var name: String = ""
     @Binding var multiPeerSession: MultipeerSession
     @State private var keyboardHeight:CGFloat = 0
     @State private var isFocused:Bool = false
     @State private var avatarOffset: CGSize = .zero
     @State private var avatarOpacity: Double = 1.0
-    @State private var avatarIndex: Int = UserDefaults.standard.integer(forKey: "avatar") ?? 0
+    @State private var avatarIndex: Int = UserDefaults.standard.integer(forKey: "avatar")
     @State private var isInvited:Bool = false
     @State private var time:Int  = 15
     @State private var inviterName:String?
     @State private var inviterProfile:String = "lancelot-avatar"
     @State private var invitationHandler: ((Bool) -> Void)?
-    @State private var topOffset:CGFloat = 0
-    @State private var botOffset:CGFloat = 0
+    @State private var topOffset:CGFloat = -100
+    @State private var botOffset:CGFloat = -100
     @State private var navigateRoom = false
     @State private var navigateWait = false
+    @State private var isShowRock = false
+    
+    var rockScene: SCNScene = Self.loadScene(named: "art.scnassets/models/rock-home.scn")
     
     let avatarImageNames = ["male-avatar", "female-avatar"]
     
@@ -54,9 +58,12 @@ struct HomeView: View {
                         }
                         .offset(x:0,y: topOffset - (gp.size.height/30*5))
                         Spacer()
+                        
+                        if isShowRock {
+                            LegacySceneView(scene: rockScene)
+                                .frame(width: gp.size.width)
+                        }
                         // 3d Asset
-                        LegacySceneView(scene: Self.loadScene(named: "art.scnassets/models/rock-home.scn"))
-                            .frame(width: gp.size.width)
                         Spacer()
                         
                         /// Bottom Action BAR
@@ -75,6 +82,7 @@ struct HomeView: View {
                                 .offset(avatarOffset)
                                 .opacity(avatarOpacity)
                                 .onTapGesture(){
+                                    audio.playClick()
                                     avatarIndex = (avatarIndex + 1) % avatarImageNames.count
                                     UserDefaults.standard.setValue(avatarIndex,forKey:"avatar")
                                 }
@@ -120,12 +128,14 @@ struct HomeView: View {
                             .keyboardHeight($keyboardHeight,hide:hideKeyboard)
                             .offset(y: -keyboardHeight * 0.6)
                             .onTapGesture {
+                                audio.playClick()
                                 withAnimation(.easeOut(duration: 0.25)) {
                                     isFocused = true
                                 }
                             }
                             
                             Button(action: {
+                                audio.playClick()
                                 // Your custom logic here
                                 // e.g., update some state, print a message, etc.
                                 multiPeerSession.createRoom()
@@ -160,7 +170,6 @@ struct HomeView: View {
                                 .shadow(color:.init(.black.opacity(0.33)),radius: 20,x:0,y:4)
                         }
                         .offset(x:0,y:(gp.size.height/30*7) - botOffset)
-                        
                     }
                     .background(Color.clear)  // Add a clear background to detect taps outside
                     .contentShape(Rectangle())  // Define the tap area as the whole view
@@ -288,6 +297,11 @@ struct HomeView: View {
                 }
                 name = multiPeerSession.getDisplayName()
                 print(multiPeerSession.connectedPeers.map({$0.displayName}))
+                DispatchQueue.main.asyncAfter(deadline:.now() + 0.2){
+                    withAnimation(.easeOut(duration:0.2)){
+                        isShowRock = true
+                    }
+                }
             }
             .navigationBarBackButtonHidden()
         }

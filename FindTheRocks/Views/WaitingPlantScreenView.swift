@@ -9,7 +9,7 @@ import SwiftUI
 import SceneKit
 
 struct WaitingPlantScreenView: View {
-    @Binding var planterTeam : Int
+    var planterTeam : Int
     @Binding var timeRemaining : Int
     var scene : SCNScene = loadScene(named: "art.scnassets/models/rock-home.scn")
     
@@ -43,9 +43,9 @@ struct WaitingPlantScreenView: View {
                         SkewedRoundedRectangle(topLeftYOffset: -2, topRightXOffset: 5, topRightYOffset: 1, bottomLeftXOffset: -2, cornerRadius: 15)
                             .frame(height: 60)
                             .padding(.horizontal, 50)
-                            .foregroundStyle(planterTeam == 0 ? Color.blueGradient : Color.redGradient)
+                            .foregroundStyle(planterTeam == 1 ? Color.blueGradient : Color.redGradient)
                             .overlay {
-                                Text(planterTeam == 0 ? "Blue Team Planting" : "Red Team Planting")
+                                Text(planterTeam == 1 ? "Blue Team Planting" : "Red Team Planting")
                                     .foregroundStyle(.white)
                                     .fontWeight(.bold)
                                     .font(.custom("Staatliches-Regular", size: 32))

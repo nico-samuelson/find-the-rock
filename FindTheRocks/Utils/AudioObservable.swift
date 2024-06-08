@@ -31,8 +31,8 @@ class AudioObservable {
         playerSFX?.play()
     }
     
-    func playKerching() {
-        guard let path = Bundle.main.path(forResource: "kerching", ofType: ".mp3") else {
+    func playDrop() {
+        guard let path = Bundle.main.path(forResource: "drop", ofType: ".mp3") else {
           return
         }
           
@@ -47,6 +47,29 @@ class AudioObservable {
           print("Failed to load the sound: \(error)")
         }
         playerSFX?.play()
+    }
+    
+    func playCountDown() {
+        guard let path = Bundle.main.path(forResource: "count-down", ofType: ".mp3") else {
+          return
+        }
+          
+          let url = URL(fileURLWithPath: path)
+
+        do {
+            self.playerSFX = try AVAudioPlayer(contentsOf: url)
+            self.playerSFX?.currentTime = 0
+            self.playerSFX?.volume = 3
+            self.playerSFX?.play()
+        } catch {
+          print("Failed to load the sound: \(error)")
+        }
+        playerSFX?.play()
+    }
+    
+    func stopBGMusic() {
+        playerMusic?.stop()
+        playerMusic?.currentTime = 0
     }
     
     func playWin() {

@@ -8,8 +8,11 @@
 import SwiftUI
 
 struct ResultView: View {
+    @Environment(AudioObservable.self) var audio
     @Binding var multiPeerSession: MultipeerSession
     @State var winner: String = ""
+    @State var navigateToHome: Bool = false
+    @State var navigateToPlayAgain: Bool = false
     
     var body: some View {
         NavigationStack {
@@ -176,7 +179,11 @@ struct ResultView: View {
                     }
                     .frame(height: 170)
                     
-                    NavigationLink(destination: HomeView(multiPeerSession: $multiPeerSession), label: {
+                    Button {
+                        audio.playClick()
+                        multiPeerSession.destroyRoom()
+                        navigateToHome = true
+                    } label: {
                         SkewedRoundedRectangle(topRightYOffset: -2, bottomRightXOffset: -3, bottomRightYOffset: -1, cornerRadius: 20)
                             .frame(maxHeight: 60)
                             .padding(.horizontal, 60)
@@ -187,34 +194,41 @@ struct ResultView: View {
                                     .fontWeight(.bold)
                                     .font(.custom("Staatliches-Regular", size: 32))
                             )
-                    })
+                    }
+                    .navigationDestination(isPresented: $navigateToHome){
+                        HomeView(multiPeerSession: $multiPeerSession)
+                    }
                     .padding(.top, 30)
                     
-                    NavigationLink(
-                        destination: multiPeerSession.isMaster ?
+                    Button {
+                        audio.playClick()
+                        navigateToPlayAgain = true
+                    } label: {
+                        SkewedRoundedRectangle(topRightYOffset: -5, bottomRightXOffset: 3, bottomRightYOffset: 3, bottomLeftXOffset: 6, cornerRadius: 20)
+                            .frame(maxHeight: 75)
+                            .padding(.horizontal, 50)
+                            .foregroundStyle(Color.tersierGradient)
+                            .overlay(
+                                Text("PLAY AGAIN")
+                                    .foregroundStyle(Color.white)
+                                    .fontWeight(.bold)
+                                    .font(.custom("Staatliches-Regular", size: 32))
+                            )
+                            .padding(.top, 15)
+                            .padding(.bottom, 25)
+                    }
+                    .navigationDestination(isPresented: $navigateToPlayAgain){
+                        multiPeerSession.isMaster ?
                         AnyView(RoomView(multiPeerSession: $multiPeerSession, myself:Player(peerID: multiPeerSession.getPeerId(), profile:"lancelot-avatar", status: .connected, point: 0, isPlanter: true))) :
                             AnyView(WaitingView(multiPeerSession: $multiPeerSession))
-                        ,
-                        label:{
-                            SkewedRoundedRectangle(topRightYOffset: -5, bottomRightXOffset: 3, bottomRightYOffset: 3, bottomLeftXOffset: 6, cornerRadius: 20)
-                                .frame(maxHeight: 75)
-                                .padding(.horizontal, 50)
-                                .foregroundStyle(Color.tersierGradient)
-                                .overlay(
-                                    Text("PLAY AGAIN")
-                                        .foregroundStyle(Color.white)
-                                        .fontWeight(.bold)
-                                        .font(.custom("Staatliches-Regular", size: 32))
-                                )
-                                .padding(.top, 15)
-                                .padding(.bottom, 25)
-                        })
+                    }
                 }
             }
             .navigationBarBackButtonHidden()
             .background(Color.primaryGradient)
         }
         .onAppear(perform: {
+            audio.playWin()
             let redTeamScore = multiPeerSession.room.teams[0].players.reduce(0) { $0 + $1.point }
             let blueTeamScore = multiPeerSession.room.teams[1].players.reduce(0) { $0 + $1.point }
             if redTeamScore == blueTeamScore {

@@ -9,10 +9,6 @@ import Foundation
 import MultipeerConnectivity
 import ARKit
 
-enum Phases {
-    case redTeamPlantingPhase, blueTeamPlantingPhase, seekPhase
-}
-
 /// - Tag: MultipeerSession
 @Observable
 class MultipeerSession: NSObject {
