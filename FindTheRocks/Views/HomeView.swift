@@ -374,6 +374,21 @@ public extension View {
         scene.background.contents = UIColor.clear
         return scene
     }
+    
+    static func loadScene(named modelName: String, scale: CGFloat) -> SCNScene {
+        guard let scene = SCNScene(named: modelName) else {
+            print("cannot find \(modelName)")
+            abort()
+        }
+        scene.background.contents = UIColor.clear
+        
+        // Apply scale to all root node's childNodes
+        for childNode in scene.rootNode.childNodes {
+            childNode.scale = SCNVector3(scale, scale, scale)
+        }
+        
+        return scene
+    }
 }
 
 struct LegacySceneView: UIViewRepresentable {

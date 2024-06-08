@@ -29,13 +29,15 @@ struct InGameView: View {
     @State var selectedButton: PlantButton = PlantButton.real
     @State var plantTimeRemaining: Int = 5
     @State var seekTimeRemaining: Int = 5
-    @State var countDownRemaining: Int = 3
+    @State var countDownRemaining: Double = 7.2
     @State var isPlantTimerActive: Bool = false
     @State var isSeekTimerActive: Bool = false
     @State var isCountDownActive: Bool = false
     @State var isOver: Bool = false
     @State var redPoints: Int = 0
     @State var bluePoints: Int = 0
+    
+    var countDownScene = Self.loadScene(named: "art.scnassets/models/123.scn")
     
     let plantTimer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     let seekTimer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
@@ -209,16 +211,18 @@ struct InGameView: View {
                         isPlantTimerActive = true
                     }
                     
-                    // Modal Countdown
+                    // MARK: Modal Countdown
                     if isCountDownActive {
                         VStack{
                             Spacer()
                             HStack{
                                 Spacer()
                                 VStack(alignment:.center){
-                                    Text("\(countDownRemaining)")
-                                        .font(.custom("TitanOne", size: 50))
-                                        .foregroundColor(Color.white)
+                                    LegacySceneView(scene: countDownScene)
+                                        .frame(width: gp.size.width)
+                                        .onAppear {
+                                            audio.playBGMusic()
+                                        }
                                         .onReceive(startCountDown) { _ in
                                             if countDownRemaining <= 0 {
                                                 isSeekTimerActive = true
@@ -227,12 +231,24 @@ struct InGameView: View {
                                                 countDownRemaining -= 1
                                             }
                                         }
+//                                    Text("\(countDownRemaining)")
+//                                        .font(.custom("TitanOne", size: 50))
+//                                        .foregroundColor(Color.white)
+//                                        .onReceive(startCountDown) { _ in
+//                                            if countDownRemaining <= 0 {
+//                                                isSeekTimerActive = true
+//                                                isCountDownActive = false
+//                                            } else {
+//                                                countDownRemaining -= 1
+//                                            }
+//                                        }
                                 }
-                                .frame(width:gp.size.width - 150, height: gp.size.height*0.23)
-                                .background(){
-                                    SkewedRoundedRectangle(topLeftXOffset: 5,topRightYOffset: 5,bottomRightYOffset: 5,cornerRadius: 20)
-                                        .fill(Color.primaryGradient)
-                                }
+                                .frame(width:gp.size.width * 2.5, height: gp.size.height)
+                                .background(.clear)
+//                                .background(){
+//                                    SkewedRoundedRectangle(topLeftXOffset: 5,topRightYOffset: 5,bottomRightYOffset: 5,cornerRadius: 20)
+//                                        .fill(Color.primaryGradient)
+//                                }
                                 Spacer()
                             }
                             Spacer()
@@ -254,8 +270,8 @@ struct InGameView: View {
         .onAppear {
             self.multiPeerSession.isPlanting = true
             self.multiPeerSession.isGameStarted = true
-            seekTimeRemaining = multiPeerSession.room.seekTime * 60
-            plantTimeRemaining = multiPeerSession.room.hideTime * 60
+//            seekTimeRemaining = multiPeerSession.room.seekTime * 60
+//            plantTimeRemaining = multiPeerSession.room.hideTime * 60
         }
     }
 }
