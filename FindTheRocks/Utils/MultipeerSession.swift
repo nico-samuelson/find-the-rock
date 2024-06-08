@@ -9,11 +9,14 @@ import Foundation
 import MultipeerConnectivity
 import ARKit
 
+enum Phases {
+    case redTeamPlantingPhase, blueTeamPlantingPhase, seekPhase
+}
+
 /// - Tag: MultipeerSession
 @Observable
 class MultipeerSession: NSObject {
     static let serviceType = "find-the-rock"
-    
     var displayName:String = "Player"
     private var myPeerID:MCPeerID!
     private var session: MCSession!

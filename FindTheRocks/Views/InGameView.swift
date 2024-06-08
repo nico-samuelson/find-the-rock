@@ -28,7 +28,6 @@ struct InGameView: View {
     @State var countDownRemaining: Int = 3
     @State var isPlantTimerActive: Bool = false
     @State var isSeekTimerActive: Bool = false
-    
     @State var isCountDownActive: Bool = false
     @State var isOver: Bool = false
     
