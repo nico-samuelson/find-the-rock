@@ -133,6 +133,7 @@ struct InGameView: View {
                                         .foregroundColor(Color.white)
                                 }
                             }
+                            Spacer()
                             SkewedRoundedRectangle(topLeftYOffset: -2, topRightXOffset: -2, topRightYOffset: -0.5, bottomLeftXOffset: 2, cornerRadius: 10)
                                 .frame(height: 40)
                                 .foregroundStyle(!multiPeerSession.isPlanting ? Color.whiteGradient : multiPeerSession.plantTurn == 0 ? Color.redGradient : Color.blueGradient)
@@ -144,6 +145,7 @@ struct InGameView: View {
                                 )
                                 .padding(.horizontal, 10)
                                 .padding(.vertical, 10)
+                                .frame(maxWidth: 270)
                         }
                         
                         VStack(spacing: 0) {
@@ -182,7 +184,10 @@ struct InGameView: View {
                                 // Button Real Rock
                                 VStack(spacing: 0) {
                                     VStack {
-                                        Image(systemName: "circle.fill")
+                                        //                                        Image(systemName: "circle.fill")
+                                        Image("rock-1")
+                                            .resizable()
+                                            .frame(width: 50, height: 50)
                                     }
                                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                                     .background(Color.white.opacity(0.2))
@@ -214,7 +219,10 @@ struct InGameView: View {
                                 // Button Fake Rock
                                 VStack(spacing: 0) {
                                     VStack {
-                                        Image(systemName: "circle.fill")
+//                                        Image(systemName: "circle.fill")
+                                        Image("rock-2")
+                                            .resizable()
+                                            .frame(width: 50, height: 50)
                                     }
                                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                                     .background(Color.white.opacity(0.2))
@@ -265,20 +273,8 @@ struct InGameView: View {
                             HStack{
                                 Spacer()
                                 VStack(alignment:.center){
-                                    LegacySceneView(scene: countDownScene)
-                                        .frame(width: gp.size.width)
-                                        .onReceive(startCountDown) { _ in
-                                            if countDownRemaining <= 0 {
-                                                isSeekTimerActive = true
-                                                isCountDownActive = false
-                                                countDownRemaining = 3
-                                            } else {
-                                                countDownRemaining -= 1
-                                            }
-                                        }
-//                                    Text("\(countDownRemaining)")
-//                                        .font(.custom("TitanOne", size: 50))
-//                                        .foregroundColor(Color.white)
+//                                    LegacySceneView(scene: countDownScene)
+//                                        .frame(width: gp.size.width)
 //                                        .onReceive(startCountDown) { _ in
 //                                            if countDownRemaining <= 0 {
 //                                                isSeekTimerActive = true
@@ -288,13 +284,25 @@ struct InGameView: View {
 //                                                countDownRemaining -= 1
 //                                            }
 //                                        }
+                                    Text("\(countDownRemaining)")
+                                        .font(.custom("TitanOne", size: 50))
+                                        .foregroundColor(Color.white)
+                                        .onReceive(startCountDown) { _ in
+                                            if countDownRemaining <= 0 {
+                                                isSeekTimerActive = true
+                                                isCountDownActive = false
+                                                countDownRemaining = 3
+                                            } else {
+                                                countDownRemaining -= 1
+                                            }
+                                        }
                                 }
-                                .frame(width:gp.size.width * 2.5, height: gp.size.height)
-//                                .frame(width:gp.size.width - 150, height: gp.size.height*0.23)
-//                                .background(){
-//                                    SkewedRoundedRectangle(topLeftXOffset: 5,topRightYOffset: 5,bottomRightYOffset: 5,cornerRadius: 20)
-//                                        .fill(Color.primaryGradient)
-//                                }
+//                                .frame(width:gp.size.width * 2.5, height: gp.size.height)
+                                .frame(width:gp.size.width - 150, height: gp.size.height*0.23)
+                                .background(){
+                                    SkewedRoundedRectangle(topLeftXOffset: 5,topRightYOffset: 5,bottomRightYOffset: 5,cornerRadius: 20)
+                                        .fill(Color.primaryGradient)
+                                }
                                 Spacer()
                             }
                             Spacer()
@@ -326,9 +334,9 @@ struct InGameView: View {
             self.multiPeerSession.isPlanting = true
             self.multiPeerSession.isGameStarted = true
             self.multiPeerSession.plantTurn = 0
-            self.seekTimeRemaining = multiPeerSession.room.seekTime * 60
-            self.redTeamTimeRemaining = multiPeerSession.room.hideTime * 60
-            self.blueTeamTimeRemaining = multiPeerSession.room.hideTime * 60
+//            self.seekTimeRemaining = multiPeerSession.room.seekTime * 60
+//            self.redTeamTimeRemaining = multiPeerSession.room.hideTime * 60
+//            self.blueTeamTimeRemaining = multiPeerSession.room.hideTime * 60
         }
     }
 }

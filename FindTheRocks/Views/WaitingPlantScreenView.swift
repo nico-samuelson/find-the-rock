@@ -9,6 +9,7 @@ import SwiftUI
 import SceneKit
 
 struct WaitingPlantScreenView: View {
+    @Environment(AudioObservable.self) var audio
     var planterTeam : Int
     @Binding var timeRemaining : Int
     var scene : SCNScene = loadScene(named: "art.scnassets/models/rock-home.scn")
@@ -22,7 +23,6 @@ struct WaitingPlantScreenView: View {
             GeometryReader { gp in
                 VStack {
                     HStack {
-                        Spacer()
                         Text("\(format(seconds: timeRemaining))")
                             .font(.custom("Staatliches-Regular", size: 21))
                             .foregroundStyle(Color.white)
@@ -35,11 +35,15 @@ struct WaitingPlantScreenView: View {
                             }
                             .padding(10)
                             .padding(.horizontal, 10)
+                        Spacer()
                     }
                     Spacer()
                     VStack(alignment: .center) {
                         Spacer()
                         LegacySceneView(scene: self.scene)
+                            .onTapGesture {
+                                audio.playClick()
+                            }
                         SkewedRoundedRectangle(topLeftYOffset: -2, topRightXOffset: 5, topRightYOffset: 1, bottomLeftXOffset: -2, cornerRadius: 15)
                             .frame(height: 60)
                             .padding(.horizontal, 50)
@@ -56,7 +60,7 @@ struct WaitingPlantScreenView: View {
                     .offset(y: -70)
                     Spacer()
                 }
-                .background(Color.secondaryGradient)
+                .background(Color.iconGradient)
             }
         }
     }
