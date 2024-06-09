@@ -30,12 +30,13 @@
 		92E0B1212C13204A0009E2BB /* AudioObservable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E0B1202C13204A0009E2BB /* AudioObservable.swift */; };
 		92E0B1242C1321340009E2BB /* count-down.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 92E0B1232C1321340009E2BB /* count-down.mp3 */; };
 		92E0B1262C13213A0009E2BB /* background-music-funk.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 92E0B1252C13213A0009E2BB /* background-music-funk.mp3 */; };
-		92E0B1292C1321480009E2BB /* click.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 92E0B1272C1321480009E2BB /* click.mp3 */; };
+		92E0B1292C1321480009E2BB /* click-2.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 92E0B1272C1321480009E2BB /* click-2.mp3 */; };
 		92E0B12A2C1321480009E2BB /* winner.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 92E0B1282C1321480009E2BB /* winner.mp3 */; };
 		92E0B1322C1440250009E2BB /* Staatliches-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 92E0B1312C1440250009E2BB /* Staatliches-Regular.ttf */; };
 		92E0B1362C1442D70009E2BB /* WaitingPlantScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E0B1352C1442D70009E2BB /* WaitingPlantScreenView.swift */; };
 		92E0B13A2C1497E30009E2BB /* drop.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 92E0B1392C1497E30009E2BB /* drop.mp3 */; };
 		92E0B13C2C1499EC0009E2BB /* drop-2.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 92E0B13B2C1499EC0009E2BB /* drop-2.mp3 */; };
+		92E0B13E2C15D8920009E2BB /* click.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 92E0B13D2C15D8920009E2BB /* click.mp3 */; };
 		A43A7A032C05DA0A00C46FAA /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A43A7A022C05DA0A00C46FAA /* HomeView.swift */; };
 		A43A7A062C05E27E00C46FAA /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = A43A7A042C05E27E00C46FAA /* Color.swift */; };
 		A43A7A092C05E54000C46FAA /* SkewedRoundedRectangle.swift in Sources */ = {isa = PBXBuildFile; fileRef = A43A7A082C05E54000C46FAA /* SkewedRoundedRectangle.swift */; };
@@ -100,13 +101,14 @@
 		92E0B1202C13204A0009E2BB /* AudioObservable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioObservable.swift; sourceTree = "<group>"; };
 		92E0B1232C1321340009E2BB /* count-down.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "count-down.mp3"; sourceTree = "<group>"; };
 		92E0B1252C13213A0009E2BB /* background-music-funk.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "background-music-funk.mp3"; sourceTree = "<group>"; };
-		92E0B1272C1321480009E2BB /* click.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = click.mp3; sourceTree = "<group>"; };
+		92E0B1272C1321480009E2BB /* click-2.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "click-2.mp3"; sourceTree = "<group>"; };
 		92E0B1282C1321480009E2BB /* winner.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = winner.mp3; sourceTree = "<group>"; };
 		92E0B12B2C1323B40009E2BB /* Staatliches-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Staatliches-Regular.ttf"; path = "/Downloads/Staatliches,Titan_One/Staatliches/Staatliches-Regular.ttf"; sourceTree = "<absolute>"; };
 		92E0B1312C1440250009E2BB /* Staatliches-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Staatliches-Regular.ttf"; sourceTree = "<group>"; };
 		92E0B1352C1442D70009E2BB /* WaitingPlantScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaitingPlantScreenView.swift; sourceTree = "<group>"; };
 		92E0B1392C1497E30009E2BB /* drop.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = drop.mp3; sourceTree = "<group>"; };
 		92E0B13B2C1499EC0009E2BB /* drop-2.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "drop-2.mp3"; sourceTree = "<group>"; };
+		92E0B13D2C15D8920009E2BB /* click.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = click.mp3; sourceTree = "<group>"; };
 		A43A7A022C05DA0A00C46FAA /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		A43A7A042C05E27E00C46FAA /* Color.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 		A43A7A082C05E54000C46FAA /* SkewedRoundedRectangle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkewedRoundedRectangle.swift; sourceTree = "<group>"; };
@@ -237,9 +239,10 @@
 				92E0B1232C1321340009E2BB /* count-down.mp3 */,
 				92E0B1252C13213A0009E2BB /* background-music-funk.mp3 */,
 				92E0B1282C1321480009E2BB /* winner.mp3 */,
-				92E0B1272C1321480009E2BB /* click.mp3 */,
+				92E0B1272C1321480009E2BB /* click-2.mp3 */,
 				92E0B1392C1497E30009E2BB /* drop.mp3 */,
 				92E0B13B2C1499EC0009E2BB /* drop-2.mp3 */,
+				92E0B13D2C15D8920009E2BB /* click.mp3 */,
 			);
 			path = Sounds;
 			sourceTree = "<group>";
@@ -418,11 +421,12 @@
 			files = (
 				92E0B13C2C1499EC0009E2BB /* drop-2.mp3 in Resources */,
 				A442E7F62C14BCD900D8A6DC /* TitanOne-Regular.ttf in Resources */,
-				92E0B1292C1321480009E2BB /* click.mp3 in Resources */,
+				92E0B1292C1321480009E2BB /* click-2.mp3 in Resources */,
 				92E0B1322C1440250009E2BB /* Staatliches-Regular.ttf in Resources */,
 				924A44CA2C086B390002D8E1 /* art.scnassets in Resources */,
 				92E0B12A2C1321480009E2BB /* winner.mp3 in Resources */,
 				92E0B1262C13213A0009E2BB /* background-music-funk.mp3 in Resources */,
+				92E0B13E2C15D8920009E2BB /* click.mp3 in Resources */,
 				92E0B13A2C1497E30009E2BB /* drop.mp3 in Resources */,
 				04F5BCE22C05CD0200AC5205 /* Preview Assets.xcassets in Resources */,
 				04F5BCDF2C05CD0200AC5205 /* Assets.xcassets in Resources */,
@@ -646,7 +650,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"FindTheRocks/Preview Content\"";
-				DEVELOPMENT_TEAM = Y834K368F4;
+				DEVELOPMENT_TEAM = KDM6FL3S9W;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = FindTheRocks/Info.plist;
@@ -679,7 +683,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"FindTheRocks/Preview Content\"";
-				DEVELOPMENT_TEAM = Y834K368F4;
+				DEVELOPMENT_TEAM = KDM6FL3S9W;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = FindTheRocks/Info.plist;

@@ -25,15 +25,15 @@ public extension Color {
     
     static let primaryGradient: LinearGradient = LinearGradient(
         stops: [
-            .init(color: .init(red: 233/255.0, green: 168/255.0, blue: 255/255.0), location: 0),
+            .init(color: .init(red: 255/255.0, green: 129/255.0, blue: 241/255.0), location: 0),
             .init(color: .init(red: 185/255.0, green: 97/255.0, blue: 255/255.0), location: 0.3),
             .init(color: .init(red: 109/255.0, green: 71/255.0, blue: 253/255.0), location: 1),
         ], startPoint: .init(x: 0.2, y: -0.2), endPoint: .init(x: 0.7, y: 1.2))
     
     static let iconGradient: RadialGradient = RadialGradient(colors: [
-        .init(red: 255/255.0, green: 129/255.0, blue: 241/255.0), // Placeholder for inner light blue
+        .init(red: 255/255.0, green: 129/255.0, blue: 241/255.0),
             .init(red: 178/255.0, green: 87/255.0, blue: 233/255.0),
-        .init(red: 97/255.0, green: 0/255.0, blue: 253/255.0), // Placeholder for outer purple
+        .init(red: 97/255.0, green: 0/255.0, blue: 253/255.0),
     ], center: .center, startRadius: 5, endRadius: UIScreen.main.bounds.width)
     
     static let secondaryGradient: RadialGradient = RadialGradient(colors: [

@@ -12,6 +12,7 @@ import AVFoundation
 class AudioObservable {
     var playerMusic: AVAudioPlayer?
     var playerSFX: AVAudioPlayer?
+    var playerSFX2: AVAudioPlayer?
     
     func playClick() {
         guard let path = Bundle.main.path(forResource: "click", ofType: ".mp3") else {
@@ -23,7 +24,7 @@ class AudioObservable {
         do {
             self.playerSFX = try AVAudioPlayer(contentsOf: url)
             self.playerSFX?.currentTime = 0
-            self.playerSFX?.volume = 3
+            self.playerSFX?.volume = 2
             self.playerSFX?.play()
         } catch {
           print("Failed to load the sound: \(error)")
@@ -57,14 +58,14 @@ class AudioObservable {
           let url = URL(fileURLWithPath: path)
 
         do {
-            self.playerSFX = try AVAudioPlayer(contentsOf: url)
-            self.playerSFX?.currentTime = 0
-            self.playerSFX?.volume = 3
-            self.playerSFX?.play()
+            self.playerSFX2 = try AVAudioPlayer(contentsOf: url)
+            self.playerSFX2?.currentTime = 0
+            self.playerSFX2?.volume = 3
+            self.playerSFX2?.play()
         } catch {
           print("Failed to load the sound: \(error)")
         }
-        playerSFX?.play()
+        playerSFX2?.play()
     }
     
     func stopBGMusic() {

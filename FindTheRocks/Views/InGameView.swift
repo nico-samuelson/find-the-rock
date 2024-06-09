@@ -285,7 +285,7 @@ struct InGameView: View {
 //                                            }
 //                                        }
                                     Text("\(countDownRemaining)")
-                                        .font(.custom("TitanOne", size: 50))
+                                        .font(.custom("TitanOne", size: 76))
                                         .foregroundColor(Color.white)
                                         .onReceive(startCountDown) { _ in
                                             if countDownRemaining <= 0 {
@@ -298,7 +298,7 @@ struct InGameView: View {
                                         }
                                 }
 //                                .frame(width:gp.size.width * 2.5, height: gp.size.height)
-                                .frame(width:gp.size.width - 150, height: gp.size.height*0.23)
+                                .frame(width:gp.size.width - 170, height: gp.size.height*0.25)
                                 .background(){
                                     SkewedRoundedRectangle(topLeftXOffset: 5,topRightYOffset: 5,bottomRightYOffset: 5,cornerRadius: 20)
                                         .fill(Color.primaryGradient)
