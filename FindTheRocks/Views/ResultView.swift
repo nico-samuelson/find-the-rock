@@ -66,9 +66,11 @@ struct ResultView: View {
                                             .foregroundStyle(Color.lightRed)
                                             .frame(width: 30, height: 30)
                                             .overlay {
-                                                Circle()
-                                                    .foregroundStyle(.white)
-                                                    .padding(2)
+                                                Image(player.profile)
+                                                    .resizable()
+                                                    .clipShape(
+                                                        Circle()
+                                                    ).padding(2)
                                             }
                                         
                                         Text(player.peerID.displayName.uppercased())
@@ -133,9 +135,11 @@ struct ResultView: View {
                                             .foregroundStyle(Color.lightBlue)
                                             .frame(width: 30, height: 30)
                                             .overlay {
-                                                Circle()
-                                                    .foregroundStyle(.white)
-                                                    .padding(2)
+                                                Image(player.profile)
+                                                    .resizable()
+                                                    .clipShape(
+                                                        Circle()
+                                                    ).padding(2)
                                             }
                                         
                                         Text(player.peerID.displayName.uppercased())

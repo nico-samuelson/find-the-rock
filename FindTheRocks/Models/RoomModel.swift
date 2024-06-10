@@ -11,8 +11,8 @@ import Foundation
 class Room: NSObject, NSCoding, NSSecureCoding {
     var name: String = "Player \(Int.random(in:1...100))"
     var teams: [Team] = [Team(), Team()]
-    var hideTime: Int = 1
-    var seekTime: Int = 1
+    var hideTime: Int = 5
+    var seekTime: Int = 5
     var fakeRock: Int = 3
     var realRock: Int = 3
     static var supportsSecureCoding: Bool = true

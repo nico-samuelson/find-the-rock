@@ -12,7 +12,7 @@ struct WaitingPlantScreenView: View {
     @Environment(AudioObservable.self) var audio
     var planterTeam : Int
     @Binding var timeRemaining : Int
-    var scene : SCNScene = loadScene(named: "art.scnassets/models/rock-home.scn")
+//    var scene : SCNScene = loadScene(named: "art.scnassets/models/rock-home.scn")
     
     func format(seconds: Int) -> String {
         String(format:"%d:%02d", seconds / 60, seconds % 60)
@@ -40,10 +40,10 @@ struct WaitingPlantScreenView: View {
                     Spacer()
                     VStack(alignment: .center) {
                         Spacer()
-                        LegacySceneView(scene: self.scene)
-                            .onTapGesture {
-                                audio.playClick()
-                            }
+//                        LegacySceneView(scene: self.scene)
+//                            .onTapGesture {
+//                                audio.playClick()
+//                            }
                         SkewedRoundedRectangle(topLeftYOffset: -2, topRightXOffset: 5, topRightYOffset: 1, bottomLeftXOffset: -2, cornerRadius: 15)
                             .frame(height: 60)
                             .padding(.horizontal, 50)

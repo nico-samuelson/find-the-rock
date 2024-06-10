@@ -20,9 +20,9 @@ struct InGameView: View {
     @Binding var multiPeerSession: MultipeerSession
     @State var myself: Player? = nil
     
-    @State var redTeamTimeRemaining: Int = 10
-    @State var blueTeamTimeRemaining: Int = 10
-    @State var seekTimeRemaining: Int = 10
+    @State var redTeamTimeRemaining: Int = 30
+    @State var blueTeamTimeRemaining: Int = 30
+    @State var seekTimeRemaining: Int = 30
     @State var countDownRemaining: Int = 3
     @State var isPlantTimerActive: Bool = false
     @State var isSeekTimerActive: Bool = false
