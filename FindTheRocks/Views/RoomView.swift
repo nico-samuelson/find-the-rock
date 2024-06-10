@@ -292,7 +292,7 @@ struct RoomView: View {
                                     }
                                 
                                 Text(peer.peerID.displayName.uppercased())
-                                    .foregroundStyle(.black)
+                                    .foregroundStyle(.white)
                                     .fontWeight(.medium)
                                     .font(.custom("Staatliches-Regular",size: 21))
                                     .padding(.leading, 5)

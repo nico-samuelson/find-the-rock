@@ -22,24 +22,24 @@ struct WaitingPlantScreenView: View {
         NavigationStack {
             GeometryReader { gp in
                 VStack {
-                    HStack {
-                        Text("\(format(seconds: timeRemaining))")
-                            .font(.custom("Staatliches-Regular", size: 21))
-                            .foregroundStyle(Color.white)
-                            .frame(width: 60, height: 60, alignment: .center)
-                            .overlay {
-                                Circle()
-                                    .stroke(Color.white, lineWidth: 3)
-                                    .fill(.clear)
-                                    .frame(width: 60, height: 60)
-                            }
-                            .padding(10)
-                            .padding(.horizontal, 10)
-                        Spacer()
-                    }
+//                    HStack {
+//                        Text("\(format(seconds: timeRemaining))")
+//                            .font(.custom("Staatliches-Regular", size: 21))
+//                            .foregroundStyle(Color.white)
+//                            .frame(width: 60, height: 60, alignment: .center)
+//                            .overlay {
+//                                Circle()
+//                                    .stroke(Color.white, lineWidth: 3)
+//                                    .fill(.clear)
+//                                    .frame(width: 60, height: 60)
+//                            }
+//                            .padding(10)
+//                            .padding(.horizontal, 10)
+//                        Spacer()
+//                    }
                     Spacer()
                     VStack(alignment: .center) {
-                        Spacer()
+//                        Spacer()
 //                        LegacySceneView(scene: self.scene)
 //                            .onTapGesture {
 //                                audio.playClick()
@@ -54,7 +54,20 @@ struct WaitingPlantScreenView: View {
                                     .fontWeight(.bold)
                                     .font(.custom("Staatliches-Regular", size: 32))
                             }
-                            .offset(y: -50)
+                        Text("\(format(seconds: timeRemaining))")
+                            .contentTransition(.numericText())
+                            .font(.custom("TitanOne", size: 48))
+                            .foregroundStyle(Color.white)
+//                            .frame(width: 90, height: 90, alignment: .center)
+//                            .overlay {
+//                                Circle()
+//                                    .stroke(Color.white, lineWidth: 4)
+//                                    .fill(.clear)
+//                                    .frame(width: 90, height: 90)
+//                            }
+                            .padding(10)
+                            .padding(.horizontal, 10)
+//                            .offset(y: -50)
                     }
                     .frame(height: gp.size.height / 2)
                     .offset(y: -70)

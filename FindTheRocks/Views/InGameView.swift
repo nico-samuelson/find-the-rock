@@ -64,11 +64,14 @@ struct InGameView: View {
                             VStack {
                                 if !isCountDownActive && multiPeerSession.plantTurn == 0 && multiPeerSession.isPlanting {
                                     Text("\(format(seconds: redTeamTimeRemaining))")
+                                        .contentTransition(.numericText())
                                         .font(.custom("TitanOne", size: 30))
                                         .foregroundColor(Color.white)
                                         .onReceive(redTeamTimer) { _ in
                                             if redTeamTimeRemaining > 0 {
-                                                redTeamTimeRemaining -= 1
+                                                withAnimation {
+                                                    redTeamTimeRemaining -= 1
+                                                }
                                             }
                                             else {
                                                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
@@ -89,7 +92,9 @@ struct InGameView: View {
                                         .foregroundColor(Color.white)
                                         .onReceive(blueTeamTimer) { _ in
                                             if blueTeamTimeRemaining > 0 {
-                                                blueTeamTimeRemaining -= 1
+                                                withAnimation {
+                                                    blueTeamTimeRemaining -= 1
+                                                }
                                             }
                                             else {
                                                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
@@ -109,7 +114,9 @@ struct InGameView: View {
                                         .foregroundColor(Color.white)
                                         .onReceive(seekTimer) { _ in
                                             if seekTimeRemaining > 0 && isSeekTimerActive {
-                                                seekTimeRemaining -= 1
+                                                withAnimation {
+                                                    seekTimeRemaining -= 1
+                                                }
                                             }
                                             else if seekTimeRemaining <= 0 {
                                                 isOver = true

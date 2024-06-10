@@ -52,7 +52,7 @@ struct HomeView: View {
                         }
                         .frame(minWidth:gp.size.width,minHeight:gp.size.height/30*7)
                         .background{
-                            SkewedRoundedRectangle(bottomRightYOffset: 20,cornerRadius: 30)
+                            SkewedRoundedRectangle(bottomRightYOffset: 20, bottomLeftCornerRadius: 30, bottomRightCornerRadius: 30)
                                 .fill(Color.primaryGradient)
                                 .shadow(color:.init(.black.opacity(0.25)),radius: 20,x:0,y:4)
                         }
