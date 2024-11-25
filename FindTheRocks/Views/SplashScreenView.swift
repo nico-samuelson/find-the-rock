@@ -8,37 +8,37 @@
 import SwiftUI
 
 struct SplashScreenView: View {
-    @State private var offsetY:CGFloat = 0
+    @Environment(AudioObservable.self) var audio
+    @State private var offsetY: CGFloat = -800
+    
     var body: some View {
-        GeometryReader{gp in
-            VStack{
+        GeometryReader { gp in
+            VStack {
                 Spacer()
-                HStack{
+                HStack {
                     Spacer()
-                    VStack{
-                        Image(systemName: "star.fill")
+                    VStack {
+                        Image("AppIcon-nobg")
                             .resizable()
-                            .frame(width:100,height:100)
+                            .frame(width: 350, height: 350)
                             .foregroundStyle(.white)
-                        Text("Find ThE ROCK")
-                            .font(.custom("TitanOne",size:30))
-                            .bold()
-                            .foregroundStyle(.white)
-                    }.offset(x:0,y:0 - offsetY)
+                            .offset(y: offsetY)
+                            .onAppear {
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                                    withAnimation(.spring(dampingFraction: 0.9)) {
+                                        audio.playDrop()
+                                        offsetY = 0
+                                    }
+                                }
+                            }
+                    }
                     Spacer()
                 }
                 Spacer()
             }
-            .frame(minWidth: gp.size.width,minHeight: gp.size.height)
-            .background(Color.secondaryGradient)
+            .frame(minWidth: gp.size.width, minHeight: gp.size.height)
+            .background(Color.iconGradient)
             .edgesIgnoringSafeArea(.all)
-            .onAppear(){
-                DispatchQueue.main.asyncAfter(deadline:.now() + 0.8){
-                    withAnimation(.easeOut(duration:0.5)){
-                        offsetY = gp.size.height
-                    }
-                }
-            }
         }
     }
 }

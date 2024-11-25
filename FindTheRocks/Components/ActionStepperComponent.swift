@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct ActionStepperComponent: View {
+    @Environment(AudioObservable.self) var audio
     var action:String
     @Binding var value:Int
     var body: some View {
@@ -23,6 +24,7 @@ struct ActionStepperComponent: View {
                     .fill(Color.tersierGradient)
             }
             .onTapGesture {
+                audio.playClick()
                 if action == "plus" {
                     guard value < 15 else {
                         return

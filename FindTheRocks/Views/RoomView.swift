@@ -7,6 +7,7 @@
 
 import SwiftUI
 import MultipeerConnectivity
+import SceneKit
 
 struct RoomView: View {
     @Environment(AudioObservable.self) var audio
@@ -16,12 +17,15 @@ struct RoomView: View {
     @State private var isSettingSheet = false
     @State var startGame = false
     
+    var gearScene: SCNScene = Self.loadScene(named: "art.scnassets/models/gear.scn")
+    
     func assignToTeam(player: Player, to: Int = -1) {
         print("player: ", player)
         print("to: ", to)
+        
         // assign player to team after invite
         if to == -1 {
-            multiPeerSession.invitePeer(peerID: player.peerID, data: try! NSKeyedArchiver.archivedData(withRootObject: Player(peerID: multiPeerSession.getPeerId(), profile: "lancelot-avatar", status: .connected, point:0 ), requiringSecureCoding: true))
+            multiPeerSession.invitePeer(peerID: player.peerID, data: try! NSKeyedArchiver.archivedData(withRootObject: myself, requiringSecureCoding: true))
         }
         
         // move player to another team
@@ -29,8 +33,10 @@ struct RoomView: View {
             let from = to == 0 ? 1 : 0
             multiPeerSession.room.teams[from].players.removeAll(where: { $0.peerID == player.peerID })
             multiPeerSession.room.teams[to].players.append(player)
-            multiPeerSession.syncRoom()
+//            multiPeerSession.syncRoom()
         }
+        
+        multiPeerSession.syncRoom()
     }
     
     func kickPlayer(player: Player) {
@@ -52,7 +58,7 @@ struct RoomView: View {
                             .fontWeight(.bold)
                             .foregroundStyle(.white)
                         Spacer()
-                        LegacySceneView(scene: Self.loadScene(named: "art.scnassets/models/gear.scn"))
+                        LegacySceneView(scene: gearScene)
                             .onTapGesture {
                                 audio.playClick()
                                 isSettingSheet = true
@@ -93,9 +99,11 @@ struct RoomView: View {
                                             .foregroundStyle(Color.lightRed)
                                             .frame(width: 25, height: 25)
                                             .overlay {
-                                                Circle()
-                                                    .foregroundStyle(.white)
-                                                    .padding(2)
+                                                Image(player.profile)
+                                                    .resizable()
+                                                    .clipShape(
+                                                        Circle()
+                                                    ).padding(2)
                                             }
                                         
                                         Text(player.peerID.displayName.uppercased())
@@ -230,9 +238,11 @@ struct RoomView: View {
                                             .foregroundStyle(Color.lightBlue)
                                             .frame(width: 25, height: 25)
                                             .overlay {
-                                                Circle()
-                                                    .foregroundStyle(.white)
-                                                    .padding(2)
+                                                Image(player.profile)
+                                                    .resizable()
+                                                    .clipShape(
+                                                        Circle()
+                                                    ).padding(2)
                                             }
                                     }
                                     .padding(0)
@@ -271,13 +281,18 @@ struct RoomView: View {
                                     .foregroundStyle(.white.opacity(0.5))
                                     .frame(width: 40, height: 40)
                                     .overlay {
-                                        Circle()
-                                            .foregroundStyle(.white)
-                                            .padding(4)
+//                                        Circle()
+//                                            .foregroundStyle(.white)
+//                                            .padding(4)
+                                        Image(peer.profile)
+                                            .resizable()
+                                            .clipShape(
+                                                Circle()
+                                            ).padding(4)
                                     }
                                 
                                 Text(peer.peerID.displayName.uppercased())
-                                    .foregroundStyle(.black)
+                                    .foregroundStyle(.white)
                                     .fontWeight(.medium)
                                     .font(.custom("Staatliches-Regular",size: 21))
                                     .padding(.leading, 5)
@@ -325,6 +340,7 @@ struct RoomView: View {
                         audio.playClick()
                         // Your custom logic here
                         // e.g., update some state, print a message, etc.
+                        audio.playClick()
                         print("Logic Executed, destroying room!")
                         multiPeerSession.destroyRoom()
                         

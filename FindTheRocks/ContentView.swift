@@ -12,22 +12,21 @@ import MultipeerConnectivity
 struct ContentView: View {
     @Binding var multipeerSession: MultipeerSession
     @State var room: Room = Room()
-    @State var showSplashScreen = true
+    @State private var navigateToHome = false
 
     var body: some View {
-        Group{
-            if showSplashScreen {
-                SplashScreenView()
-            }else {
+        VStack {
+            if navigateToHome {
                 HomeView(multiPeerSession: $multipeerSession)
-            }
-        }.onAppear(){
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.2){
-                withAnimation(.easeOut(duration:0.3)){
-                    showSplashScreen = false
-                }
+            } else {
+                SplashScreenView()
             }
         }
-//        PlantView(multiPeerSession: $multipeerSession)
+        .onAppear() {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
+                navigateToHome = true
+                audio.playBGMusic()
+            }
+        }
     }
 }

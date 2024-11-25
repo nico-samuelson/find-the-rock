@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct ButtonPillComponent: View {
+    @Environment(AudioObservable.self) var audio
     var value:Int
     var padding:CGFloat
     @Binding var activeController:Int
@@ -28,6 +29,7 @@ struct ButtonPillComponent: View {
                 }
             }
             .onTapGesture {
+                audio.playClick()
                 activeController = value
             }
     }

@@ -49,9 +49,11 @@ struct WaitingView: View {
                                                 .foregroundStyle(Color.lightRed)
                                                 .frame(width: 25, height: 25)
                                                 .overlay {
-                                                    Circle()
-                                                        .foregroundStyle(.white)
-                                                        .padding(2)
+                                                    Image(player.profile)
+                                                        .resizable()
+                                                        .clipShape(
+                                                            Circle()
+                                                        ).padding(2)
                                                 }
                                             
                                             Text(player.peerID.displayName.uppercased())
@@ -110,9 +112,11 @@ struct WaitingView: View {
                                                 .foregroundStyle(Color.lightBlue)
                                                 .frame(width: 25, height: 25)
                                                 .overlay {
-                                                    Circle()
-                                                        .foregroundStyle(.white)
-                                                        .padding(2)
+                                                    Image(player.profile)
+                                                        .resizable()
+                                                        .clipShape(
+                                                            Circle()
+                                                        ).padding(2)
                                                 }
                                         }
                                         .padding(0)

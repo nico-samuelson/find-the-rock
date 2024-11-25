@@ -13,7 +13,6 @@ import ARKit
 @Observable
 class MultipeerSession: NSObject {
     static let serviceType = "find-the-rock"
-    
     var displayName:String = "Player"
     private var myPeerID:MCPeerID!
     private var session: MCSession!
@@ -29,6 +28,8 @@ class MultipeerSession: NSObject {
     var isPlantingFakeRock: Bool = false
     var isPlanting: Bool = true
     var isGameStarted: Bool = false
+    var plantTurn: Int = 0
+    let avatars = ["male-avatar","female-avatar"]
     
     // MARK: Scene View
     var cameraTransform: SCNMatrix4? = SCNMatrix4()
@@ -116,7 +117,7 @@ class MultipeerSession: NSObject {
     }
     
     private func startAdvertisingAndBrowsing() {
-        serviceAdvertiser = MCNearbyServiceAdvertiser(peer: myPeerID, discoveryInfo: nil, serviceType: MultipeerSession.serviceType)
+        serviceAdvertiser = MCNearbyServiceAdvertiser(peer: myPeerID, discoveryInfo: ["profile":avatars[UserDefaults.standard.integer(forKey: "avatar") ?? 0]], serviceType: MultipeerSession.serviceType)
         serviceAdvertiser.delegate = self
         serviceAdvertiser.startAdvertisingPeer()
         
@@ -157,7 +158,16 @@ class MultipeerSession: NSObject {
         self.isJoined = true
         
         // new advertiser and run
-        serviceAdvertiser = MCNearbyServiceAdvertiser(peer:self.myPeerID,discoveryInfo: ["room":self.room.name],serviceType: serviceBrowser.serviceType)
+        serviceAdvertiser = MCNearbyServiceAdvertiser(peer:self.myPeerID,discoveryInfo: ["room":self.room.name,"profile":avatars[UserDefaults.standard.integer(forKey: "avatar") ?? 0]],serviceType: serviceBrowser.serviceType)
+        serviceAdvertiser.delegate = self
+        serviceAdvertiser.startAdvertisingPeer()
+    }
+    
+    func changeAvatar(_ index:Int){
+        serviceAdvertiser.stopAdvertisingPeer()
+        serviceAdvertiser.delegate = nil
+        
+        serviceAdvertiser = MCNearbyServiceAdvertiser(peer:self.myPeerID,discoveryInfo: ["profile":avatars[index]],serviceType: serviceBrowser.serviceType)
         serviceAdvertiser.delegate = self
         serviceAdvertiser.startAdvertisingPeer()
     }
@@ -198,6 +208,14 @@ class MultipeerSession: NSObject {
     }
     
     func syncRoom(){
+        // re-sync team planter
+        for team in self.room.teams where team.players.count > 0 {
+            for player in team.players where player.isPlanter {
+                player.isPlanter = false
+            }
+            team.players[0].isPlanter = true
+        }
+        
         self.sendToAllPeers(try! NSKeyedArchiver.archivedData(withRootObject: self.room, requiringSecureCoding: true))
     }
     
@@ -215,40 +233,17 @@ class MultipeerSession: NSObject {
         }
     }
     
-    
-    func alignNewAnchor(anchor: ARAnchor) -> ARAnchor? {
-        guard let currentFrame = sceneView.session.currentFrame else {
-            print("Couldn't get current frame")
-            return nil
+    func shareWorldMap() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5){
+            self.sceneView.session.getCurrentWorldMap { worldMap, error in
+                guard let map = worldMap
+                else { print("Error: \(error!)"); return }
+                guard let data = try? NSKeyedArchiver.archivedData(withRootObject: ARData(room: self.room, map: map), requiringSecureCoding: true)
+                else { fatalError("can't encode map") }
+                print("rock planted: ", self.room.getAllPlantedRocks().count)
+                self.sendToAllPeers(data)
+            }
         }
-        
-        // Get current device transform (position and orientation)
-        let currentTransform = currentFrame.camera.transform
-        
-        // Extract the translation and rotation components of the current transform
-        let currentTranslation = currentTransform.columns.3
-        let currentRotation = simd_quatf(currentTransform)
-        
-        // Extract the translation and rotation components of the received anchor's transform
-        let anchorTranslation = anchor.transform.columns.3
-        let anchorRotation = simd_quatf(anchor.transform)
-        
-        // Calculate the new position: your current position + the relative position of the anchor
-        let newTranslation = currentTranslation + anchorTranslation
-        
-        // Combine the rotations: your current rotation * anchor's rotation
-        let newRotation = currentRotation * anchorRotation
-        
-        // Construct the new transform with the combined translation and rotation
-        var newTransform = matrix_identity_float4x4
-        newTransform.columns.3 = newTranslation
-        newTransform = matrix_float4x4(newRotation)
-        newTransform.columns.3 = newTranslation
-        
-        // Create a new anchor with the transformed position and orientation
-        let newAnchor = ARAnchor(name: anchor.name!, transform: anchor.transform)
-        
-        return newAnchor
     }
 }
 
@@ -263,8 +258,10 @@ extension MultipeerSession: MCSessionDelegate {
         case .connected:
             // if room master than share the state room to every connected player
             print("Connected with \(peerID.displayName)")
+            var profile = "male-avatar"
             if let index = self.nearbyPeers.firstIndex(where: {$0.peerID == peerID}) {
                 self.nearbyPeers[index].status = .connected
+                profile = self.nearbyPeers[index].profile
             }
             if isMaster {
                 // Assign the connected players into a room
@@ -272,7 +269,7 @@ extension MultipeerSession: MCSessionDelegate {
                 let team2Count = self.room.teams[1].players.count
                 let target = team1Count <= team2Count ? 0 : 1
                 
-                self.room.teams[target].players.append(Player(peerID:peerID,profile:"tigreal-avatar",status:.connected,point:0))
+                self.room.teams[target].players.append(Player(peerID:peerID,profile:profile,status:.connected,point:0, isPlanter: true))
                 self.sendToAllPeers( try! NSKeyedArchiver.archivedData(withRootObject: self.room ,requiringSecureCoding: true))
                 
             }
@@ -313,111 +310,95 @@ extension MultipeerSession: MCSessionDelegate {
         if string == "start" {
             self.isGameStarted = true
         }
+        
+        if string == "switch" {
+            self.shareWorldMap()
+        }
     }
     
     // room master will merge all the anchors sent by the players
     func handleAnchorChange(_ newAnchor: ARAnchor, _ mode: String, _ isReal: Bool, _ sender: MCPeerID) {
         let team = self.getTeam(sender)
         
-        guard isMaster else { return }
-        if (mode == "add") {
-            if (isReal && room.teams[team].realPlanted.count + 1 <= room.realRock) {
-                room.teams[team].realPlanted.append(Rock(isFake: !isReal, anchor: newAnchor))
-                sceneView.session.add(anchor: newAnchor)
+        // TODO: change send world map only for adding and removing
+        if mode == "pick" {
+            guard let player = room.teams[team].players.first(where: {$0.peerID == sender}) else { return }
+            
+            if isReal {
+                player.point += 1
             }
-            else if (!isReal && room.teams[team].fakePlanted.count + 1 <= room.fakeRock){
-                room.teams[team].fakePlanted.append(Rock(isFake: !isReal, anchor: newAnchor))
-                sceneView.session.add(anchor: newAnchor)
-            }
-        }
-        else if (mode == "remove") {
-            print("remove node")
-            print(isReal)
-            print(room.teams[team].realPlanted)
-            if isReal && room.teams[team].realPlanted.count > 0 {
-                print(room.teams[team].realPlanted.count)
-                room.teams[team].realPlanted.removeAll(where: {$0.anchor.identifier == newAnchor.identifier})
-                print(room.teams[team].realPlanted.count)
-                sceneView.session.remove(anchor: newAnchor)
-            }
-            else if !isReal && room.teams[team].fakePlanted.count > 0 {
-                room.teams[team].fakePlanted.removeAll(where: {$0.anchor.identifier == newAnchor.identifier})
-                sceneView.session.remove(anchor: newAnchor)
-            }
-        }
-        else if (mode == "pick") {
-            guard isReal, let player = room.teams[team].players.first(where: {$0.peerID == sender}) else { return }
-            player.point += 1
-            room.teams[team].realPlanted.removeAll(where: {$0.anchor.identifier == newAnchor.identifier})
+            
+            room.teams[team].realPlanted.removeAll(where: {$0.anchor.name == newAnchor.name})
             sceneView.session.remove(anchor: newAnchor)
-        }
-        
-        sceneView.session.getCurrentWorldMap { worldMap, error in
-            guard let map = worldMap
-            else { print("Error: \(error!)"); return }
-            guard let data = try? NSKeyedArchiver.archivedData(withRootObject: ARData(room: self.room, map: map), requiringSecureCoding: true)
-            else { fatalError("can't encode map") }
-            self.sendToAllPeers(data)
+            guard let data = try? NSKeyedArchiver.archivedData(withRootObject: CustomAnchor(anchor:newAnchor,action: "pick", isReal: isReal),requiringSecureCoding: true) else { fatalError("can't encode anchor") }
+                    self.sendToAllPeers(data)
+            
+            // send the removed anchor to the others peer
+            
+        } else {
+            if mode == "add" {
+                if (isReal && room.teams[team].realPlanted.count + 1 <= room.realRock) {
+                    room.teams[team].realPlanted.append(Rock(isFake: !isReal, anchor: newAnchor))
+                    sceneView.session.add(anchor: newAnchor)
+                }
+                else if (!isReal && room.teams[team].fakePlanted.count + 1 <= room.fakeRock){
+                    room.teams[team].fakePlanted.append(Rock(isFake: !isReal, anchor: newAnchor))
+                    sceneView.session.add(anchor: newAnchor)
+                }
+            }
+            else if mode == "remove" {
+                print("remove node")
+                print(isReal)
+                print(room.teams[team].realPlanted)
+                if isReal && room.teams[team].realPlanted.count > 0 {
+                    print(room.teams[team].realPlanted.count)
+                    room.teams[team].realPlanted.removeAll(where: {$0.anchor.identifier == newAnchor.identifier})
+                    print(room.teams[team].realPlanted.count)
+                    sceneView.session.remove(anchor: newAnchor)
+                }
+                else if !isReal && room.teams[team].fakePlanted.count > 0 {
+                    room.teams[team].fakePlanted.removeAll(where: {$0.anchor.identifier == newAnchor.identifier})
+                    sceneView.session.remove(anchor: newAnchor)
+                }
+            }
         }
     }
     
     // players will receive the world map from master
     func receiveWorldMap(data: ARData) {
-        if (!isMaster) {
+//        if (!isMaster) {
             print("receive new world map and room data")
             let configuration = ARWorldTrackingConfiguration()
             configuration.planeDetection = [.horizontal, .vertical]
             configuration.initialWorldMap = data.map
-            configuration.initialWorldMap?.anchors.removeAll()
-            configuration.worldAlignment = .gravityAndHeading
+//            configuration.initialWorldMap?.anchors.removeAll()
+//            configuration.worldAlignment = .gravityAndHeading
             
             self.room = data.room
+            print("rock planted: ", self.room.getAllPlantedRocks().count)
             self.sceneView.session.run(configuration, options: [.resetTracking, .removeExistingAnchors])
-            
-            let allRocks = room.getAllPlantedRocks()
-            
-            print(allRocks.count)
-            
-            for rock in allRocks {
-                // change the orientation of the rock subsequent to the reciever anchor
-                
-                sceneView.session.add(anchor: rock.anchor)
-            }
-        }
-        
     }
     
-    func changeOrientation(_ anchor: ARAnchor) -> ARAnchor{
-        guard let currentFrame = sceneView.session.currentFrame else {
-            print("Couldn't get current frame")
-            return anchor
+    func resetWorldMap() {
+        let configuration = ARWorldTrackingConfiguration()
+        configuration.planeDetection = [.horizontal, .vertical]
+        
+        self.sceneView.session.run(configuration, options: [.resetTracking, .removeExistingAnchors])
+    }
+    
+    func receivePick(_ customAnchor: CustomAnchor,_ peerID: MCPeerID){
+        let team = self.getTeam(peerID)
+        guard let player = room.teams[team].players.first(where: {$0.peerID == peerID}) else { return }
+        
+        if customAnchor.isReal {
+            player.point += 1
+            room.teams[team].realPlanted.removeAll(where: {$0.anchor.name == customAnchor.anchor.name})
         }
-        let currentTransform = currentFrame.camera.transform
+        else {
+            room.teams[team].fakePlanted.removeAll(where: {$0.anchor.name == customAnchor.anchor.name})
+        }
         
-        // Extract the translation and rotation components of the current transform
-        let currentTranslation = currentTransform.columns.3
-        let currentRotation = simd_quatf(currentTransform)
-        
-        // Extract the translation and rotation components of the received anchor's transform
-        let anchorTranslation = anchor.transform.columns.3
-        let anchorRotation = simd_quatf(anchor.transform)
-        
-        // Calculate the new position: your current position + the relative position of the anchor
-        let newTranslation = currentTranslation + anchorTranslation
-        
-        // Combine the rotations: your current rotation * anchor's rotation
-        let newRotation = currentRotation * anchorRotation
-        
-        // Construct the new transform with the combined translation and rotation
-        var newTransform = matrix_identity_float4x4
-        newTransform.columns.3 = newTranslation
-        newTransform = matrix_float4x4(newRotation)
-        newTransform.columns.3 = newTranslation
-        
-        // Create a new anchor with the transformed position and orientation
-        let newAnchor = ARAnchor(name: anchor.name!, transform: newTransform)
-        
-        return newAnchor
+        sceneView.session.remove(anchor: customAnchor.anchor)
     }
     
     func session(_ session: MCSession, didReceive data: Data, fromPeer peerID: MCPeerID) {
@@ -433,10 +414,16 @@ extension MultipeerSession: MCSessionDelegate {
                 case let room as Room:
                     handleDataRoom(room)
                 case let newAnchor as CustomAnchor:
-                    print(newAnchor.action)
-                    handleAnchorChange(newAnchor.anchor, newAnchor.action, newAnchor.isReal, peerID)
+                    if newAnchor.action != "pick" {
+                        handleAnchorChange(newAnchor.anchor, newAnchor.action, newAnchor.isReal, peerID)
+                    }else{
+                        // action to delete locally and not changing the world map globally
+                       receivePick(newAnchor, peerID)
+                    }
                 case let arData as ARData:
-                    receiveWorldMap(data: arData)
+                    if peerID != self.peerID {
+                        receiveWorldMap(data: arData)
+                    }
                 case let data as Data:
                     handleDataString(String(decoding: data, as: UTF8.self))
                 default:
@@ -467,25 +454,28 @@ extension MultipeerSession: MCNearbyServiceBrowserDelegate {
     public func browser(_ browser: MCNearbyServiceBrowser, foundPeer peerID: MCPeerID, withDiscoveryInfo info: [String: String]?) {
         // check for discoveryInfo
         
-       if let info = info {
-           // if exist the same room and connected peers, and not connected yet
-           if self.room.name == info["room"]! && (self.connectedPeers.firstIndex(where: { $0 == peerID }) == nil) {
-               browser.invitePeer(peerID,to:self.session,withContext:"approved".data(using:.utf8),timeout:10)
-           }
-       }
-       
-       DispatchQueue.main.async {
-           print(self.nearbyPeers.firstIndex(where: {$0.peerID == peerID}) == nil)
-           if self.nearbyPeers.firstIndex(where: { $0.peerID == peerID }) == nil {
-               self.nearbyPeers.append(Player(peerID: peerID, profile: "", status: .disconnected, point: 0))
-           }
-           print(self.nearbyPeers.map({($0.peerID, $0.peerID.displayName)}))
-       }
+        if let info = info {
+            // if exist the same room and connected peers, and not connected yet
+            let room = info["room"] ?? "no-room"
+            if self.room.name == room && (self.connectedPeers.firstIndex(where: { $0 == peerID }) == nil) {
+                browser.invitePeer(peerID,to:self.session,withContext:"approved".data(using:.utf8),timeout:10)
+            }
+            
+            let profile = info["profile"] ?? "male-avatar"
+            
+            DispatchQueue.main.async {
+                print(self.nearbyPeers.firstIndex(where: {$0.peerID == peerID}) == nil)
+                if self.nearbyPeers.firstIndex(where: { $0.peerID == peerID }) == nil {
+                    self.nearbyPeers.append(Player(peerID: peerID, profile: profile, status: .disconnected, point: 0, isPlanter: false))
+                }
+                print(self.nearbyPeers.map({($0.peerID, $0.peerID.displayName)}))
+            }
+        }
     }
     
     /// - Tag: Lost Peer
     public func browser(_ browser: MCNearbyServiceBrowser, lostPeer peerID: MCPeerID) {
-        // This app doesn't do anything with non-invited peers, so there's nothing to do here.
+        
         DispatchQueue.main.async {
             if let index = self.nearbyPeers.firstIndex(where: {$0.peerID == peerID}) {
                 self.nearbyPeers.remove(at: index)
@@ -507,8 +497,6 @@ extension MultipeerSession: MCNearbyServiceBrowserDelegate {
 
 // MARK: Advertiser
 extension MultipeerSession: MCNearbyServiceAdvertiserDelegate {
-    
-    
     /// - Tag: AcceptInvite
     func advertiser(_ advertiser: MCNearbyServiceAdvertiser, didReceiveInvitationFromPeer peerID: MCPeerID, withContext context: Data?, invitationHandler: @escaping (Bool, MCSession?) -> Void) {
         //        Open the modal dialog and use the callback
