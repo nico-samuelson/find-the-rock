@@ -10,6 +10,7 @@ import SwiftData
 import MultipeerConnectivity
 
 struct ContentView: View {
+    @Environment(AudioObservable.self) var audio
     @Binding var multipeerSession: MultipeerSession
     @State var room: Room = Room()
     @State private var navigateToHome = false
