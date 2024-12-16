@@ -1,4 +1,4 @@
-## Multiplayer AR Treasure Hunting Game
+## 🪨🪨
 
 Find the Rocks 🪨🎮 is an exhilarating Augmented Reality (AR) game that brings the classic hide-and-seek to a whole new level. This multiplayer game allows players to take turns hiding and seeking virtual rocks in the real world, all through the lens of their mobile devices.
 
